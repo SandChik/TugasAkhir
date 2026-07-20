@@ -50,11 +50,15 @@ const MENUS: Record<Peran, MenuSection[]> = {
         { label: "Konfigurasi Wallet", href: "/admin/wallet" },
         { label: "Periode BKD", href: "/admin/periode" },
         { label: "Referensi Kegiatan", href: "/admin/referensi" },
+        { label: "Sinkronisasi PDDikti", href: "/admin/sinkron" },
       ],
     },
     {
       title: "Blockchain",
-      items: [{ label: "Operasi Token", href: "/admin/token" }],
+      items: [
+        { label: "Operasi Token", href: "/admin/token" },
+        { label: "Log Blockchain", href: "/admin/log-blockchain" },
+      ],
     },
     {
       title: "Laporan",

@@ -5,8 +5,8 @@ import { prisma } from "../../../../lib/prisma";
 import AppShell from "../../../../components/AppShell";
 import BuktiKegiatanDetail from "../../../../components/BuktiKegiatanDetail";
 
-/** Detail kegiatan pengajaran + bukti ajar (UI-DOS-04 / FR-09). */
-export default async function BuktiAjarPage({ params }: { params: { id: string } }) {
+/** Lihat detail kegiatan pengajaran (read-only; upload bukti via Layanan BKD). */
+export default async function DetailPengajaranPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
 
   const kegiatan = await prisma.kegiatan.findUnique({
@@ -17,7 +17,6 @@ export default async function BuktiAjarPage({ params }: { params: { id: string }
       dokumen_kegiatan: { orderBy: { tanggal_upload: "desc" } },
     },
   });
-
   if (!kegiatan || kegiatan.lkd.id_pengguna !== session!.user.id) notFound();
 
   return (
@@ -25,10 +24,15 @@ export default async function BuktiAjarPage({ params }: { params: { id: string }
       peran="dosen"
       nama={session?.user.name ?? "-"}
       deskripsi="Dosen, D3 Teknik Informatika"
-      breadcrumb={["Beranda", "Pelaksanaan pendidikan", "Pengajaran", "Bukti Ajar"]}
-      title={`Laporan Kinerja - Semester ${kegiatan.lkd.periode_bkd.nama_periode}`}
+      breadcrumb={["Beranda", "Pelaksanaan pendidikan", "Pengajaran", "Detail"]}
+      title={`Detail Kegiatan - Semester ${kegiatan.lkd.periode_bkd.nama_periode}`}
     >
-      <BuktiKegiatanDetail kegiatan={kegiatan} slug="pengajaran" backHref="/dosen/pengajaran" />
+      <BuktiKegiatanDetail
+        kegiatan={kegiatan}
+        returnTo="/dosen/pengajaran"
+        backHref="/dosen/pengajaran"
+        canUpload={false}
+      />
     </AppShell>
   );
 }

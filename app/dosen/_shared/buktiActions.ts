@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
@@ -28,30 +29,39 @@ async function pastikanMilikDosen(idKegiatan: string, idPengguna: string) {
   return kegiatan;
 }
 
-/** FR-09: unggah dokumen bukti kegiatan (file fisik ATAU tautan). Berlaku semua kategori. */
+function withFlash(base: string, msg: { ok?: string; err?: string }) {
+  const q = new URLSearchParams();
+  if (msg.ok) q.set("ok", msg.ok);
+  if (msg.err) q.set("err", msg.err);
+  const s = q.toString();
+  return s ? `${base}?${s}` : base;
+}
+
+/** FR-09: unggah dokumen bukti (file fisik ATAU tautan). returnTo = halaman balik + flash. */
 export async function uploadBukti(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session) return;
 
   const idKegiatan = String(formData.get("id_kegiatan") ?? "");
-  const slug = String(formData.get("slug") ?? "pengajaran");
+  const returnTo = String(formData.get("return_to") ?? "/dosen/rekap-kegiatan");
   const nama = String(formData.get("nama_dokumen") ?? "").trim();
   const keterangan = String(formData.get("keterangan") ?? "").trim() || null;
   const jenis = String(formData.get("jenis_dokumen") ?? "");
   const tautan = String(formData.get("tautan") ?? "").trim();
   const file = formData.get("file") as File | null;
 
-  if (!idKegiatan || !nama || !JENIS_DOKUMEN.includes(jenis)) return;
+  if (!idKegiatan || !nama || !JENIS_DOKUMEN.includes(jenis))
+    redirect(withFlash(returnTo, { err: "Lengkapi nama dan jenis dokumen" }));
 
   const kegiatan = await pastikanMilikDosen(idKegiatan, session.user.id);
-  if (!kegiatan) return;
+  if (!kegiatan) redirect(withFlash(returnTo, { err: "Kegiatan tidak ditemukan" }));
 
   let fileUrl: string | null = null;
   let namaFile: string | null = null;
   let jenisFile: string | null = null;
 
   if (file && file.size > 0) {
-    if (file.size > MAX_FILE_BYTES) return;
+    if (file.size > MAX_FILE_BYTES) redirect(withFlash(returnTo, { err: "Ukuran file melebihi 10 MB" }));
     const bytes = Buffer.from(await file.arrayBuffer());
     const aman = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const unik = `${crypto.randomUUID()}-${aman}`;
@@ -62,11 +72,11 @@ export async function uploadBukti(formData: FormData) {
     namaFile = file.name;
     jenisFile = file.type || null;
   } else if (tautan) {
-    if (!/^https?:\/\//i.test(tautan)) return;
+    if (!/^https?:\/\//i.test(tautan)) redirect(withFlash(returnTo, { err: "Tautan harus diawali http(s)://" }));
     fileUrl = tautan;
     jenisFile = "tautan";
   } else {
-    return; // wajib salah satu: file atau tautan
+    redirect(withFlash(returnTo, { err: "Pilih file atau isi tautan dokumen" }));
   }
 
   await prisma.dokumen_kegiatan.create({
@@ -81,8 +91,8 @@ export async function uploadBukti(formData: FormData) {
     },
   });
 
-  revalidatePath(`/dosen/${slug}/${idKegiatan}`);
-  revalidatePath(`/dosen/${slug}`);
+  revalidatePath(returnTo);
+  redirect(withFlash(returnTo, { ok: "Dokumen bukti berhasil diunggah" }));
 }
 
 export async function hapusBukti(formData: FormData) {
@@ -90,16 +100,17 @@ export async function hapusBukti(formData: FormData) {
   if (!session) return;
 
   const idDokumen = String(formData.get("id_dokumen") ?? "");
-  const slug = String(formData.get("slug") ?? "pengajaran");
+  const returnTo = String(formData.get("return_to") ?? "/dosen/rekap-kegiatan");
   if (!idDokumen) return;
 
   const dok = await prisma.dokumen_kegiatan.findUnique({
     where: { id_dokumen: idDokumen },
     include: { kegiatan: { include: { lkd: true } } },
   });
-  if (!dok || dok.kegiatan.lkd.id_pengguna !== session.user.id) return;
+  if (!dok || dok.kegiatan.lkd.id_pengguna !== session.user.id)
+    redirect(withFlash(returnTo, { err: "Dokumen tidak ditemukan" }));
 
   await prisma.dokumen_kegiatan.delete({ where: { id_dokumen: idDokumen } });
-  revalidatePath(`/dosen/${slug}/${dok.id_kegiatan}`);
-  revalidatePath(`/dosen/${slug}`);
+  revalidatePath(returnTo);
+  redirect(withFlash(returnTo, { ok: "Dokumen bukti dihapus" }));
 }

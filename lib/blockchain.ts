@@ -115,6 +115,44 @@ export async function mintSks(alamatDosen: string, jumlahX100: bigint, reference
 }
 
 /**
+ * R10: baca event on-chain (SKSMinted / SKSBurned) langsung dari kontrak token.
+ * Dipakai halaman Log Blockchain admin — sumber kebenaran on-chain, bukan DB.
+ */
+export async function bacaEventToken(maksimal = 100) {
+  const address = process.env.NEXT_PUBLIC_SKS_TOKEN_ADDRESS;
+  if (!address) return [];
+  const token = BKDSKSToken__factory.connect(address, getProvider());
+
+  const [minted, burned] = await Promise.all([
+    token.queryFilter(token.filters.SKSMinted(), 0, "latest"),
+    token.queryFilter(token.filters.SKSBurned(), 0, "latest"),
+  ]);
+
+  const rows = [
+    ...minted.map((e: any) => ({
+      jenis: "mint" as const,
+      operator: e.args?.operator as string,
+      akun: e.args?.recipient as string,
+      jumlahX100: Number(e.args?.amount ?? 0n),
+      referensi: e.args?.referenceId as string,
+      txHash: e.transactionHash,
+      block: e.blockNumber,
+    })),
+    ...burned.map((e: any) => ({
+      jenis: "burn" as const,
+      operator: e.args?.operator as string,
+      akun: e.args?.account as string,
+      jumlahX100: Number(e.args?.amount ?? 0n),
+      referensi: e.args?.reason as string,
+      txHash: e.transactionHash,
+      block: e.blockNumber,
+    })),
+  ];
+  rows.sort((a, b) => b.block - a.block);
+  return rows.slice(0, maksimal);
+}
+
+/**
  * Burn token untuk koreksi (hanya admin).
  */
 export async function burnSks(alamatDosen: string, jumlahX100: bigint, alasan: string) {

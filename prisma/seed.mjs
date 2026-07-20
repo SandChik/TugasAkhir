@@ -229,13 +229,19 @@ async function main() {
     byEmail[u.email] = await prisma.pengguna.upsert({ where: { email: u.email }, update: u, create: u });
   }
 
-  console.log("Seeding periode_bkd...");
+  console.log("Seeding periode_bkd + fase (aktif, fase pengisian)...");
+  const dosen1 = byEmail["dosen1@polban.ac.id"];
   let aktif = await prisma.periode_bkd.findFirst({ where: { nama_periode: "2025/2026 Genap" } });
   if (!aktif) {
     aktif = await prisma.periode_bkd.create({
       data: {
         nama_periode: "2025/2026 Genap", tahun_ajaran: "2025/2026", semester: "Genap",
         tanggal_mulai: new Date("2026-02-02"), tanggal_selesai: new Date("2026-07-31"), status: "aktif",
+        // Rentang fase (R3). Override manual ke 'pengisian' agar demo langsung bisa input.
+        pengisian_mulai: new Date("2026-06-01"), pengisian_selesai: new Date("2026-07-31"),
+        penilaian_mulai: new Date("2026-08-01"), penilaian_selesai: new Date("2026-08-20"),
+        perbaikan_mulai: new Date("2026-08-21"), perbaikan_selesai: new Date("2026-08-31"),
+        fase_override: "pengisian",
       },
     });
   }
@@ -245,22 +251,21 @@ async function main() {
       data: {
         nama_periode: "2025/2026 Ganjil", tahun_ajaran: "2025/2026", semester: "Ganjil",
         tanggal_mulai: new Date("2025-09-01"), tanggal_selesai: new Date("2026-01-31"), status: "nonaktif",
+        fase_override: "selesai",
       },
     });
   }
 
-  console.log("Seeding LKD + penugasan asesor untuk Dosen Satu...");
-  const dosen1 = byEmail["dosen1@polban.ac.id"];
-  for (const jenis of ["rencana", "laporan"]) {
-    const existing = await prisma.lkd.findFirst({
-      where: { id_pengguna: dosen1.id_pengguna, id_periode: aktif.id_periode, jenis },
-    });
-    if (existing) continue;
-    await prisma.lkd.create({
+  console.log("Seeding LKD laporan + penugasan 2 asesor (Dosen Satu, periode aktif)...");
+  let lkdLaporan = await prisma.lkd.findFirst({
+    where: { id_pengguna: dosen1.id_pengguna, id_periode: aktif.id_periode, jenis: "laporan" },
+  });
+  if (!lkdLaporan) {
+    lkdLaporan = await prisma.lkd.create({
       data: {
         id_pengguna: dosen1.id_pengguna,
         id_periode: aktif.id_periode,
-        jenis,
+        jenis: "laporan",
         penugasan_asesor: {
           create: [
             { id_asesor: byEmail["asesor1@polban.ac.id"].id_pengguna, urutan: 1 },
@@ -271,216 +276,47 @@ async function main() {
     });
   }
 
-  console.log("Seeding contoh kegiatan pengajaran (dosen1, LKD laporan)...");
-  const lkdLaporan = await prisma.lkd.findFirst({
-    where: { id_pengguna: dosen1.id_pengguna, id_periode: aktif.id_periode, jenis: "laporan" },
-  });
-  const refPengajaran = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU101" } });
-  if (lkdLaporan && refPengajaran) {
-    const contohKegiatan = [
-      { judul: "Matkul A", kelas: "2CTI3", sks: 3 },
-      { judul: "Matkul B", kelas: "1ATI2", sks: 3 },
-    ];
-    for (const c of contohKegiatan) {
-      const exists = await prisma.kegiatan.findFirst({
-        where: { id_lkd: lkdLaporan.id_lkd, judul: c.judul },
-      });
-      if (exists) continue;
-      await prisma.kegiatan.create({
-        data: {
-          id_lkd: lkdLaporan.id_lkd,
-          id_referensi: refPengajaran.id_referensi,
-          judul: c.judul,
-          detail_kegiatan: { kelas: c.kelas, jenis_mata_kuliah: "Wajib" },
-          parameter: {
-            sksMataKuliah: c.sks,
-            jumlahPertemuanRencana: 16,
-            jumlahPertemuanRealisasi: 16,
-            semesterPenuh: true,
-            teamTeaching: false,
-            persenPorsiDosen: 100,
-          },
-          sks_dihitung_x100: c.sks * 100,
-          status_perhitungan: "berhasil",
-          status: "diajukan",
-          status_capaian: "selesai",
-        },
-      });
-    }
-  }
-
-  console.log("Seeding contoh kegiatan kategori lain (bimbingan TA & penguji)...");
-  if (lkdLaporan) {
-    const contohLain = [
-      {
-        kode: "EDU203",
-        judul: "Membimbing Tugas Akhir (pembimbing utama) MAHASISWA 1",
-        parameter: { peran: "PembimbingUtama", jenisTugasAkhir: "TugasAkhir", jumlahMahasiswa: 1 },
-        sks: 50,
+  // R7: portofolio hasil "sinkron PDDikti" - kegiatan BELUM diklaim ke LKD.
+  // Ini bukan teks dummy: merepresentasikan data feeder yang menunggu diklaim dosen.
+  console.log("Seeding portofolio PDDikti (belum diklaim) untuk Dosen Satu...");
+  const refP = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU101" } });
+  const refBimb = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU203" } });
+  const refUji = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU301" } });
+  const portofolio = [
+    { ref: refP, judul: "Basis Data / 2CTI3", detail: { kelas: "2CTI3", jenis_mata_kuliah: "Wajib" },
+      parameter: { sksMataKuliah: 3, jumlahPertemuanRencana: 16, jumlahPertemuanRealisasi: 16, semesterPenuh: true, teamTeaching: false, persenPorsiDosen: 100 }, sks: 300 },
+    { ref: refP, judul: "Pemrograman Web / 1ATI2", detail: { kelas: "1ATI2", jenis_mata_kuliah: "Wajib" },
+      parameter: { sksMataKuliah: 3, jumlahPertemuanRencana: 16, jumlahPertemuanRealisasi: 16, semesterPenuh: true, teamTeaching: false, persenPorsiDosen: 100 }, sks: 300 },
+    { ref: refBimb, judul: "Bimbingan TA - Andi Pratama", detail: {},
+      parameter: { peran: "PembimbingUtama", jenisTugasAkhir: "TugasAkhir", jumlahMahasiswa: 1 }, sks: 50 },
+    { ref: refUji, judul: "Penguji Sidang TA (4 mahasiswa)", detail: {},
+      parameter: { peranPenguji: "Ketua", jumlahMahasiswa: 4 }, sks: 200 },
+  ];
+  for (const it of portofolio) {
+    if (!it.ref) continue;
+    const exists = await prisma.kegiatan.findFirst({ where: { id_lkd: lkdLaporan.id_lkd, judul: it.judul } });
+    if (exists) continue;
+    await prisma.kegiatan.create({
+      data: {
+        id_lkd: lkdLaporan.id_lkd,
+        id_referensi: it.ref.id_referensi,
+        judul: it.judul,
+        detail_kegiatan: it.detail,
+        parameter: it.parameter,
+        sks_dihitung_x100: it.sks,
+        status_perhitungan: "berhasil",
+        status: "diajukan",
+        status_capaian: "berlanjut",
+        sumber_data: "pddikti",
+        diklaim: false,
       },
-      {
-        kode: "EDU301",
-        judul: "Ketua penguji sidang Tugas Akhir (4 mahasiswa)",
-        parameter: { peranPenguji: "Ketua", jumlahMahasiswa: 4 },
-        sks: 200,
-      },
-    ];
-    for (const c of contohLain) {
-      const ref = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: c.kode } });
-      if (!ref) continue;
-      const exists = await prisma.kegiatan.findFirst({
-        where: { id_lkd: lkdLaporan.id_lkd, judul: c.judul },
-      });
-      if (exists) continue;
-      await prisma.kegiatan.create({
-        data: {
-          id_lkd: lkdLaporan.id_lkd,
-          id_referensi: ref.id_referensi,
-          judul: c.judul,
-          parameter: c.parameter,
-          sks_dihitung_x100: c.sks,
-          status_perhitungan: "berhasil",
-          status: "diajukan",
-          status_capaian: "selesai",
-        },
-      });
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // Dummy lengkap: dokumen bukti, LKD periode lama yang sudah dinilai penuh,
-  // hasil penilaian 2 asesor, simpulan M, dan riwayat transaksi mint (contoh).
-  // Idempoten - aman dijalankan berulang.
-  // -------------------------------------------------------------------------
-  console.log("Seeding dokumen bukti untuk Matkul A...");
-  const matkulA = await prisma.kegiatan.findFirst({
-    where: { judul: "Matkul A", id_lkd: lkdLaporan?.id_lkd },
-  });
-  if (matkulA) {
-    const adaDok = await prisma.dokumen_kegiatan.findFirst({
-      where: { id_kegiatan: matkulA.id_kegiatan },
     });
-    if (!adaDok) {
-      await prisma.dokumen_kegiatan.createMany({
-        data: [
-          {
-            id_kegiatan: matkulA.id_kegiatan,
-            nama_dokumen: "Berita Acara Perkuliahan Matkul A",
-            jenis_dokumen: "Berita Acara Perkuliahan",
-            jenis_file: "tautan",
-            file_url: "https://drive.google.com/contoh-bap-matkul-a",
-            keterangan: "Dummy seed",
-          },
-          {
-            id_kegiatan: matkulA.id_kegiatan,
-            nama_dokumen: "Daftar Hadir Matkul A",
-            jenis_dokumen: "Daftar Hadir",
-            jenis_file: "tautan",
-            file_url: "https://drive.google.com/contoh-daftar-hadir",
-            keterangan: "Dummy seed",
-          },
-        ],
-      });
-    }
   }
 
-  console.log("Seeding LKD periode lama (sudah dinilai penuh)...");
-  const periodeLama = await prisma.periode_bkd.findFirst({
-    where: { nama_periode: "2025/2026 Ganjil" },
-  });
-  if (periodeLama) {
-    let lkdLama = await prisma.lkd.findFirst({
-      where: { id_pengguna: dosen1.id_pengguna, id_periode: periodeLama.id_periode, jenis: "laporan" },
-      include: { penugasan_asesor: true },
-    });
-    if (!lkdLama) {
-      lkdLama = await prisma.lkd.create({
-        data: {
-          id_pengguna: dosen1.id_pengguna,
-          id_periode: periodeLama.id_periode,
-          jenis: "laporan",
-          status: "final",
-          simpan_permanen: true,
-          penugasan_asesor: {
-            create: [
-              { id_asesor: byEmail["asesor1@polban.ac.id"].id_pengguna, urutan: 1 },
-              { id_asesor: byEmail["asesor2@polban.ac.id"].id_pengguna, urutan: 2 },
-            ],
-          },
-        },
-        include: { penugasan_asesor: true },
-      });
-
-      const refP = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU101" } });
-      const kegLama = await prisma.kegiatan.create({
-        data: {
-          id_lkd: lkdLama.id_lkd,
-          id_referensi: refP.id_referensi,
-          judul: "Matkul Lama X",
-          detail_kegiatan: { kelas: "3CTI1" },
-          parameter: {
-            sksMataKuliah: 3, jumlahPertemuanRencana: 16, jumlahPertemuanRealisasi: 16,
-            semesterPenuh: true, teamTeaching: false, persenPorsiDosen: 100,
-          },
-          sks_dihitung_x100: 300,
-          status_perhitungan: "berhasil",
-          status: "disetujui",
-          status_capaian: "selesai",
-        },
-      });
-
-      let hasilPertama = null;
-      for (const pn of lkdLama.penugasan_asesor) {
-        const h = await prisma.hasil_penilaian.create({
-          data: {
-            id_kegiatan: kegLama.id_kegiatan,
-            id_penugasan: pn.id_penugasan,
-            sks_disetujui_x100: 300,
-            status: "disetujui",
-            catatan: "sesuai PO BKD tahun 2021",
-          },
-        });
-        if (!hasilPertama) hasilPertama = h;
-      }
-
-      await prisma.simpulan_bkd.create({
-        data: {
-          id_lkd: lkdLama.id_lkd,
-          sks_pendidikan_x100: 1200,
-          sks_penelitian_x100: 300,
-          sks_pengabdian_x100: 100,
-          sks_penunjang_x100: 100,
-          status_kewajiban_khusus: "M",
-          status_final: "M",
-          hash_penilaian: "0x" + "ab12".repeat(16), // dummy - diganti hash asli saat pengesahan
-        },
-      });
-
-      const adaTx = await prisma.riwayat_transaksi.findFirst({
-        where: { alamat_wallet: dosen1.alamat_wallet, jenis_transaksi: "mint" },
-      });
-      if (!adaTx && hasilPertama) {
-        await prisma.riwayat_transaksi.create({
-          data: {
-            id_hasil: hasilPertama.id_hasil,
-            jenis_transaksi: "mint",
-            jumlah_token_x100: 300,
-            alamat_wallet: dosen1.alamat_wallet,
-            reference_id: "0x" + "ab12".repeat(16),
-            alasan: "Dummy seed - pengesahan LKD 2025/2026 Ganjil",
-            status: "pending", // belum benar-benar on-chain; jalankan mint sungguhan via app
-          },
-        });
-      }
-    }
-  }
-
-  console.log("Seed selesai.");
+  console.log("Seed selesai (master + portofolio PDDikti belum diklaim).");
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
+  .catch((e) => { console.error(e); process.exit(1); })
   .finally(() => prisma.$disconnect());
+

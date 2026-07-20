@@ -68,13 +68,7 @@ export default async function TambahKegiatanForm({
             <label className="pt-2.5 text-[11.5px] font-medium text-cell">
               Nama Kegiatan <span className="text-danger">*</span>
             </label>
-            <input name="judul" required placeholder="cth: Matkul A / Kelas 2CTI3" className={inputCls} />
-
-            <label className="pt-2.5 text-[11.5px] font-medium text-cell">Simpan ke</label>
-            <select name="jenis_lkd" className={`${inputCls} max-w-xs bg-white`} defaultValue="laporan">
-              <option value="laporan">Laporan Kinerja (LKD)</option>
-              <option value="rencana">Rencana Kerja (RBKD)</option>
-            </select>
+            <input name="judul" required placeholder="cth: Modul Praktikum Basis Data" className={inputCls} />
 
             <label className="pt-2.5 text-[11.5px] font-medium text-cell">No. SK</label>
             <input name="no_sk" placeholder="Opsional" className={`${inputCls} max-w-xs`} />

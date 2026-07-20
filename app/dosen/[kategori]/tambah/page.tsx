@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { KATEGORI_DOSEN } from "../../../../lib/kategoriDosen";
@@ -14,6 +14,9 @@ export default async function TambahKegiatanKategoriPage({
 }) {
   const kategori = KATEGORI_DOSEN[params.kategori];
   if (!kategori) notFound();
+  // R7: kategori sumber PDDikti tidak boleh tambah manual
+  if (kategori.sumberPddikti) redirect(`/dosen/${params.kategori}`);
+
   const session = await getServerSession(authOptions);
 
   return (

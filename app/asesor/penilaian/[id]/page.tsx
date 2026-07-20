@@ -4,15 +4,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 import { SEKSI_BKD, CAPAIAN_LABEL } from "../../../../lib/seksiBkd";
+import { faseAktif, bolehAsesorNilai, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
 import InfoBox from "../../../../components/InfoBox";
-import { simpanPenilaian } from "./actions";
+import { simpanPenilaian, sahkanPenilaian } from "./actions";
 
 const inputCls =
   "rounded-md border border-line px-2 py-1.5 text-[11px] outline-none placeholder:text-crumb focus:border-primary";
 
-/** Penilaian LKD per seksi (mockup 229:2): B(diklat), A, B..N + satu Simpan Penilaian. */
 export default async function PenilaianPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
 
@@ -38,8 +38,13 @@ export default async function PenilaianPage({ params }: { params: { id: string }
   if (!penugasan || penugasan.id_asesor !== session!.user.id) notFound();
 
   const lkd = penugasan.lkd;
+  const fase = faseAktif(lkd.periode_bkd);
+  const sudahSah = (penugasan as any).disahkan;
+  const bisaNilai = lkd.simpan_permanen && bolehAsesorNilai(fase) && !sudahSah;
+
+  const claimed = lkd.kegiatan.filter((k: any) => k.diklaim);
   const bySeksi = (kodeRules: string[]) =>
-    lkd.kegiatan.filter((k: any) => kodeRules.includes(k.referensi_kegiatan.kode_rule));
+    claimed.filter((k: any) => kodeRules.includes(k.referensi_kegiatan.kode_rule));
   const nilaiSaya = (k: any) =>
     k.hasil_penilaian.find((h: any) => h.id_penugasan === penugasan.id_penugasan);
 
@@ -49,21 +54,34 @@ export default async function PenilaianPage({ params }: { params: { id: string }
       nama={session?.user.name ?? "-"}
       deskripsi="Asesor, Teknik Informatika"
       breadcrumb={["Beranda", "Layanan BKD", "Asesor BKD", "Peserta BKD", "Rincian Peserta"]}
-      title={`🏛 Penilaian ${lkd.jenis === "rencana" ? "Rencana Kerja" : "Laporan Kinerja Dosen (LKD)"} - Semester ${lkd.periode_bkd.nama_periode}`}
+      title={`🏛 Penilaian Laporan Kinerja Dosen (LKD) - Semester ${lkd.periode_bkd.nama_periode}`}
       subtitle={`Dosen: ${lkd.pengguna.nama} (${lkd.pengguna.nidn ?? "-"}) — Anda asesor ke-${penugasan.urutan}`}
+      actions={
+        sudahSah ? (
+          <StatusChip label="Sudah Anda sahkan" variant="success" />
+        ) : (
+          <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
+            {FASE_LABEL[fase]}
+          </span>
+        )
+      }
     >
       {!lkd.simpan_permanen ? (
         <div className="rounded-lg bg-danger-soft px-4 py-4 text-xs font-medium text-danger">
           Penilaian belum bisa dilakukan — dosen belum melakukan simpan permanen.
+        </div>
+      ) : !bolehAsesorNilai(fase) ? (
+        <div className="rounded-lg bg-info-bg px-4 py-4 text-xs font-medium text-info-tx">
+          Saat ini {FASE_LABEL[fase]} — di luar masa penilaian asesor.
         </div>
       ) : (
         <form action={simpanPenilaian}>
           <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
 
           <InfoBox>
-            <b>Info:</b> Nilai SKS hasil smart contract tampil sebagai acuan deterministik. Isi
-            SKS keputusan Anda, status, dan komentar (wajib untuk Tolak/Revisi), lalu klik satu
-            tombol <b>Simpan Penilaian</b> di bagian bawah.
+            <b>Info:</b> SKS hasil smart contract adalah acuan deterministik. Isi SKS keputusan,
+            status, dan komentar (wajib untuk Tolak/Revisi). Jika nilai Anda berbeda dengan asesor
+            lain, nilai final = rata-rata. Klik <b>Simpan Penilaian</b>, lalu <b>Sahkan</b> bila final.
           </InfoBox>
 
           <div className="mt-5 space-y-6">
@@ -83,20 +101,8 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                       <table className="w-full border-collapse text-left">
                         <thead>
                           <tr className="bg-head-bg">
-                            {[
-                              "No",
-                              "Nama Kegiatan",
-                              "Bukti",
-                              "Capaian",
-                              "SKS Kontrak",
-                              "Penilaian Asesor (sks)",
-                              "Status",
-                              "Komentar",
-                            ].map((h) => (
-                              <th
-                                key={h}
-                                className="border-l border-line-grid px-3 py-2.5 text-[11px] font-medium text-head-tx first:border-l-0"
-                              >
+                            {["No", "Nama Kegiatan", "Bukti", "Capaian", "SKS Kontrak", "Penilaian (sks)", "Status", "Komentar"].map((h) => (
+                              <th key={h} className="border-l border-line-grid px-3 py-2.5 text-[11px] font-medium text-head-tx first:border-l-0">
                                 {h}
                               </th>
                             ))}
@@ -110,38 +116,25 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                                 <td className="w-10">{i + 1}</td>
                                 <td>
                                   {k.judul}
-                                  <span className="block text-[10px] text-crumb">
-                                    {k.referensi_kegiatan.kode_rule}
-                                  </span>
+                                  <span className="block text-[10px] text-crumb">{k.referensi_kegiatan.kode_rule}</span>
                                 </td>
-                                <td className="w-28">
+                                <td className="w-24">
                                   <Link
                                     href={`/asesor/penilaian/${penugasan.id_penugasan}/bukti/${k.id_kegiatan}`}
                                     className={`inline-block rounded-md px-2.5 py-1.5 text-[10px] font-medium ${
-                                      k._count.dokumen_kegiatan > 0
-                                        ? "bg-primary text-white"
-                                        : "bg-danger-soft text-danger"
+                                      k._count.dokumen_kegiatan > 0 ? "bg-primary text-white" : "bg-danger-soft text-danger"
                                     }`}
                                   >
-                                    {k._count.dokumen_kegiatan > 0
-                                      ? `✔ ${k._count.dokumen_kegiatan} dokumen`
-                                      : "✕ Tidak ada"}
+                                    {k._count.dokumen_kegiatan > 0 ? `✔ ${k._count.dokumen_kegiatan}` : "✕"}
                                   </Link>
                                 </td>
                                 <td className="w-24">
                                   {k.status_capaian ? (
-                                    <StatusChip
-                                      label={CAPAIAN_LABEL[k.status_capaian]}
-                                      variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"}
-                                    />
-                                  ) : (
-                                    "-"
-                                  )}
+                                    <StatusChip label={CAPAIAN_LABEL[k.status_capaian]} variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"} />
+                                  ) : "-"}
                                 </td>
                                 <td className="w-24">
-                                  {k.sks_dihitung_x100 != null
-                                    ? (k.sks_dihitung_x100 / 100).toFixed(2)
-                                    : "manual"}
+                                  {k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "manual"}
                                 </td>
                                 <td className="w-28">
                                   <input
@@ -157,23 +150,14 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                                   />
                                 </td>
                                 <td className="w-28">
-                                  <select
-                                    name={`status_${k.id_kegiatan}`}
-                                    defaultValue={h?.status ?? "disetujui"}
-                                    className={`${inputCls} bg-white`}
-                                  >
+                                  <select name={`status_${k.id_kegiatan}`} defaultValue={h?.status ?? "disetujui"} className={`${inputCls} bg-white`}>
                                     <option value="disetujui">Disetujui</option>
                                     <option value="revisi">Revisi</option>
                                     <option value="ditolak">Ditolak</option>
                                   </select>
                                 </td>
                                 <td>
-                                  <input
-                                    name={`catatan_${k.id_kegiatan}`}
-                                    defaultValue={h?.catatan ?? ""}
-                                    placeholder="Komentar/rekomendasi"
-                                    className={`${inputCls} w-full`}
-                                  />
+                                  <input name={`catatan_${k.id_kegiatan}`} defaultValue={h?.catatan ?? ""} placeholder="Komentar/rekomendasi" className={`${inputCls} w-full`} />
                                 </td>
                               </tr>
                             );
@@ -193,11 +177,18 @@ export default async function PenilaianPage({ params }: { params: { id: string }
         </form>
       )}
 
+      {/* Pengesahan (R11) */}
+      {lkd.simpan_permanen && !sudahSah && bolehAsesorNilai(fase) && (
+        <form action={sahkanPenilaian} className="mt-4">
+          <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
+          <button className="w-full rounded-lg bg-navy py-3 text-xs font-medium text-white">
+            ✅ Sahkan Penilaian (final — memicu penerbitan token bila kedua asesor sudah sahkan)
+          </button>
+        </form>
+      )}
+
       <div className="mt-5">
-        <Link
-          href="/asesor/asesor-bkd"
-          className="inline-block rounded-lg bg-head-bg px-4 py-2.5 text-xs font-medium text-muted"
-        >
+        <Link href="/asesor/asesor-bkd" className="inline-block rounded-lg bg-head-bg px-4 py-2.5 text-xs font-medium text-muted">
           ← Kembali
         </Link>
       </div>

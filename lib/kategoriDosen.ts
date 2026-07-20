@@ -6,6 +6,8 @@ export type KategoriDosen = {
   label: string;
   subtitle: string;
   kodeRules: string[];
+  // R7: true = data ditarik dari Feeder PDDikti (tidak bisa tambah manual)
+  sumberPddikti?: boolean;
 };
 
 export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
@@ -13,11 +15,13 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
     label: "Bimbingan Mahasiswa",
     subtitle: "Seminar, KKN/PKL/magang, dan pembimbingan tugas akhir",
     kodeRules: ["EDU201", "EDU202", "EDU203"],
+    sumberPddikti: true,
   },
   "pengujian-mahasiswa": {
     label: "Pengujian Mahasiswa",
     subtitle: "Bertugas sebagai penguji pada ujian akhir/profesi",
     kodeRules: ["EDU301"],
+    sumberPddikti: true,
   },
   "bahan-ajar": {
     label: "Bahan Ajar",
@@ -28,6 +32,7 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
     label: "Pembinaan Mahasiswa",
     subtitle: "Pembinaan kegiatan akademik dan kemahasiswaan",
     kodeRules: ["EDU401", "EDU402"],
+    sumberPddikti: true,
   },
   "visiting-scientist": {
     label: "Visiting Scientist",

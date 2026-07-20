@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import FlashBanner from "./FlashBanner";
 
 /**
  * Kerangka halaman ber-sidebar sesuai mockup:
@@ -38,7 +40,12 @@ export default function AppShell({
             </div>
             {actions && <div className="flex items-center gap-3">{actions}</div>}
           </div>
-          <div className="mt-4">{children}</div>
+          <div className="mt-4">
+            <Suspense fallback={null}>
+              <FlashBanner />
+            </Suspense>
+            {children}
+          </div>
         </main>
       </div>
     </div>

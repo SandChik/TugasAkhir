@@ -6,8 +6,8 @@ import { KATEGORI_DOSEN } from "../../../../lib/kategoriDosen";
 import AppShell from "../../../../components/AppShell";
 import BuktiKegiatanDetail from "../../../../components/BuktiKegiatanDetail";
 
-/** Detail kegiatan + bukti untuk kategori B-N (route generik). */
-export default async function KategoriDetailPage({
+/** Lihat detail kegiatan kategori (read-only; upload bukti via Layanan BKD). */
+export default async function DetailKategoriPage({
   params,
 }: {
   params: { kategori: string; id: string };
@@ -16,7 +16,6 @@ export default async function KategoriDetailPage({
   if (!kategori) notFound();
 
   const session = await getServerSession(authOptions);
-
   const kegiatan = await prisma.kegiatan.findUnique({
     where: { id_kegiatan: params.id },
     include: {
@@ -25,7 +24,6 @@ export default async function KategoriDetailPage({
       dokumen_kegiatan: { orderBy: { tanggal_upload: "desc" } },
     },
   });
-
   if (!kegiatan || kegiatan.lkd.id_pengguna !== session!.user.id) notFound();
 
   return (
@@ -33,13 +31,14 @@ export default async function KategoriDetailPage({
       peran="dosen"
       nama={session?.user.name ?? "-"}
       deskripsi="Dosen, D3 Teknik Informatika"
-      breadcrumb={["Beranda", "Pelaksanaan pendidikan", kategori.label, "Bukti Kegiatan"]}
-      title={`Laporan Kinerja - Semester ${kegiatan.lkd.periode_bkd.nama_periode}`}
+      breadcrumb={["Beranda", "Pelaksanaan pendidikan", kategori.label, "Detail"]}
+      title={`Detail Kegiatan - Semester ${kegiatan.lkd.periode_bkd.nama_periode}`}
     >
       <BuktiKegiatanDetail
         kegiatan={kegiatan}
-        slug={params.kategori}
+        returnTo={`/dosen/${params.kategori}`}
         backHref={`/dosen/${params.kategori}`}
+        canUpload={false}
       />
     </AppShell>
   );

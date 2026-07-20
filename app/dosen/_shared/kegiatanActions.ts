@@ -6,40 +6,55 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
+import { faseAktif, bolehDosenInput } from "../../../lib/fase";
 
-/**
- * FR-07..FR-11: input kegiatan + perhitungan SKS via Rule Engine Contract.
- * Kegiatan disimpan pada LKD (rencana/laporan) periode aktif milik dosen.
- */
-export async function tambahKegiatan(formData: FormData) {
-  const session = await getServerSession(authOptions);
-  if (!session) return;
+async function periodeAktif() {
+  return prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
+}
 
-  const slug = String(formData.get("slug") ?? "");
-  const kodeRule = String(formData.get("kode_rule") ?? "");
-  const judul = String(formData.get("judul") ?? "").trim();
-  const jenisLkd = String(formData.get("jenis_lkd") ?? "laporan");
-  if (!kodeRule || !judul || !["rencana", "laporan"].includes(jenisLkd)) return;
+async function pastikanFasePengisian(): Promise<boolean> {
+  const p = await periodeAktif();
+  if (!p) return false;
+  return bolehDosenInput(faseAktif(p));
+}
 
-  const referensi = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: kodeRule } });
-  if (!referensi) return;
-
-  const periode = await prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
-  if (!periode) return;
-
-  // LKD tujuan (buat otomatis bila belum ada)
+async function lkdLaporan(idPengguna: string) {
+  const periode = await periodeAktif();
+  if (!periode) return null;
   let lkd = await prisma.lkd.findFirst({
-    where: { id_pengguna: session.user.id, id_periode: periode.id_periode, jenis: jenisLkd as any },
+    where: { id_pengguna: idPengguna, id_periode: periode.id_periode, jenis: "laporan" },
   });
   if (!lkd) {
     lkd = await prisma.lkd.create({
-      data: { id_pengguna: session.user.id, id_periode: periode.id_periode, jenis: jenisLkd as any },
+      data: { id_pengguna: idPengguna, id_periode: periode.id_periode, jenis: "laporan" },
     });
   }
-  if (lkd.simpan_permanen) return; // terkunci
+  return lkd;
+}
 
-  // kumpulkan parameter sesuai skema
-  const fields: any[] = (referensi.skema_parameter as any)?.fields ?? [];
+/** FR-07..FR-11: input kegiatan manual + hitung SKS via smart contract. */
+export async function tambahKegiatan(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const slug = String(formData.get("slug") ?? "");
+
+  if (!(await pastikanFasePengisian())) {
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian - tidak dapat menambah kegiatan")}`);
+  }
+
+  const kodeRule = String(formData.get("kode_rule") ?? "");
+  const judul = String(formData.get("judul") ?? "").trim();
+  if (!kodeRule || !judul)
+    redirect(`/dosen/${slug}/tambah?err=${encodeURIComponent("Data tidak lengkap")}`);
+
+  const referensi = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: kodeRule } });
+  if (!referensi) redirect(`/dosen/${slug}/tambah?err=${encodeURIComponent("Referensi tidak ditemukan")}`);
+
+  const lkd = await lkdLaporan(session.user.id);
+  if (!lkd || lkd.simpan_permanen)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("LKD terkunci")}`);
+
+  const fields: any[] = (referensi!.skema_parameter as any)?.fields ?? [];
   const parameter: Record<string, any> = {};
   const rawValues: Record<string, string> = {};
   for (const f of fields) {
@@ -49,12 +64,11 @@ export async function tambahKegiatan(formData: FormData) {
       f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
   }
 
-  // hitung via smart contract (deterministik); rule "nilai maksimum" dinilai asesor
   let sksX100: number | null = null;
   let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
-  if (referensi.fungsi_contract) {
+  if (referensi!.fungsi_contract) {
     try {
-      const hasil = await hitungViaKontrak(referensi.fungsi_contract, fields, rawValues);
+      const hasil = await hitungViaKontrak(referensi!.fungsi_contract, fields, rawValues);
       sksX100 = Number(hasil);
       statusPerhitungan = "berhasil";
     } catch (e) {
@@ -66,7 +80,7 @@ export async function tambahKegiatan(formData: FormData) {
   await prisma.kegiatan.create({
     data: {
       id_lkd: lkd.id_lkd,
-      id_referensi: referensi.id_referensi,
+      id_referensi: referensi!.id_referensi,
       judul,
       detail_kegiatan: {
         no_sk: String(formData.get("no_sk") ?? "").trim() || null,
@@ -77,10 +91,39 @@ export async function tambahKegiatan(formData: FormData) {
       status_perhitungan: statusPerhitungan,
       status: "diajukan",
       status_capaian: "berlanjut",
+      sumber_data: "manual",
+      diklaim: true, // input manual langsung masuk LKD
       tanggal_pengajuan: new Date(),
-    },
+    } as any,
   });
 
-  revalidatePath(`/dosen/${slug}`);
-  redirect(`/dosen/${slug}`);
+  const pesan =
+    statusPerhitungan === "berhasil"
+      ? `Kegiatan ditambahkan. SKS terhitung: ${(sksX100! / 100).toFixed(2)}`
+      : statusPerhitungan === "gagal"
+        ? "Kegiatan disimpan, tetapi perhitungan kontrak gagal (cek koneksi blockchain)"
+        : "Kegiatan disimpan (dinilai manual oleh asesor)";
+  redirect(`/dosen/${slug}?ok=${encodeURIComponent(pesan)}`);
+}
+
+/** Hapus kegiatan manual (fase pengisian). */
+export async function hapusKegiatan(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const slug = String(formData.get("slug") ?? "");
+  const id = String(formData.get("id_kegiatan") ?? "");
+
+  const kegiatan = await prisma.kegiatan.findUnique({
+    where: { id_kegiatan: id },
+    include: { lkd: true },
+  });
+  if (!kegiatan || kegiatan.lkd.id_pengguna !== session.user.id)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
+  if ((kegiatan as any).sumber_data !== "manual")
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Data PDDikti tidak dapat dihapus")}`);
+  if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian")}`);
+
+  await prisma.kegiatan.delete({ where: { id_kegiatan: id } });
+  redirect(`/dosen/${slug}?ok=${encodeURIComponent("Kegiatan dihapus")}`);
 }
