@@ -1,0 +1,104 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
+import { KATEGORI_DOSEN } from "../../../lib/kategoriDosen";
+import AppShell from "../../../components/AppShell";
+import DataTable from "../../../components/DataTable";
+
+/** Halaman daftar kegiatan generik untuk kategori dosen B-N (satu route untuk semua). */
+export default async function KategoriPage({ params }: { params: { kategori: string } }) {
+  const kategori = KATEGORI_DOSEN[params.kategori];
+  if (!kategori) notFound();
+
+  const session = await getServerSession(authOptions);
+  const periodeAktif = await prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
+
+  const kegiatan = periodeAktif
+    ? await prisma.kegiatan.findMany({
+        where: {
+          lkd: { id_pengguna: session!.user.id, id_periode: periodeAktif.id_periode },
+          referensi_kegiatan: { kode_rule: { in: kategori.kodeRules } },
+        },
+        include: {
+          referensi_kegiatan: true,
+          _count: { select: { dokumen_kegiatan: true } },
+        },
+        orderBy: { created_at: "asc" },
+      })
+    : [];
+
+  return (
+    <AppShell
+      peran="dosen"
+      nama={session?.user.name ?? "-"}
+      deskripsi="Dosen, D3 Teknik Informatika"
+      breadcrumb={["Beranda", "Pelaksanaan pendidikan", kategori.label]}
+      title={kategori.label}
+      subtitle={kategori.subtitle}
+      actions={
+        <>
+          <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
+            {periodeAktif?.nama_periode ?? "Belum ada periode aktif"}
+          </span>
+          <Link
+            href={`/dosen/${params.kategori}/tambah`}
+            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white"
+          >
+            + Tambah kegiatan
+          </Link>
+        </>
+      }
+    >
+      <DataTable
+        columns={[
+          { label: "No.", width: "50px" },
+          { label: "Nama Kegiatan" },
+          { label: "Jenis Kegiatan", width: "260px" },
+          { label: "SKS BKD", width: "90px" },
+          { label: "Status", width: "100px" },
+          { label: "Bukti", width: "160px" },
+          { label: "Rubrik BKD", width: "120px" },
+        ]}
+      >
+        {kegiatan.length === 0 ? (
+          <tr>
+            <td colSpan={7} className="!text-center !text-crumb">
+              Belum ada kegiatan pada kategori ini untuk periode berjalan.
+            </td>
+          </tr>
+        ) : (
+          kegiatan.map((k: any, i: number) => (
+            <tr key={k.id_kegiatan}>
+              <td>{i + 1}</td>
+              <td>{k.judul}</td>
+              <td className="!text-[10.5px] !text-muted">{k.referensi_kegiatan.nama_kegiatan}</td>
+              <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
+              <td className="capitalize">{k.status}</td>
+              <td>
+                {k._count.dokumen_kegiatan === 0 ? (
+                  <Link
+                    href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
+                    className="inline-block rounded-md bg-danger-soft px-3 py-1.5 text-[10.5px] font-medium text-danger hover:opacity-80"
+                    title="Klik untuk mengunggah bukti"
+                  >
+                    ✕ Belum ada bukti
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
+                    className="inline-block rounded-md bg-[#e6f4ec] px-3 py-1.5 text-[10.5px] font-medium text-success-tx hover:opacity-80"
+                  >
+                    ✓ {k._count.dokumen_kegiatan} dokumen
+                  </Link>
+                )}
+              </td>
+              <td className="!text-primary">Rubrik BKD 2021</td>
+            </tr>
+          ))
+        )}
+      </DataTable>
+    </AppShell>
+  );
+}
