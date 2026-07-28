@@ -23,7 +23,13 @@ const RPC_URL = process.env.RPC_URL || "http://127.0.0.1:8545";
 let _provider: JsonRpcProvider | null = null;
 
 export function getProvider(): JsonRpcProvider {
-  if (!_provider) _provider = new JsonRpcProvider(RPC_URL);
+  if (!_provider) {
+    // batchMaxCount: 1 -> matikan auto-batching JSON-RPC bawaan ethers.
+    // Banyak RPC publik free-tier (drpc dkk) menolak batch > 3 request sekaligus,
+    // dan ethers otomatis menggabungkan panggilan concurrent (mis. Promise.all)
+    // jadi satu batch request jika ini tidak dimatikan.
+    _provider = new JsonRpcProvider(RPC_URL, undefined, { batchMaxCount: 1 });
+  }
   return _provider;
 }
 
@@ -47,6 +53,11 @@ export function getTokenContract() {
   return BKDSKSToken__factory.connect(address, getAdminSigner());
 }
 
+// Mnemonic default yang dipakai semua node/tutorial Hardhat di dunia - siapa pun
+// bisa menurunkan address & private key yang sama persis dari frasa ini.
+const DEFAULT_HARDHAT_MNEMONIC =
+  "test test test test test test test test test test test junk";
+
 /**
  * Derivasi wallet custodial dosen: m/44'/60'/0'/0/{index}.
  * Hanya address yang disimpan di DB; private key tidak pernah keluar dari server.
@@ -54,6 +65,15 @@ export function getTokenContract() {
 export function deriveDosenWallet(index: number): { address: string; path: string } {
   const phrase = process.env.WALLET_MNEMONIC;
   if (!phrase) throw new Error("WALLET_MNEMONIC belum diset di environment");
+
+  if (phrase.trim() === DEFAULT_HARDHAT_MNEMONIC && process.env.NEXT_PUBLIC_CHAIN_ID !== "31337") {
+    throw new Error(
+      "WALLET_MNEMONIC masih memakai mnemonic default Hardhat (publik, dipakai semua orang di dunia). " +
+        "Address yang diturunkan darinya akan bentrok dengan pengguna lain di jaringan publik. " +
+        "Generate mnemonic baru & rahasia sebelum pakai di Base Sepolia atau jaringan publik lain."
+    );
+  }
+
   const path = `m/44'/60'/0'/0/${index}`;
   const wallet = HDNodeWallet.fromMnemonic(Mnemonic.fromPhrase(phrase), path);
   return { address: wallet.address, path };
@@ -115,6 +135,29 @@ export async function mintSks(alamatDosen: string, jumlahX100: bigint, reference
 }
 
 /**
+ * Banyak RPC publik (mis. free tier drpc/Alchemy/Infura) menolak eth_getLogs
+ * dengan rentang > 10.000 block sekali panggil. Base Sepolia sudah punya
+ * jutaan block, jadi query dari block 0 langsung gagal (code 35: "ranges
+ * over 10000 blocks are not supported on free plan"). Pecah jadi beberapa
+ * window kecil, mulai dari block deploy kontrak (bukan 0), lalu digabung.
+ */
+const MAX_BLOCK_RANGE = 10_000;
+
+async function queryFilterChunked(
+  contract: ReturnType<typeof BKDSKSToken__factory.connect>,
+  filter: ReturnType<ReturnType<typeof BKDSKSToken__factory.connect>["filters"]["SKSMinted" | "SKSBurned"]>,
+  fromBlock: number,
+  toBlock: number
+) {
+  const events = [];
+  for (let start = fromBlock; start <= toBlock; start += MAX_BLOCK_RANGE) {
+    const end = Math.min(start + MAX_BLOCK_RANGE - 1, toBlock);
+    events.push(...(await contract.queryFilter(filter, start, end)));
+  }
+  return events;
+}
+
+/**
  * R10: baca event on-chain (SKSMinted / SKSBurned) langsung dari kontrak token.
  * Dipakai halaman Log Blockchain admin — sumber kebenaran on-chain, bukan DB.
  */
@@ -123,9 +166,12 @@ export async function bacaEventToken(maksimal = 100) {
   if (!address) return [];
   const token = BKDSKSToken__factory.connect(address, getProvider());
 
+  const fromBlock = Number(process.env.NEXT_PUBLIC_SKS_TOKEN_DEPLOY_BLOCK || 0);
+  const toBlock = await getProvider().getBlockNumber();
+
   const [minted, burned] = await Promise.all([
-    token.queryFilter(token.filters.SKSMinted(), 0, "latest"),
-    token.queryFilter(token.filters.SKSBurned(), 0, "latest"),
+    queryFilterChunked(token, token.filters.SKSMinted(), fromBlock, toBlock),
+    queryFilterChunked(token, token.filters.SKSBurned(), fromBlock, toBlock),
   ]);
 
   const rows = [

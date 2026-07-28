@@ -26,7 +26,7 @@ npx prisma db seed          # atau: npm run db:seed
 
 # 4. Blockchain lokal (terminal terpisah)
 npx hardhat node
-npx hardhat run scripts/deploy.js --network localhost
+npm run deploy:local
 #    salin alamat KalkulatorBKDPendidikan -> NEXT_PUBLIC_BKD_CONTRACT_ADDRESS
 #    salin alamat BKDSKSToken            -> NEXT_PUBLIC_SKS_TOKEN_ADDRESS
 #    salin private key akun #0 hardhat   -> ADMIN_PRIVATE_KEY
@@ -34,6 +34,58 @@ npx hardhat run scripts/deploy.js --network localhost
 # 5. Jalankan web
 npm run dev
 ```
+
+## Deploy ke Base Sepolia (testnet)
+
+Jaringan `baseSepolia` (chainId `84532`) sudah dikonfigurasi di `hardhat.config.js`
+dan `scripts/deploy.js` mendukung dijalankan ke jaringan mana pun lewat flag `--network`.
+
+1. **Siapkan wallet deployer**
+   - Buat/pakai wallet EVM baru khusus dev (jangan pakai wallet berisi dana asli).
+   - Isi ETH testnet dari faucet Base Sepolia, contoh:
+     - https://www.alchemy.com/faucets/base-sepolia
+     - https://faucet.quicknode.com/base/sepolia
+   - Wallet ini akan menjadi `deployer`, sekaligus otomatis mendapat `DEFAULT_ADMIN_ROLE`
+     dan `MINTER_ROLE` di `BKDSKSToken` (lihat `scripts/deploy.js`).
+
+2. **Isi `.env`**
+   ```bash
+   BASE_SEPOLIA_RPC_URL=https://sepolia.base.org   # atau RPC provider sendiri (Alchemy/Infura/dll)
+   ADMIN_PRIVATE_KEY=<private key wallet deployer>  # JANGAN commit, jangan share
+   BASESCAN_API_KEY=<opsional, untuk verifikasi kontrak>
+   ```
+
+3. **Compile & deploy**
+   ```bash
+   npm run compile:contracts
+   npm run deploy:baseSepolia
+   ```
+   Output berisi alamat kedua kontrak, disimpan juga ke `deployments/baseSepolia.json`.
+   Salin alamatnya ke:
+   ```bash
+   NEXT_PUBLIC_CHAIN_ID=84532
+   NEXT_PUBLIC_BKD_CONTRACT_ADDRESS=<alamat KalkulatorBKDPendidikan>
+   NEXT_PUBLIC_SKS_TOKEN_ADDRESS=<alamat BKDSKSToken>
+   RPC_URL=https://sepolia.base.org
+   ```
+
+4. **Verifikasi kontrak di Basescan (opsional)**
+   ```bash
+   npx hardhat verify --network baseSepolia <alamat KalkulatorBKDPendidikan>
+   npx hardhat verify --network baseSepolia <alamat BKDSKSToken> <deployer> <deployer>
+   ```
+   Perintah lengkap dengan argumen yang benar juga otomatis dicetak di akhir `npm run deploy:baseSepolia`.
+
+5. **Jalankan web terhadap Base Sepolia**
+   ```bash
+   npm run dev
+   ```
+   Backend (`lib/blockchain.ts`) memakai `RPC_URL` + `ADMIN_PRIVATE_KEY` yang sama
+   untuk kirim transaksi mint/burn ke kontrak yang sudah live di Base Sepolia.
+
+> Catatan: langkah 3 (compile & deploy) butuh koneksi keluar ke `binaries.soliditylang.org`
+> (download compiler Solidity) dan ke RPC Base Sepolia. Jalankan dari environment yang
+> punya akses internet penuh (mesin lokal/CI), bukan dari sandbox dengan proxy egress terbatas.
 
 ## Akun demo (dari seed)
 

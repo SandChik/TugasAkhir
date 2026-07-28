@@ -9,6 +9,7 @@ Base project dari dokumen TA: **Pengembangan Sistem Penilaian Beban Kinerja Dose
 - Next.js 14 + Node.js
 - PostgreSQL 16 via Prisma schema
 - MetaMask/RPC-ready
+- Jaringan target: Hardhat local node (dev) & **Base Sepolia** (testnet, chainId `84532`)
 
 ## Modul
 - `contracts/BKD.sol` — contract `KalkulatorBKDPendidikan` sebagai rule engine perhitungan SKS pendidikan. Output memakai skala `1 SKS = 100`.
@@ -26,6 +27,13 @@ npm run test:contracts
 npm run build:web
 npm run dev
 ```
+
+## Deploy Smart Contract
+
+- **Lokal (hardhat node)**: `npx hardhat node` lalu `npm run deploy:local`.
+- **Base Sepolia (testnet)**: `npm run deploy:baseSepolia` (butuh `ADMIN_PRIVATE_KEY` terisi ETH
+  testnet dan `BASE_SEPOLIA_RPC_URL` di `.env`). Verifikasi kontrak: `npm run verify:baseSepolia -- <address> [args...]`.
+  Detail lengkap ada di `SETUP.md`.
 
 ## Koneksi Database Server
 
