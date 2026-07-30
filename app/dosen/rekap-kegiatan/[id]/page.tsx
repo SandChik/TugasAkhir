@@ -8,6 +8,13 @@ import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
 import InfoBox from "../../../../components/InfoBox";
+import {
+  IconRefresh,
+  IconLock,
+  IconTrash,
+  IconCheck,
+  IconDoc,
+} from "../../../../components/Icons";
 import { tarikData, simpanPermanen, ubahCapaian, batalKlaim } from "../actions";
 
 const TABS = [
@@ -18,6 +25,11 @@ const TABS = [
   { key: "penunjang", label: "Pelaksanaan Penunjang", enabled: false },
   { key: "simpulan", label: "Simpulan", enabled: true },
 ];
+
+const thCls =
+  "border-l border-line-grid px-3.5 py-2.5 text-[11.5px] font-medium text-head-tx first:border-l-0";
+const tbodyCls =
+  "[&>tr]:border-t [&>tr]:border-line [&_td]:border-l [&_td]:border-line-grid [&_td]:px-3.5 [&_td]:py-2.5 [&_td]:text-[11.5px] [&_td]:text-cell [&_td:first-child]:border-l-0";
 
 export default async function LkdDetailPage({
   params,
@@ -35,7 +47,11 @@ export default async function LkdDetailPage({
       periode_bkd: true,
       pengguna: true,
       kegiatan: {
-        include: { referensi_kegiatan: true, _count: { select: { dokumen_kegiatan: true } } },
+        include: {
+          referensi_kegiatan: true,
+          hasil_penilaian: true,
+          _count: { select: { dokumen_kegiatan: true } },
+        },
         orderBy: { created_at: "asc" },
       },
     },
@@ -55,7 +71,7 @@ export default async function LkdDetailPage({
       nama={session?.user.name ?? "-"}
       deskripsi="Dosen, D3 Teknik Informatika"
       breadcrumb={["Beranda", "Layanan BKD", "Rekap kegiatan", "Laporan Kinerja"]}
-      title={`🏛 Laporan Kinerja Dosen - Semester ${lkd.periode_bkd.nama_periode}`}
+      title={`Laporan Kinerja Dosen - Semester ${lkd.periode_bkd.nama_periode}`}
       actions={
         lkd.simpan_permanen ? (
           <StatusChip label="Tersimpan permanen" variant="success" />
@@ -66,7 +82,6 @@ export default async function LkdDetailPage({
         )
       }
     >
-      {/* Tab bar */}
       <div className="flex gap-2 border-b border-line">
         {TABS.map((t) =>
           t.enabled ? (
@@ -93,9 +108,7 @@ export default async function LkdDetailPage({
 
       <div className="mt-5">
         {tab === "biodata" && <Biodata u={lkd.pengguna} periode={lkd.periode_bkd} />}
-        {tab === "pendidikan" && (
-          <Pendidikan lkd={lkd} editable={editable} fase={fase} />
-        )}
+        {tab === "pendidikan" && <Pendidikan lkd={lkd} editable={editable} fase={fase} />}
         {tab === "simpulan" && <Simpulan claimed={claimed} totalSks={totalSks} lkd={lkd} />}
       </div>
     </AppShell>
@@ -127,25 +140,97 @@ function Biodata({ u, periode }: { u: any; periode: any }) {
   );
 }
 
+/** Nilai "Jumlah Kegiatan" ala mockup: diambil dari parameter jumlah bila ada. */
+function jumlahKegiatan(k: any): number {
+  const p: any = k.parameter ?? {};
+  return (
+    p.jumlahMahasiswa ?? p.jumlahSemester ?? p.jumlahOrasi ?? p.jumlahSertifikat ??
+    p.jumlahKegiatan ?? p.jumlahNaskah ?? p.jumlahOrang ?? 1
+  );
+}
+
+/** Status penilaian gabungan dari kedua asesor (kolom "Status Penilaian" mockup). */
+function statusPenilaian(k: any): { label: string; variant: any } | null {
+  const hs: any[] = k.hasil_penilaian ?? [];
+  if (hs.length === 0) return null;
+  if (hs.some((h) => h.status === "ditolak")) return { label: "Ditolak", variant: "danger" };
+  if (hs.some((h) => h.status === "revisi")) return { label: "Revisi", variant: "warning" };
+  return { label: hs.length >= 2 ? "Disetujui" : "Dinilai sebagian", variant: "success" };
+}
+
+function BuktiBadge({ lkdId, k }: { lkdId: string; k: any }) {
+  const ada = k._count.dokumen_kegiatan > 0;
+  return (
+    <Link
+      href={`/dosen/rekap-kegiatan/${lkdId}/bukti/${k.id_kegiatan}`}
+      className={`mt-1 inline-flex items-center gap-1 rounded px-2 py-0.5 text-[9.5px] font-medium ${
+        ada ? "bg-[#e6f4ec] text-success-tx" : "bg-danger-soft text-danger"
+      }`}
+    >
+      <IconDoc size={10} />
+      {ada ? `${k._count.dokumen_kegiatan} bukti pendukung` : "Belum ada bukti pendukung"}
+    </Link>
+  );
+}
+
+function AksiCell({ lkd, k, editable }: { lkd: any; k: any; editable: boolean }) {
+  if (!editable) return <span className="text-crumb">terkunci</span>;
+  return (
+    <div className="flex items-center gap-1.5">
+      <form action={ubahCapaian} className="flex items-center gap-1">
+        <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
+        <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
+        <select
+          name="capaian"
+          defaultValue={k.status_capaian ?? "berlanjut"}
+          className="rounded border border-line bg-white px-1.5 py-1 text-[10px]"
+        >
+          {Object.entries(CAPAIAN_LABEL).map(([v, l]) => (
+            <option key={v} value={v}>
+              {l}
+            </option>
+          ))}
+        </select>
+        <button
+          className="rounded bg-warning-deep p-1.5 text-white"
+          title="Simpan status capaian"
+        >
+          <IconCheck size={11} />
+        </button>
+      </form>
+      <form action={batalKlaim}>
+        <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
+        <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
+        <button className="rounded bg-danger p-1.5 text-white" title="Batalkan klaim">
+          <IconTrash size={11} />
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase: any }) {
   const bySeksi = (kodeRules: string[], claimedOnly: boolean) =>
     lkd.kegiatan.filter(
       (k: any) => kodeRules.includes(k.referensi_kegiatan.kode_rule) && k.diklaim === claimedOnly
     );
+  const totalClaimed = lkd.kegiatan
+    .filter((k: any) => k.diklaim)
+    .reduce((a: number, k: any) => a + (k.sks_dihitung_x100 ?? 0), 0);
 
   return (
     <>
       <InfoBox>
         <b>Info untuk dosen:</b> {FASE_LABEL[fase]}. Klaim kegiatan dari portofolio ke laporan
-        dengan tombol <b>Tarik data</b> per seksi atau <b>Tarik Semua</b>. Total SKS diklaim saat
-        ini: <b>{(lkd.kegiatan.filter((k: any) => k.diklaim).reduce((a: number, k: any) => a + (k.sks_dihitung_x100 ?? 0), 0) / 100).toFixed(2)} SKS</b>.
+        dengan tombol <b>Tarik data</b> per seksi atau <b>Tarik Semua</b>. Total SKS diklaim:{" "}
+        <b>{(totalClaimed / 100).toFixed(2)} SKS</b>.
       </InfoBox>
 
       {editable && (
         <form action={tarikData} className="mt-4">
           <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
-          <button className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white">
-            ↻ Tarik Semua Kinerja dari Portofolio
+          <button className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white">
+            <IconRefresh size={12} /> Tarik Semua Kinerja dari Portofolio
           </button>
         </form>
       )}
@@ -154,6 +239,8 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
         {SEKSI_BKD.map((s) => {
           const items = bySeksi(s.kodeRules, true);
           const belum = bySeksi(s.kodeRules, false);
+          const isA = s.key === "A";
+          const totalA = items.reduce((a: number, k: any) => a + (k.sks_dihitung_x100 ?? 0), 0);
           return (
             <section key={s.key} className="rounded-[10px] border border-line p-4">
               <div className="flex items-start justify-between gap-4">
@@ -164,8 +251,8 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
                   <form action={tarikData}>
                     <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
                     <input type="hidden" name="seksi" value={s.key} />
-                    <button className="shrink-0 rounded-md bg-primary-soft px-3 py-1.5 text-[10.5px] font-medium text-primary">
-                      ↻ Tarik data ({belum.length})
+                    <button className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary-soft px-3 py-1.5 text-[10.5px] font-medium text-primary">
+                      <IconRefresh size={11} /> Tarik data ({belum.length})
                     </button>
                   </form>
                 )}
@@ -180,93 +267,117 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
                 <div className="mt-3 rounded-lg bg-info-bg py-5 text-center text-[11.5px] font-medium text-primary">
                   Belum ada data yang di klaim
                 </div>
-              ) : (
+              ) : isA ? (
+                /* ===== Seksi A: kolom sesuai mockup + baris Total sks ===== */
                 <div className="mt-3 overflow-hidden rounded-[10px] border border-line">
                   <table className="w-full border-collapse text-left">
                     <thead>
                       <tr className="bg-head-bg">
-                        {["No", "Nama Kegiatan", "Status", "SKS BKD", "Bukti", "Aksi"].map((h, i) => (
-                          <th
-                            key={h}
-                            className="border-l border-line-grid px-3.5 py-2.5 text-[11.5px] font-medium text-head-tx first:border-l-0"
-                            style={{ width: [40, undefined, 140, 90, 120, 200][i] }}
-                          >
+                        {["No", "Kegiatan", "Rencana Pertemuan", "sks MK terhitung", "sks BKD", "Status", "Status Penilaian", "Aksi"].map(
+                          (h, i) => (
+                            <th key={h} className={thCls} style={{ width: [40, undefined, 130, 120, 90, 110, 130, 170][i] }}>
+                              {h}
+                            </th>
+                          )
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody className={tbodyCls}>
+                      {items.map((k: any, i: number) => {
+                        const p: any = k.parameter ?? {};
+                        const sp = statusPenilaian(k);
+                        return (
+                          <tr key={k.id_kegiatan}>
+                            <td>{i + 1}</td>
+                            <td>
+                              {k.judul}
+                              {p.teamTeaching && (
+                                <span className="block text-[10px] text-crumb">(Team Teaching)</span>
+                              )}
+                              <BuktiBadge lkdId={lkd.id_lkd} k={k} />
+                            </td>
+                            <td>{p.jumlahPertemuanRencana ? `${p.jumlahPertemuanRencana} Pertemuan` : "-"}</td>
+                            <td>{p.sksMataKuliah != null ? `${p.sksMataKuliah} sks` : "-"}</td>
+                            <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
+                            <td>
+                              {k.status_capaian ? (
+                                <StatusChip
+                                  label={CAPAIAN_LABEL[k.status_capaian]}
+                                  variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </td>
+                            <td>
+                              {sp ? <StatusChip label={sp.label} variant={sp.variant} /> : <span className="text-crumb">-</span>}
+                            </td>
+                            <td>
+                              <AksiCell lkd={lkd} k={k} editable={editable} />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      <tr className="bg-info-bg/60">
+                        <td></td>
+                        <td className="!font-semibold">Total sks</td>
+                        <td></td>
+                        <td></td>
+                        <td className="!font-semibold">{(totalA / 100).toFixed(2)}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                /* ===== Seksi B-N: kolom sesuai mockup ===== */
+                <div className="mt-3 overflow-hidden rounded-[10px] border border-line">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-head-bg">
+                        {["No", "Nama Kegiatan", "Status", "Jumlah Kegiatan", "Beban Tugas", "Status Penilaian", "Aksi"].map((h, i) => (
+                          <th key={h} className={thCls} style={{ width: [40, undefined, 120, 120, 100, 130, 170][i] }}>
                             {h}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="[&>tr]:border-t [&>tr]:border-line [&_td]:border-l [&_td]:border-line-grid [&_td]:px-3.5 [&_td]:py-2.5 [&_td]:text-[11.5px] [&_td]:text-cell [&_td:first-child]:border-l-0">
-                      {items.map((k: any, i: number) => (
-                        <tr key={k.id_kegiatan}>
-                          <td>{i + 1}</td>
-                          <td>
-                            {k.judul}
-                            <span className="block text-[10px] text-crumb">
-                              {k.referensi_kegiatan.kode_rule} · {k.sumber_data}
-                            </span>
-                          </td>
-                          <td>
-                            {k.status_capaian ? (
-                              <StatusChip
-                                label={CAPAIAN_LABEL[k.status_capaian]}
-                                variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"}
-                              />
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                          <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
-                          <td>
-                            <Link
-                              href={`/dosen/rekap-kegiatan/${lkd.id_lkd}/bukti/${k.id_kegiatan}`}
-                              className={`inline-block rounded-md px-2.5 py-1.5 text-[10px] font-medium ${
-                                k._count.dokumen_kegiatan > 0
-                                  ? "bg-[#e6f4ec] text-success-tx"
-                                  : "bg-danger-soft text-danger"
-                              }`}
-                            >
-                              {k._count.dokumen_kegiatan > 0 ? `✔ ${k._count.dokumen_kegiatan}` : "✕ bukti"}
-                            </Link>
-                          </td>
-                          <td>
-                            {editable ? (
-                              <div className="flex items-center gap-1.5">
-                                <form action={ubahCapaian} className="flex items-center gap-1">
-                                  <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
-                                  <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
-                                  <select
-                                    name="capaian"
-                                    defaultValue={k.status_capaian ?? "berlanjut"}
-                                    className="rounded border border-line bg-white px-1.5 py-1 text-[10px]"
-                                  >
-                                    {Object.entries(CAPAIAN_LABEL).map(([v, l]) => (
-                                      <option key={v} value={v}>
-                                        {l}
-                                      </option>
-                                    ))}
-                                  </select>
-                                  <button className="rounded bg-primary-soft px-2 py-1 text-[10px] font-medium text-primary">
-                                    ✓
-                                  </button>
-                                </form>
-                                <form action={batalKlaim}>
-                                  <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
-                                  <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
-                                  <button
-                                    className="rounded bg-danger-soft px-2 py-1 text-[10px] font-medium text-danger"
-                                    title="Batalkan klaim"
-                                  >
-                                    ⊘
-                                  </button>
-                                </form>
-                              </div>
-                            ) : (
-                              <span className="text-crumb">terkunci</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                    <tbody className={tbodyCls}>
+                      {items.map((k: any, i: number) => {
+                        const sp = statusPenilaian(k);
+                        return (
+                          <tr key={k.id_kegiatan}>
+                            <td>{i + 1}</td>
+                            <td>
+                              {k.judul}
+                              <span className="block text-[10px] text-crumb">
+                                {k.referensi_kegiatan.kode_rule} · {k.sumber_data}
+                              </span>
+                              <BuktiBadge lkdId={lkd.id_lkd} k={k} />
+                            </td>
+                            <td>
+                              {k.status_capaian ? (
+                                <StatusChip
+                                  label={CAPAIAN_LABEL[k.status_capaian]}
+                                  variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </td>
+                            <td>{jumlahKegiatan(k)}</td>
+                            <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
+                            <td>
+                              {sp ? <StatusChip label={sp.label} variant={sp.variant} /> : <span className="text-crumb">-</span>}
+                            </td>
+                            <td>
+                              <AksiCell lkd={lkd} k={k} editable={editable} />
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -279,8 +390,8 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
       {editable && (
         <form action={simpanPermanen} className="mt-6">
           <input type="hidden" name="id_lkd" value={lkd.id_lkd} />
-          <button className="w-full rounded-lg bg-success-deep py-3 text-xs font-medium text-white">
-            🔒 Simpan Permanen (kunci untuk penilaian asesor)
+          <button className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-success-deep py-3 text-xs font-medium text-white">
+            <IconLock size={13} /> Simpan Permanen (kunci untuk penilaian asesor)
           </button>
         </form>
       )}
@@ -290,7 +401,6 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
 
 function Simpulan({ claimed, totalSks, lkd }: { claimed: any[]; totalSks: number; lkd: any }) {
   const sksPendidikan = totalSks / 100;
-  // Aturan PO BKD (disederhanakan untuk unsur pendidikan): min 9 sks pend+penelitian, total 12-16.
   const memenuhiMin = sksPendidikan >= 9;
   const memenuhiMax = sksPendidikan <= 16;
   const status = memenuhiMin ? "M" : "TM";

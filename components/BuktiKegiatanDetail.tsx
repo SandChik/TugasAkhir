@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DataTable from "./DataTable";
 import { uploadBukti, hapusBukti } from "../app/dosen/_shared/buktiActions";
+import { IconUpload, IconBack } from "./Icons";
 
 const inputCls =
   "w-full rounded-lg border border-line px-3.5 py-2.5 text-xs outline-none placeholder:text-crumb focus:border-primary";
@@ -163,7 +164,7 @@ export default function BuktiKegiatanDetail({
 
           <div className="mt-6 flex justify-end">
             <button className="rounded-lg bg-primary px-5 py-2.5 text-xs font-medium text-white">
-              ⬆ Upload Dokumen
+              <span className="inline-flex items-center gap-2"><IconUpload size={13}/> Upload Dokumen</span>
             </button>
           </div>
         </form>
@@ -171,7 +172,7 @@ export default function BuktiKegiatanDetail({
 
       <div className="mt-5">
         <Link href={backHref} className="inline-block rounded-lg bg-head-bg px-4 py-2.5 text-xs font-medium text-muted">
-          ← Kembali
+          <span className="inline-flex items-center gap-1.5"><IconBack size={11}/> Kembali</span>
         </Link>
       </div>
     </>

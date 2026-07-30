@@ -5,6 +5,7 @@ import { authOptions } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/prisma";
 import AppShell from "../../../../../../components/AppShell";
 import DataTable from "../../../../../../components/DataTable";
+import { IconDoc, IconBack } from "../../../../../../components/Icons";
 
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat("id-ID", {
@@ -64,7 +65,7 @@ export default async function BuktiAsesorPage({
       nama={session?.user.name ?? "-"}
       deskripsi="Asesor, Teknik Informatika"
       breadcrumb={["Beranda", "Layanan BKD", "Asesor BKD", "Peserta BKD", "Bukti Kegiatan"]}
-      title={`🏛 Laporan Kinerja - Semester ${penugasan.lkd.periode_bkd.nama_periode}`}
+      title={`Laporan Kinerja - Semester ${penugasan.lkd.periode_bkd.nama_periode}`}
     >
       <div className="overflow-hidden rounded-[10px] border border-line">
         {info.map(([label, value], i) => (
@@ -114,7 +115,7 @@ export default async function BuktiAsesorPage({
                       target="_blank"
                       className="inline-block rounded-md bg-primary px-2.5 py-1.5 text-[10.5px] font-medium text-white"
                     >
-                      📄
+                      <IconDoc size={12}/>
                     </a>
                   ) : (
                     "-"
@@ -132,7 +133,7 @@ export default async function BuktiAsesorPage({
           href={`/asesor/penilaian/${params.id}`}
           className="inline-block rounded-lg bg-head-bg px-4 py-2.5 text-xs font-medium text-muted"
         >
-          ← Kembali
+          <span className="inline-flex items-center gap-1.5"><IconBack size={11}/> Kembali</span>
         </Link>
       </div>
     </AppShell>

@@ -9,6 +9,7 @@ import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
 import InfoBox from "../../../../components/InfoBox";
 import { simpanPenilaian, sahkanPenilaian } from "./actions";
+import { IconSave, IconShield, IconDoc, IconBack } from "../../../../components/Icons";
 
 const inputCls =
   "rounded-md border border-line px-2 py-1.5 text-[11px] outline-none placeholder:text-crumb focus:border-primary";
@@ -54,7 +55,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
       nama={session?.user.name ?? "-"}
       deskripsi="Asesor, Teknik Informatika"
       breadcrumb={["Beranda", "Layanan BKD", "Asesor BKD", "Peserta BKD", "Rincian Peserta"]}
-      title={`🏛 Penilaian Laporan Kinerja Dosen (LKD) - Semester ${lkd.periode_bkd.nama_periode}`}
+      title={`Penilaian Laporan Kinerja Dosen (LKD) - Semester ${lkd.periode_bkd.nama_periode}`}
       subtitle={`Dosen: ${lkd.pengguna.nama} (${lkd.pengguna.nidn ?? "-"}) — Anda asesor ke-${penugasan.urutan}`}
       actions={
         sudahSah ? (
@@ -125,7 +126,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                                       k._count.dokumen_kegiatan > 0 ? "bg-primary text-white" : "bg-danger-soft text-danger"
                                     }`}
                                   >
-                                    {k._count.dokumen_kegiatan > 0 ? `✔ ${k._count.dokumen_kegiatan}` : "✕"}
+                                    <span className="inline-flex items-center gap-1"><IconDoc size={10}/>{k._count.dokumen_kegiatan > 0 ? ` ${k._count.dokumen_kegiatan}` : " 0"}</span>
                                   </Link>
                                 </td>
                                 <td className="w-24">
@@ -172,7 +173,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
           </div>
 
           <button className="mt-6 w-full rounded-lg bg-success-deep py-3 text-xs font-medium text-white">
-            💾 Simpan Penilaian
+            <span className="inline-flex items-center justify-center gap-2"><IconSave size={13}/> Simpan Penilaian</span>
           </button>
         </form>
       )}
@@ -182,14 +183,14 @@ export default async function PenilaianPage({ params }: { params: { id: string }
         <form action={sahkanPenilaian} className="mt-4">
           <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
           <button className="w-full rounded-lg bg-navy py-3 text-xs font-medium text-white">
-            ✅ Sahkan Penilaian (final — memicu penerbitan token bila kedua asesor sudah sahkan)
+            <span className="inline-flex items-center justify-center gap-2"><IconShield size={13}/> Sahkan Penilaian</span> (final — memicu penerbitan token bila kedua asesor sudah sahkan)
           </button>
         </form>
       )}
 
       <div className="mt-5">
         <Link href="/asesor/asesor-bkd" className="inline-block rounded-lg bg-head-bg px-4 py-2.5 text-xs font-medium text-muted">
-          ← Kembali
+          <span className="inline-flex items-center gap-1.5"><IconBack size={11}/> Kembali</span>
         </Link>
       </div>
     </AppShell>
