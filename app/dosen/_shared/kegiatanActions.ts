@@ -7,6 +7,19 @@ import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
 import { faseAktif, bolehDosenInput } from "../../../lib/fase";
+import { DETAIL_FIELDS } from "../../../lib/kolomKategori";
+
+/** Kumpulkan field detail (d_*) sesuai DETAIL_FIELDS kategori → objek detail_kegiatan. */
+function ambilDetail(slug: string, formData: FormData): Record<string, string | null> {
+  const detail: Record<string, string | null> = {
+    no_sk: String(formData.get("no_sk") ?? "").trim() || null,
+    tgl_sk: String(formData.get("tgl_sk") ?? "").trim() || null,
+  };
+  for (const f of DETAIL_FIELDS[slug] ?? []) {
+    detail[f.name] = String(formData.get(`d_${f.name}`) ?? "").trim() || null;
+  }
+  return detail;
+}
 
 async function periodeAktif() {
   return prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
@@ -82,10 +95,7 @@ export async function tambahKegiatan(formData: FormData) {
       id_lkd: lkd.id_lkd,
       id_referensi: referensi!.id_referensi,
       judul,
-      detail_kegiatan: {
-        no_sk: String(formData.get("no_sk") ?? "").trim() || null,
-        tgl_sk: String(formData.get("tgl_sk") ?? "").trim() || null,
-      },
+      detail_kegiatan: ambilDetail(slug, formData),
       parameter,
       sks_dihitung_x100: sksX100,
       status_perhitungan: statusPerhitungan,
@@ -103,6 +113,72 @@ export async function tambahKegiatan(formData: FormData) {
       : statusPerhitungan === "gagal"
         ? "Kegiatan disimpan, tetapi perhitungan kontrak gagal (cek koneksi blockchain)"
         : "Kegiatan disimpan (dinilai manual oleh asesor)";
+  redirect(`/dosen/${slug}?ok=${encodeURIComponent(pesan)}`);
+}
+
+/** Edit kegiatan manual (fase pengisian): update judul/detail/parameter + hitung ulang SKS. */
+export async function ubahKegiatan(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const slug = String(formData.get("slug") ?? "");
+  const id = String(formData.get("id_kegiatan") ?? "");
+
+  const kegiatan = await prisma.kegiatan.findUnique({
+    where: { id_kegiatan: id },
+    include: { lkd: true, referensi_kegiatan: true },
+  });
+  if (!kegiatan || kegiatan.lkd.id_pengguna !== session.user.id)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
+  if ((kegiatan as any).sumber_data !== "manual")
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Data PDDikti tidak dapat diedit")}`);
+  if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian - tidak dapat mengubah kegiatan")}`);
+
+  const judul = String(formData.get("judul") ?? "").trim();
+  if (!judul)
+    redirect(`/dosen/${slug}/${id}/edit?err=${encodeURIComponent("Nama kegiatan wajib diisi")}`);
+
+  const referensi = kegiatan!.referensi_kegiatan;
+  const fields: any[] = (referensi.skema_parameter as any)?.fields ?? [];
+  const parameter: Record<string, any> = {};
+  const rawValues: Record<string, string> = {};
+  for (const f of fields) {
+    const raw = String(formData.get(`p_${f.name}`) ?? "");
+    rawValues[f.name] = raw;
+    parameter[f.name] =
+      f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
+  }
+
+  let sksX100: number | null = null;
+  let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
+  if (referensi.fungsi_contract) {
+    try {
+      const hasil = await hitungViaKontrak(referensi.fungsi_contract, fields, rawValues);
+      sksX100 = Number(hasil);
+      statusPerhitungan = "berhasil";
+    } catch (e) {
+      console.error("Perhitungan kontrak gagal:", e);
+      statusPerhitungan = "gagal";
+    }
+  }
+
+  await prisma.kegiatan.update({
+    where: { id_kegiatan: id },
+    data: {
+      judul,
+      detail_kegiatan: ambilDetail(slug, formData),
+      parameter,
+      sks_dihitung_x100: sksX100,
+      status_perhitungan: statusPerhitungan,
+    } as any,
+  });
+
+  const pesan =
+    statusPerhitungan === "berhasil"
+      ? `Perubahan disimpan. SKS terhitung ulang: ${(sksX100! / 100).toFixed(2)}`
+      : statusPerhitungan === "gagal"
+        ? "Perubahan disimpan, tetapi perhitungan kontrak gagal (cek koneksi blockchain)"
+        : "Perubahan disimpan (dinilai manual oleh asesor)";
   redirect(`/dosen/${slug}?ok=${encodeURIComponent(pesan)}`);
 }
 

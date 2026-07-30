@@ -5,6 +5,7 @@ import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
 import { sinkronPddikti } from "./actions";
+import { IconRefresh } from "../../../components/Icons";
 
 /** R7: Sinkronisasi Feeder PDDikti (simulasi). */
 export default async function SinkronPage() {
@@ -34,7 +35,7 @@ export default async function SinkronPage() {
             disabled={!periode}
             className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white disabled:opacity-40"
           >
-            ↻ Sinkronkan Feeder PDDikti
+            <span className="inline-flex items-center gap-2"><IconRefresh size={12}/> Sinkronkan Feeder PDDikti</span>
           </button>
         </form>
       }

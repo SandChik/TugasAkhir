@@ -7,6 +7,7 @@ import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
 import { buatLkd } from "./actions";
+import { IconCheck, IconPencil } from "../../../components/Icons";
 
 /** Layanan BKD - Rekap Kegiatan (mockup 142:2): status laporan per semester. */
 export default async function RekapKegiatanPage() {
@@ -62,7 +63,7 @@ export default async function RekapKegiatanPage() {
                       href={`/dosen/rekap-kegiatan/${rencana.id_lkd}?tab=pendidikan`}
                       className="inline-block rounded-md bg-primary px-3 py-1.5 text-[10.5px] font-medium text-white"
                     >
-                      ✓ Lihat Rencana Kerja
+                      <span className="inline-flex items-center gap-1.5"><IconCheck size={11}/> Lihat Rencana Kerja</span>
                     </Link>
                   ) : (
                     <span className="text-[10.5px] text-crumb">Belum tersedia</span>
@@ -74,12 +75,12 @@ export default async function RekapKegiatanPage() {
                       href={`/dosen/rekap-kegiatan/${laporan.id_lkd}?tab=pendidikan`}
                       className="inline-block rounded-md bg-success-deep px-3 py-1.5 text-[10.5px] font-medium text-white"
                     >
-                      ✎ Lihat Laporan Kinerja
+                      <span className="inline-flex items-center gap-1.5"><IconPencil size={11}/> Lihat Laporan Kinerja</span>
                     </Link>
                   ) : aktif ? (
                     <form action={buatLkd}>
                       <button className="rounded-md bg-warning-deep px-3 py-1.5 text-[10.5px] font-medium text-white">
-                        ✎ Isi Laporan Kinerja
+                        <span className="inline-flex items-center gap-1.5"><IconPencil size={11}/> Isi Laporan Kinerja</span>
                       </button>
                     </form>
                   ) : (

@@ -4,21 +4,32 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { KATEGORI_DOSEN } from "../../../lib/kategoriDosen";
+import { KOLOM_KATEGORI } from "../../../lib/kolomKategori";
 import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
+import { IconEye, IconPencil, IconTrash } from "../../../components/Icons";
 import { hapusKegiatan } from "../_shared/kegiatanActions";
 
-/** Menu kategori dosen (R7/R8/R9): tanpa kolom bukti; PDDikti read-only; aksi lihat/edit/hapus. */
+/** Menu kategori dosen: kolom mengikuti frame Figma masing-masing + aksi lihat/edit/hapus. */
 export default async function KategoriPage({ params }: { params: { kategori: string } }) {
   const kategori = KATEGORI_DOSEN[params.kategori];
-  if (!kategori) notFound();
+  const kolom = KOLOM_KATEGORI[params.kategori];
+  if (!kategori || !kolom) notFound();
 
   const session = await getServerSession(authOptions);
-  const periode = await prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
+  const [periode, dosen] = await Promise.all([
+    prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
+    prisma.pengguna.findUnique({ where: { id_pengguna: session!.user.id } }),
+  ]);
   const fase = periode ? faseAktif(periode) : "selesai";
   const bisaInput = periode ? bolehDosenInput(fase) : false;
+  const ctx = {
+    periode: periode?.nama_periode,
+    prodi: dosen?.program_studi ?? "-",
+    namaDosen: dosen?.nama,
+  };
 
   const kegiatan = periode
     ? await prisma.kegiatan.findMany({
@@ -67,64 +78,64 @@ export default async function KategoriPage({ params }: { params: { kategori: str
         <DataTable
           columns={[
             { label: "No.", width: "50px" },
-            { label: "Nama Kegiatan" },
-            { label: "Jenis Kegiatan", width: "240px" },
-            { label: "SKS BKD", width: "90px" },
-            { label: "Sumber", width: "100px" },
-            { label: "Aksi", width: "150px" },
+            ...kolom.map((c) => ({ label: c.label, width: c.width })),
+            { label: "Rubrik BKD", width: "120px" },
+            { label: "Aksi", width: "130px" },
           ]}
         >
           {kegiatan.length === 0 ? (
             <tr>
-              <td colSpan={6} className="!text-center !text-crumb">
+              <td colSpan={kolom.length + 3} className="!text-center !text-crumb">
                 {kategori.sumberPddikti
                   ? "Belum ada data dari PDDikti untuk periode ini."
                   : "Belum ada kegiatan. Gunakan tombol Tambah kegiatan."}
               </td>
             </tr>
           ) : (
-            kegiatan.map((k: any, i: number) => (
-              <tr key={k.id_kegiatan}>
-                <td>{i + 1}</td>
-                <td>{k.judul}</td>
-                <td className="!text-[10.5px] !text-muted">{k.referensi_kegiatan.nama_kegiatan}</td>
-                <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
-                <td>
-                  <span
-                    className={`rounded px-2 py-0.5 text-[10px] font-medium ${
-                      k.sumber_data === "pddikti"
-                        ? "bg-info-bg text-info-tx"
-                        : "bg-head-bg text-muted"
-                    }`}
-                  >
-                    {k.sumber_data === "pddikti" ? "PDDikti" : "Manual"}
-                  </span>
-                </td>
-                <td>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
-                      className="rounded-md bg-primary-soft px-2.5 py-1.5 text-[10.5px] font-medium text-primary"
-                      title="Lihat detail"
-                    >
-                      👁 Lihat
-                    </Link>
-                    {k.sumber_data === "manual" && bisaInput && (
-                      <form action={hapusKegiatan}>
-                        <input type="hidden" name="slug" value={params.kategori} />
-                        <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
-                        <button
-                          className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[10.5px] font-medium text-danger"
-                          title="Hapus"
-                        >
-                          🗑
-                        </button>
-                      </form>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))
+            kegiatan.map((k: any, i: number) => {
+              const manual = k.sumber_data === "manual";
+              return (
+                <tr key={k.id_kegiatan}>
+                  <td>{i + 1}</td>
+                  {kolom.map((c) => (
+                    <td key={c.label}>{c.get(k, ctx)}</td>
+                  ))}
+                  <td className="!text-primary">Rubrik BKD 2021</td>
+                  <td>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
+                        className="rounded-md bg-primary-soft p-2 text-primary"
+                        title="Lihat detail"
+                      >
+                        <IconEye size={13} />
+                      </Link>
+                      {manual && bisaInput && (
+                        <>
+                          <Link
+                            href={`/dosen/${params.kategori}/${k.id_kegiatan}/edit`}
+                            className="rounded-md bg-head-bg p-2 text-muted"
+                            title="Edit kegiatan"
+                          >
+                            <IconPencil size={13} />
+                          </Link>
+                          <form action={hapusKegiatan}>
+                            <input type="hidden" name="slug" value={params.kategori} />
+                            <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
+                            <button
+                              className="rounded-md bg-danger-soft p-2 text-danger"
+                              title="Hapus kegiatan"
+                            >
+                              <IconTrash size={13} />
+                            </button>
+                          </form>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
           )}
         </DataTable>
       </div>

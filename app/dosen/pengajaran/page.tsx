@@ -2,16 +2,27 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
+import { KOLOM_KATEGORI } from "../../../lib/kolomKategori";
 import { faseAktif, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
+import { IconEye } from "../../../components/Icons";
 
-/** Menu Pengajaran (R7/R8): sumber PDDikti, read-only, tanpa kolom bukti. */
+/** Menu Pengajaran (frame 29:2): kolom sesuai mockup; sumber PDDikti, read-only. */
 export default async function PengajaranPage() {
   const session = await getServerSession(authOptions);
-  const periode = await prisma.periode_bkd.findFirst({ where: { status: "aktif" } });
+  const [periode, dosen] = await Promise.all([
+    prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
+    prisma.pengguna.findUnique({ where: { id_pengguna: session!.user.id } }),
+  ]);
   const fase = periode ? faseAktif(periode) : "selesai";
+  const kolom = KOLOM_KATEGORI["pengajaran"];
+  const ctx = {
+    periode: periode?.nama_periode,
+    prodi: dosen?.program_studi ?? "-",
+    namaDosen: dosen?.nama,
+  };
 
   const kegiatan = periode
     ? await prisma.kegiatan.findMany({
@@ -31,7 +42,7 @@ export default async function PengajaranPage() {
       deskripsi="Dosen, D3 Teknik Informatika"
       breadcrumb={["Beranda", "Pelaksanaan pendidikan", "Pengajaran"]}
       title="Pengajaran"
-      subtitle="Kegiatan perkuliahan pada periode berjalan (tersinkronisasi dari Feeder PDDikti)"
+      subtitle="Kegiatan perkuliahan yang Anda input pada periode berjalan"
       actions={
         <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
           {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
@@ -47,17 +58,14 @@ export default async function PengajaranPage() {
         <DataTable
           columns={[
             { label: "No.", width: "50px" },
-            { label: "Mata Kuliah" },
-            { label: "Kelas", width: "90px" },
-            { label: "SKS", width: "70px" },
-            { label: "SKS BKD", width: "100px" },
-            { label: "Sumber", width: "100px" },
-            { label: "Aksi", width: "110px" },
+            ...kolom.map((c) => ({ label: c.label, width: c.width })),
+            { label: "Rubrik BKD", width: "120px" },
+            { label: "Aksi", width: "100px" },
           ]}
         >
           {kegiatan.length === 0 ? (
             <tr>
-              <td colSpan={7} className="!text-center !text-crumb">
+              <td colSpan={kolom.length + 3} className="!text-center !text-crumb">
                 Belum ada data pengajaran dari PDDikti untuk periode ini.
               </td>
             </tr>
@@ -65,21 +73,17 @@ export default async function PengajaranPage() {
             kegiatan.map((k: any, i: number) => (
               <tr key={k.id_kegiatan}>
                 <td>{i + 1}</td>
-                <td>{k.judul}</td>
-                <td>{(k.detail_kegiatan as any)?.kelas ?? "-"}</td>
-                <td>{(k.parameter as any)?.sksMataKuliah ?? "-"}</td>
-                <td>{k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "-"}</td>
-                <td>
-                  <span className="rounded bg-info-bg px-2 py-0.5 text-[10px] font-medium text-info-tx">
-                    PDDikti
-                  </span>
-                </td>
+                {kolom.map((c) => (
+                  <td key={c.label}>{c.get(k, ctx)}</td>
+                ))}
+                <td className="!text-primary">Rubrik BKD 2021</td>
                 <td>
                   <Link
                     href={`/dosen/pengajaran/${k.id_kegiatan}`}
-                    className="rounded-md bg-primary-soft px-2.5 py-1.5 text-[10.5px] font-medium text-primary"
+                    className="inline-block rounded-md bg-primary-soft p-2 text-primary"
+                    title="Lihat detail"
                   >
-                    👁 Lihat
+                    <IconEye size={13} />
                   </Link>
                 </td>
               </tr>

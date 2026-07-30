@@ -19,13 +19,17 @@ export async function sinkronPddikti() {
   const refUji = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU301" } });
 
   const template = [
-    { ref: refP, judul: "Basis Data / 2CTI3", detail: { kelas: "2CTI3", jenis_mata_kuliah: "Wajib" },
+    { ref: refP, judul: "Basis Data / 2CTI3",
+      detail: { kelas: "2CTI3", jenis_mata_kuliah: "Wajib", bidang_keilmuan: "Rekayasa Perangkat Lunak", jumlah_mahasiswa: 28 },
       parameter: { sksMataKuliah: 3, jumlahPertemuanRencana: 16, jumlahPertemuanRealisasi: 16, semesterPenuh: true, teamTeaching: false, persenPorsiDosen: 100 }, sks: 300 },
-    { ref: refP, judul: "Pemrograman Web / 1ATI2", detail: { kelas: "1ATI2", jenis_mata_kuliah: "Wajib" },
+    { ref: refP, judul: "Pemrograman Web / 1ATI2",
+      detail: { kelas: "1ATI2", jenis_mata_kuliah: "Wajib", bidang_keilmuan: "Rekayasa Perangkat Lunak", jumlah_mahasiswa: 30 },
       parameter: { sksMataKuliah: 3, jumlahPertemuanRencana: 16, jumlahPertemuanRealisasi: 16, semesterPenuh: true, teamTeaching: false, persenPorsiDosen: 100 }, sks: 300 },
-    { ref: refBimb, judul: "Bimbingan TA - Andi Pratama", detail: {},
+    { ref: refBimb, judul: "Bimbingan TA - Andi Pratama",
+      detail: { bidang_keilmuan: "Sistem Informasi" },
       parameter: { peran: "PembimbingUtama", jenisTugasAkhir: "TugasAkhir", jumlahMahasiswa: 1 }, sks: 50 },
-    { ref: refUji, judul: "Penguji Sidang TA (4 mahasiswa)", detail: {},
+    { ref: refUji, judul: "Penguji Sidang TA (4 mahasiswa)",
+      detail: { bidang_keilmuan: "Sistem Informasi", jenis_pengujian: "Sidang Tugas Akhir" },
       parameter: { peranPenguji: "Ketua", jumlahMahasiswa: 4 }, sks: 200 },
   ];
 
