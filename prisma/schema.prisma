@@ -1,0 +1,403 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum peran_pengguna {
+  dosen
+  asesor
+  admin
+}
+
+enum status_periode {
+  aktif
+  nonaktif
+}
+
+// R3: fase LKD dalam satu periode
+enum fase_bkd {
+  pengisian // dosen isi kegiatan + upload bukti
+  penilaian // asesor menilai
+  perbaikan // dosen memperbaiki sesuai catatan asesor
+  selesai   // sudah disahkan / dikunci
+}
+
+// Alur dokumen LKD (per dosen per periode per jenis)
+enum jenis_lkd {
+  rencana // RBKD - diisi awal semester
+  laporan // LKD  - realisasi akhir semester
+}
+
+enum status_lkd {
+  draft
+  diajukan
+  dinilai
+  final
+}
+
+// Status workflow per kegiatan
+enum status_kegiatan {
+  draft
+  diajukan
+  dihitung
+  disetujui
+  ditolak
+  revisi
+}
+
+// Status capaian kegiatan (modal "Ubah Status" di mockup)
+enum status_capaian {
+  selesai
+  berlanjut
+  gagal
+  beban_lebih
+}
+
+enum status_perhitungan {
+  berhasil
+  gagal
+  tidak_diotomatisasi
+}
+
+enum status_penilaian {
+  disetujui
+  ditolak
+  revisi
+}
+
+// Simpulan M/TM
+enum status_simpulan {
+  M
+  TM
+}
+
+enum jenis_transaksi {
+  mint
+  burn
+}
+
+// Jenis dokumen sumber yang diunggah admin (SK / ST) untuk diekstrak parser
+enum jenis_unggahan {
+  st_pengajaran // Surat Penugasan Pengajaran   (parser offline/pdfplumber)
+  st_bimbingan  // ST Pembimbing PKL            (parser offline/pdfplumber)
+  st_pengujian  // ST Penguji Tugas Akhir       (parser offline/pdfplumber)
+  sk_pembinaan  // SK Pembina Ormawa (pindai)   (parser VLM)
+}
+
+enum status_unggahan {
+  terparse   // berhasil diekstrak, menunggu diterapkan admin
+  gagal      // parser menolak (layout berubah / galat layanan)
+  diterapkan // hasil ekstraksi sudah dijadikan kegiatan dosen
+}
+
+enum status_transaksi {
+  pending
+  success
+  failed
+}
+
+model pengguna {
+  id_pengguna   String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama          String         @db.VarChar
+  email         String?        @unique @db.VarChar
+  password_hash String?        @db.VarChar
+  peran         peran_pengguna
+  aktif         Boolean        @default(true)
+
+  // Wallet custodial: address diturunkan dari HD wallet server (m/44'/60'/0'/0/{wallet_index})
+  alamat_wallet String? @db.VarChar
+  wallet_index  Int?    @unique
+
+  nip                String? @db.VarChar
+  nidn               String? @db.VarChar
+  program_studi      String? @db.VarChar
+  jabatan_fungsional String? @db.VarChar
+
+  // Kode dosen pada surat tugas JTK (kolom "Kd Dosen", mis. KO019N) — dipakai
+  // mencocokkan baris hasil ekstraksi ST Pengajaran ke akun dosen.
+  kode_dosen String? @db.VarChar
+
+  // Atribut asesor
+  nira            String? @db.VarChar
+  kelompok_bidang String? @db.VarChar
+
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  lkd               lkd[]
+  penugasan_asesor  penugasan_asesor[]  @relation("PenugasanAsesor")
+  riwayat_transaksi riwayat_transaksi[] @relation("RiwayatTransaksiAdmin")
+  unggahan_dokumen  unggahan_dokumen[]  @relation("UnggahanAdmin")
+
+  @@index([peran])
+  @@index([alamat_wallet])
+}
+
+model periode_bkd {
+  id_periode      String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_periode    String         @db.VarChar
+  tahun_ajaran    String?        @db.VarChar
+  semester        String?        @db.VarChar
+  tanggal_mulai   DateTime?      @db.Date
+  tanggal_selesai DateTime?      @db.Date
+
+  // Rentang fase (R3) - fase aktif ditentukan dari tanggal hari ini
+  pengisian_mulai    DateTime? @db.Date
+  pengisian_selesai  DateTime? @db.Date
+  penilaian_mulai    DateTime? @db.Date
+  penilaian_selesai  DateTime? @db.Date
+  perbaikan_mulai    DateTime? @db.Date
+  perbaikan_selesai  DateTime? @db.Date
+  fase_override      fase_bkd? // jika diisi, override perhitungan tanggal
+  status          status_periode @default(nonaktif)
+  created_at      DateTime       @default(now()) @db.Timestamp(6)
+
+  lkd              lkd[]
+  unggahan_dokumen unggahan_dokumen[]
+
+  @@index([status])
+}
+
+// Satu dokumen BKD per dosen per periode per jenis (rencana/laporan)
+model lkd {
+  id_lkd      String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_pengguna String     @db.Uuid
+  id_periode  String     @db.Uuid
+  jenis       jenis_lkd
+  status      status_lkd @default(draft)
+
+  // Syarat asesor boleh menilai (badge "Dosen belum simpan permanen" di mockup)
+  simpan_permanen Boolean @default(false)
+
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  pengguna         pengguna           @relation(fields: [id_pengguna], references: [id_pengguna], onDelete: Restrict, onUpdate: Cascade)
+  periode_bkd      periode_bkd        @relation(fields: [id_periode], references: [id_periode], onDelete: Restrict, onUpdate: Cascade)
+  kegiatan         kegiatan[]
+  penugasan_asesor penugasan_asesor[]
+  simpulan         simpulan_bkd?
+
+  @@unique([id_pengguna, id_periode, jenis])
+  @@index([id_periode])
+  @@index([status])
+}
+
+// 2 asesor per LKD, dengan urutan (asesor ke-1 / ke-2)
+model penugasan_asesor {
+  id_penugasan String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_lkd       String @db.Uuid
+  id_asesor    String @db.Uuid
+  urutan       Int // 1 = asesor ke-1, 2 = asesor ke-2
+
+  // R11: pengesahan per asesor; kedua asesor sahkan -> simpulan + mint
+  disahkan            Boolean   @default(false)
+  tanggal_pengesahan  DateTime? @db.Timestamp(6)
+
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  lkd             lkd               @relation(fields: [id_lkd], references: [id_lkd], onDelete: Cascade, onUpdate: Cascade)
+  asesor          pengguna          @relation("PenugasanAsesor", fields: [id_asesor], references: [id_pengguna], onDelete: Restrict, onUpdate: Cascade)
+  hasil_penilaian hasil_penilaian[]
+
+  @@unique([id_lkd, urutan])
+  @@unique([id_lkd, id_asesor])
+  @@index([id_asesor])
+}
+
+model referensi_kegiatan {
+  id_referensi      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kode_rule         String   @unique @db.VarChar
+  kategori          String   @db.VarChar // Seksi A..N sesuai rubrik PO BKD 2021
+  nama_kegiatan     String   @db.VarChar
+  fungsi_contract   String?  @db.VarChar // null = tidak_diotomatisasi (nilai maksimum, dinilai asesor)
+  skema_parameter   Json?    @db.JsonB
+  sks_maksimal_x100 Int?
+  keterangan        String?  @db.Text
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+
+  kegiatan kegiatan[]
+
+  @@index([kategori])
+}
+
+model kegiatan {
+  id_kegiatan String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  id_lkd       String @db.Uuid
+  id_referensi String @db.Uuid
+
+  judul           String @db.VarChar
+  detail_kegiatan Json?  @db.JsonB
+  parameter       Json?  @db.JsonB
+
+  sks_dihitung_x100  Int?
+  status_perhitungan status_perhitungan?
+  status             status_kegiatan     @default(draft)
+  status_capaian     status_capaian?
+
+  // R5: kegiatan menu = portofolio; masuk LKD setelah diklaim (Tarik data)
+  diklaim     Boolean @default(false)
+  // R7: 'manual' | 'pddikti' | 'surat_tugas' (hasil ekstraksi SK/ST oleh admin)
+  sumber_data String  @default("manual") @db.VarChar
+
+  // Jejak asal data bila kegiatan lahir dari ekstraksi dokumen SK/ST
+  id_unggahan String? @db.Uuid
+
+  tanggal_pengajuan DateTime? @db.Timestamp(6)
+  created_at        DateTime  @default(now()) @db.Timestamp(6)
+  updated_at        DateTime? @updatedAt @db.Timestamp(6)
+
+  lkd                lkd                @relation(fields: [id_lkd], references: [id_lkd], onDelete: Restrict, onUpdate: Cascade)
+  referensi_kegiatan referensi_kegiatan @relation(fields: [id_referensi], references: [id_referensi], onDelete: Restrict, onUpdate: Cascade)
+  unggahan_dokumen   unggahan_dokumen?  @relation(fields: [id_unggahan], references: [id_unggahan], onDelete: SetNull, onUpdate: Cascade)
+  dokumen_kegiatan   dokumen_kegiatan[]
+  hasil_penilaian    hasil_penilaian[]
+
+  @@index([id_lkd])
+  @@index([id_referensi])
+  @@index([status])
+  @@index([id_unggahan])
+}
+
+/**
+ * Dokumen sumber (SK/ST) yang diunggah admin lalu diekstrak layanan parser
+ * (backend-extract). Satu baris = satu berkas PDF. `hasil_parse` menyimpan
+ * JSON mentah dari parser sebagai bukti audit; kegiatan dosen baru dibuat
+ * setelah admin menekan "Terapkan" (lihat kegiatan.id_unggahan).
+ */
+model unggahan_dokumen {
+  id_unggahan String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  id_periode String? @db.Uuid
+  id_admin   String? @db.Uuid
+
+  jenis       jenis_unggahan
+  nama_file   String  @db.VarChar
+  file_url    String? @db.Text
+  ukuran_byte Int?
+  sha256      String? @db.VarChar // dari parser: surat.sha256 (integritas berkas)
+  nomor_surat String? @db.VarChar
+
+  status      status_unggahan @default(terparse)
+  pesan_galat String?         @db.Text
+  hasil_parse Json?           @db.JsonB // respons utuh parser
+  ringkasan   Json?           @db.JsonB // blok `ringkasan` parser (tampilan cepat)
+
+  // Koreksi manual admin atas hasil pemetaan, per baris (kunci = tanda baris).
+  // Disimpan TERPISAH dari hasil_parse: JSON parser tetap utuh sebagai bukti
+  // audit, koreksi ditumpangkan saat pratinjau maupun saat diterapkan.
+  koreksi Json? @db.JsonB
+
+  jumlah_dosen_dokumen Int       @default(0) // dosen yang muncul di dokumen
+  jumlah_dosen_cocok   Int       @default(0) // yang cocok dengan akun sistem
+  jumlah_kegiatan      Int       @default(0) // kegiatan yang dibuat saat diterapkan
+  tanggal_terapkan     DateTime? @db.Timestamp(6)
+
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  periode_bkd periode_bkd? @relation(fields: [id_periode], references: [id_periode], onDelete: SetNull, onUpdate: Cascade)
+  admin       pengguna?    @relation("UnggahanAdmin", fields: [id_admin], references: [id_pengguna], onDelete: SetNull, onUpdate: Cascade)
+  kegiatan    kegiatan[]
+
+  @@index([jenis])
+  @@index([status])
+  @@index([id_periode])
+}
+
+model dokumen_kegiatan {
+  id_dokumen String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  id_kegiatan String @db.Uuid
+
+  nama_dokumen   String?  @db.VarChar
+  nama_file      String?  @db.VarChar
+  jenis_file     String?  @db.VarChar
+  jenis_dokumen  String?  @db.VarChar
+  file_url       String?  @db.Text
+  keterangan     String?  @db.Text
+  tanggal_upload DateTime @default(now()) @db.Timestamp(6)
+
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  kegiatan kegiatan @relation(fields: [id_kegiatan], references: [id_kegiatan], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id_kegiatan])
+}
+
+// Penilaian per kegiatan PER ASESOR (2 asesor per LKD)
+model hasil_penilaian {
+  id_hasil String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  id_kegiatan  String @db.Uuid
+  id_penugasan String @db.Uuid
+
+  sks_disetujui_x100  Int?
+  pertemuan_keputusan Int? // kolom "Pertemuan Keputusan Asesor" (seksi A)
+  capaian_persen      Int? // kolom "Capaian" (seksi J)
+  status              status_penilaian
+  catatan             String?          @db.Text
+  tanggal_penilaian   DateTime         @default(now()) @db.Timestamp(6)
+
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  kegiatan          kegiatan            @relation(fields: [id_kegiatan], references: [id_kegiatan], onDelete: Cascade, onUpdate: Cascade)
+  penugasan_asesor  penugasan_asesor    @relation(fields: [id_penugasan], references: [id_penugasan], onDelete: Restrict, onUpdate: Cascade)
+  riwayat_transaksi riwayat_transaksi[]
+
+  @@unique([id_kegiatan, id_penugasan])
+  @@index([status])
+}
+
+// Simpulan otomatis per LKD (tab "Simpulan" di mockup)
+model simpulan_bkd {
+  id_simpulan String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_lkd      String @unique @db.Uuid
+
+  sks_pendidikan_x100 Int @default(0)
+  sks_penelitian_x100 Int @default(0)
+  sks_pengabdian_x100 Int @default(0)
+  sks_penunjang_x100  Int @default(0)
+
+  status_kewajiban_khusus status_simpulan?
+  status_final            status_simpulan? // pend+penelitian >= 9, total 12-16
+
+  // Jejak on-chain: keccak256(JSON simpulan final) dikirim sebagai referenceId saat mint
+  hash_penilaian String? @db.VarChar
+  tx_hash        String? @db.VarChar
+
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  lkd lkd @relation(fields: [id_lkd], references: [id_lkd], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model riwayat_transaksi {
+  id_transaksi String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  id_hasil String? @db.Uuid
+  id_admin String? @db.Uuid
+
+  jenis_transaksi   jenis_transaksi
+  contract_address  String?          @db.VarChar
+  tx_hash           String?          @unique @db.VarChar
+  jumlah_token_x100 Int?
+  alamat_wallet     String?          @db.VarChar
+  reference_id      String?          @db.VarChar
+  alasan            String?          @db.Text
+  status            status_transaksi @default(pending)
+
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  hasil_penilaian hasil_penilaian? @relation(fields: [id_hasil], references: [id_hasil], onDelete: Restrict, onUpdate: Cascade)
+  admin           pengguna?        @relation("RiwayatTransaksiAdmin", fields: [id_admin], references: [id_pengguna], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([jenis_transaksi])
+  @@index([tx_hash])
+  @@index([status])
+}

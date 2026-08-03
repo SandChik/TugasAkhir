@@ -1,0 +1,43 @@
+# === Rahasia / konfigurasi lokal ===
+.env
+.env.*
+!.env.example
+
+# === Artefak Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual env
+.venv/
+venv/
+env/
+ENV/
+
+# === Keluaran parser / data uji ===
+hasil/
+hasil*.json
+dosen_tki.json
+keluaran/
+keluaran_artefak/
+*.tmp
+
+# Berkas sumber besar (PDF/DOCX contoh) — jangan commit ke repo
+*.pdf
+*.docx
+
+# === Editor / OS ===
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# === Tooling ===
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

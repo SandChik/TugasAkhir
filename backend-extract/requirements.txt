@@ -1,0 +1,13 @@
+# API (api.py)
+fastapi==0.121.2
+uvicorn[standard]==0.38.0
+python-multipart==0.0.20   # wajib untuk upload file (UploadFile)
+python-dotenv==1.0.1       # muat konfigurasi dari .env
+
+# Parser offline (parse_st_pengajaran/bimbingan/pengujian.py)
+pdfplumber==0.11.10
+
+# Parser VLM (vlm_sk_pembinaan.py, parse_artefak_vlm.py)
+pypdfium2==4.30.0          # rasterisasi halaman PDF -> gambar
+pillow==11.0.0             # simpan/konversi gambar (PNG/JPEG)
+requests==2.32.3           # panggilan ke endpoint 9router

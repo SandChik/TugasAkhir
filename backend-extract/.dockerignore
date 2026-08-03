@@ -1,0 +1,29 @@
+# Rahasia & konfigurasi lokal — jangan pernah masuk image
+.env
+.env.*
+!.env.example
+
+# Berkas uji / data / keluaran
+*.pdf
+*.docx
+hasil/
+hasil*.json
+Literatur Pendukung/
+verify.py
+
+# Artefak Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / VCS / dokumentasi build
+.vscode/
+.git/
+.gitignore
+*.md
+breakdown-parser.md
+
+# Docker sendiri
+Dockerfile
+.dockerignore
+docker-compose.yml
