@@ -103,14 +103,13 @@ export default async function TokenPage() {
       {/* Kartu ringkas */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[
-          ["Kontrak Token (BKDSKSToken)", kontrak ? `${kontrak.slice(0, 6)}…${kontrak.slice(-4)}` : "-", "Non-transferable ERC-20"],
-          ["Total Token Diterbitkan", `${(totalMint / 100).toFixed(2)} SKS`, "transaksi mint sukses"],
-          ["Total Token di Burn", `${(totalBurn / 100).toFixed(2)} SKS`, "transaksi burn (koreksi)"],
-        ].map(([label, value, sub]) => (
+          ["Kontrak Token (BKDSKSToken)", kontrak ? `${kontrak.slice(0, 6)}…${kontrak.slice(-4)}` : "-"],
+          ["Total Token Diterbitkan", `${(totalMint / 100).toFixed(2)} SKS`],
+          ["Total Token di Burn", `${(totalBurn / 100).toFixed(2)} SKS`],
+        ].map(([label, value]) => (
           <div key={label as string} className="rounded-[10px] border border-line p-4">
             <p className="text-[11px] text-muted">{label}</p>
             <p className="mt-1 text-[17px] font-semibold text-navy">{value}</p>
-            <p className="mt-1 text-[10px] text-crumb">{sub}</p>
           </div>
         ))}
       </div>
@@ -136,7 +135,6 @@ export default async function TokenPage() {
               placeholder="cth: kelebihan penerbitan"
               className="mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-xs outline-none placeholder:text-crumb focus:border-primary"
             />
-            <p className="mt-1 text-[10px] text-crumb">Tampil pada riwayat & log blockchain.</p>
           </div>
           <div className="md:pt-[22px]">
             <SubmitButton

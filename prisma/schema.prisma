@@ -241,7 +241,8 @@ model kegiatan {
 
   // R5: kegiatan menu = portofolio; masuk LKD setelah diklaim (Tarik data)
   diklaim     Boolean @default(false)
-  // R7: 'manual' | 'pddikti' | 'surat_tugas' (hasil ekstraksi SK/ST oleh admin)
+  // R7: 'manual' (input dosen) | 'admin' (input admin atas penugasan)
+  //     | 'surat_tugas' (hasil ekstraksi SK/ST oleh admin)
   sumber_data String  @default("manual") @db.VarChar
 
   // Jejak asal data bila kegiatan lahir dari ekstraksi dokumen SK/ST

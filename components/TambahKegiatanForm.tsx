@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "../lib/prisma";
 import { tambahKegiatan, ubahKegiatan } from "../app/dosen/_shared/kegiatanActions";
 import { DETAIL_FIELDS } from "../lib/kolomKategori";
+import { fieldFormulir, fieldTetap, PARAMETER_TETAP } from "../lib/parameterKegiatan";
 import { IconCalc, IconBack, IconSave } from "./Icons";
 
 const inputCls =
@@ -35,6 +36,9 @@ export default async function TambahKegiatanForm({
     : referensi.find((r: any) => r.kode_rule === selectedKode) ?? referensi[0] ?? null;
 
   const fields: any[] = selected ? ((selected.skema_parameter as any)?.fields ?? []) : [];
+  // Parameter yang nilainya ditentukan periode (jumlahSemester) tidak ditanyakan.
+  const fieldsIsian = fieldFormulir(fields);
+  const fieldsTetap = fieldTetap(fields);
   const detailFields = DETAIL_FIELDS[slug] ?? [];
   const dNilai: any = editMode ? (kegiatan.detail_kegiatan ?? {}) : {};
   const pNilai: any = editMode ? (kegiatan.parameter ?? {}) : {};
@@ -118,10 +122,17 @@ export default async function TambahKegiatanForm({
               className={`${inputCls} max-w-xs`}
             />
 
-            {fields.map((f: any) => (
+            {fieldsIsian.map((f: any) => (
               <FieldInput key={f.name} f={f} nilai={pNilai[f.name]} />
             ))}
           </div>
+
+          {fieldsTetap.length > 0 && (
+            <p className="mt-3 text-[10.5px] leading-snug text-muted">
+              {fieldsTetap.map((f: any) => `${f.label} = ${PARAMETER_TETAP[f.name]}`).join(", ")}{" "}
+              mengikuti periode BKD — satu laporan mencakup satu semester, jadi tidak perlu diisi.
+            </p>
+          )}
 
           {detailFields.length > 0 && (
             <>
@@ -210,14 +221,16 @@ function FieldInput({ f, nilai }: { f: any; nilai?: any }) {
 }
 
 function DetailInput({ f, nilai }: { f: { name: string; label: string; type: string }; nilai?: any }) {
+  const sempit = f.type === "date" || f.type === "number";
   return (
     <>
       <label className="pt-2.5 text-[11.5px] font-medium text-cell">{f.label}</label>
       <input
         name={`d_${f.name}`}
-        type={f.type === "date" ? "date" : "text"}
+        type={f.type === "date" ? "date" : f.type === "number" ? "number" : "text"}
+        min={f.type === "number" ? 0 : undefined}
         defaultValue={nilai ?? undefined}
-        className={`${inputCls} ${f.type === "date" ? "max-w-xs" : "max-w-sm"}`}
+        className={`${inputCls} ${sempit ? "max-w-xs" : "max-w-sm"}`}
       />
     </>
   );

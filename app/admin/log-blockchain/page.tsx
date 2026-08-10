@@ -5,7 +5,6 @@ import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
-import InfoBox from "../../../components/InfoBox";
 
 const inputCls =
   "mt-1 rounded-md border border-line px-2.5 py-1.5 text-[11px] outline-none focus:border-primary";
@@ -110,14 +109,8 @@ export default async function LogBlockchainPage({
         </div>
       }
     >
-      <InfoBox>
-        Dibaca langsung dari event kontrak{" "}
-        <span className="font-mono">{kontrak ? `${kontrak.slice(0, 10)}…` : "(belum dikonfigurasi)"}</span>,
-        bukan dari basis data — siapa pun dapat memverifikasi ulang.
-      </InfoBox>
-
       {error && (
-        <div className="mt-4 rounded-lg bg-danger-soft px-4 py-3 text-xs text-danger">
+        <div className="rounded-lg bg-danger-soft px-4 py-3 text-xs text-danger">
           Tidak dapat membaca on-chain: {error}. Pastikan node RPC berjalan dan alamat kontrak terisi.
         </div>
       )}

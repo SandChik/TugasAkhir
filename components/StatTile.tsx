@@ -35,7 +35,9 @@ export default function StatTile({
     <>
       <p className="text-[11px] font-medium text-muted">{label}</p>
       <p className={`mt-1 text-[19px] font-semibold leading-none ${n.angka}`}>{nilai}</p>
-      <p className="mt-1.5 min-h-[13px] text-[10.5px] leading-tight text-muted">{catatan ?? ""}</p>
+      {catatan && (
+        <p className="mt-1.5 text-[10.5px] leading-tight text-muted">{catatan}</p>
+      )}
     </>
   );
 

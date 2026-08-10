@@ -16,15 +16,34 @@ export async function createPengguna(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const nidn = String(formData.get("nidn") ?? "").trim() || null;
   const program_studi = String(formData.get("program_studi") ?? "").trim() || null;
-  const nira = String(formData.get("nira") ?? "").trim() || null;
-  // Kode dosen pada surat tugas JTK — kunci pencocokan hasil ekstraksi SK/ST
-  const kode_dosen = String(formData.get("kode_dosen") ?? "").trim().toUpperCase() || null;
+  // NIRA hanya milik asesor; kode dosen berlaku untuk dosen & asesor (asesor juga dosen)
+  const nira = peran === "asesor" ? String(formData.get("nira") ?? "").trim() || null : null;
+  const kode_dosen =
+    peran === "admin" ? null : String(formData.get("kode_dosen") ?? "").trim().toUpperCase() || null;
 
   if (!nama || !email || !password || !["dosen", "asesor", "admin"].includes(peran))
     redirect(withFlash(DASAR, { err: "Nama, email, password, dan peran wajib diisi" }));
+  if (password.length < 8)
+    redirect(withFlash(DASAR, { err: "Password awal minimal 8 karakter" }));
+  if ((peran === "dosen" || peran === "asesor") && !nidn)
+    redirect(withFlash(DASAR, { err: "NIDN wajib diisi untuk akun dosen/asesor" }));
 
   const exists = await prisma.pengguna.findUnique({ where: { email } });
   if (exists) redirect(withFlash(DASAR, { err: `Email ${email} sudah dipakai akun lain` }));
+
+  if (kode_dosen) {
+    const dipakai = await prisma.pengguna.findFirst({
+      where: { kode_dosen },
+      select: { nama: true },
+    });
+    if (dipakai)
+      redirect(withFlash(DASAR, { err: `Kode dosen ${kode_dosen} sudah dipakai ${dipakai.nama}` }));
+  }
+  if (nira) {
+    const dipakai = await prisma.pengguna.findFirst({ where: { nira }, select: { nama: true } });
+    if (dipakai)
+      redirect(withFlash(DASAR, { err: `NIRA ${nira} sudah dipakai ${dipakai.nama}` }));
+  }
 
   await prisma.pengguna.create({
     data: {
@@ -63,6 +82,29 @@ export async function setKodeDosen(formData: FormData) {
   });
   revalidatePath(DASAR);
   redirect(withFlash(DASAR, { ok: kode ? `Kode dosen disimpan: ${kode}` : "Kode dosen dikosongkan" }));
+}
+
+/** Isi/ubah NIRA (Nomor Induk Registrasi Asesor) — hanya relevan untuk akun asesor. */
+export async function setNira(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const nira = String(formData.get("nira") ?? "").trim() || null;
+  if (!id) redirect(withFlash(DASAR, { err: "Pengguna tidak dikenal" }));
+
+  const dipakai = nira
+    ? await prisma.pengguna.findFirst({
+        where: { nira, id_pengguna: { not: id } },
+        select: { nama: true },
+      })
+    : null;
+  if (dipakai)
+    redirect(withFlash(DASAR, { err: `NIRA ${nira} sudah dipakai ${dipakai.nama}` }));
+
+  await prisma.pengguna.update({
+    where: { id_pengguna: id },
+    data: { nira },
+  });
+  revalidatePath(DASAR);
+  redirect(withFlash(DASAR, { ok: nira ? `NIRA disimpan: ${nira}` : "NIRA dikosongkan" }));
 }
 
 export async function setAktifPengguna(formData: FormData) {

@@ -48,7 +48,7 @@ const MENUS: Record<Peran, MenuSection[]> = {
         { label: "Penugasan Asesor", href: "/admin/penugasan-asesor" },
         { label: "Referensi Kegiatan", href: "/admin/referensi" },
         { label: "Unggah SK & ST", href: "/admin/unggah" },
-        { label: "Sinkronisasi PDDikti", href: "/admin/sinkron" },
+        { label: "Input Kegiatan Dosen", href: "/admin/kegiatan" },
       ],
     },
     {

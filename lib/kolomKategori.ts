@@ -72,9 +72,16 @@ export const KOLOM_KATEGORI: Record<string, Kolom[]> = {
 };
 
 /** Field detail tambahan (opsional) per kategori pada form tambah/edit. */
-export type DetailField = { name: string; label: string; type: "text" | "date" };
+export type DetailField = { name: string; label: string; type: "text" | "date" | "number" };
 
 export const DETAIL_FIELDS: Record<string, DetailField[]> = {
+  // Diisi admin lewat "Input Kegiatan Dosen" — dosen tidak menginput pengajaran.
+  pengajaran: [
+    { name: "kelas", label: "Kelas", type: "text" },
+    { name: "jenis_mata_kuliah", label: "Jenis Mata Kuliah", type: "text" },
+    { name: "bidang_keilmuan", label: "Bidang Keilmuan", type: "text" },
+    { name: "jumlah_mahasiswa", label: "Jumlah Mahasiswa", type: "number" },
+  ],
   "bimbingan-mahasiswa": [{ name: "bidang_keilmuan", label: "Bidang Keilmuan", type: "text" }],
   "pengujian-mahasiswa": [
     { name: "bidang_keilmuan", label: "Bidang Keilmuan", type: "text" },

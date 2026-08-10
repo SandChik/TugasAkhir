@@ -24,6 +24,7 @@ import {
   type PetaKoreksi,
 } from "../../../lib/pemetaanPenugasan";
 import { buatPencocokDosen } from "../../../lib/namaDosen";
+import { fieldFormulir } from "../../../lib/parameterKegiatan";
 import { withFlash } from "../../../lib/flash";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25 MB — SK hasil pindai bisa besar
@@ -494,7 +495,8 @@ export async function simpanKoreksiBaris(formData: FormData) {
   const ref = await prisma.referensi_kegiatan.findUnique({
     where: { kode_rule: asli!.kodeRule },
   });
-  const fields: any[] = (ref?.skema_parameter as any)?.fields ?? [];
+  // Parameter yang dikunci periode (jumlahSemester) tidak dikoreksi lewat form.
+  const fields: any[] = fieldFormulir((ref?.skema_parameter as any)?.fields ?? []);
 
   // Hanya nilai yang BERBEDA dari hasil parser disimpan sebagai koreksi.
   const parameter: Record<string, unknown> = {};

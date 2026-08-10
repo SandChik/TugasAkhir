@@ -14,8 +14,8 @@ export default async function TambahKegiatanKategoriPage({
 }) {
   const kategori = KATEGORI_DOSEN[params.kategori];
   if (!kategori) notFound();
-  // R7: kategori sumber PDDikti tidak boleh tambah manual
-  if (kategori.sumberPddikti) redirect(`/dosen/${params.kategori}`);
+  // R7: kegiatan berbasis penugasan (diinput admin) tidak boleh ditambah dosen
+  if (kategori.sumberPenugasan) redirect(`/dosen/${params.kategori}`);
 
   const session = await getServerSession(authOptions);
 

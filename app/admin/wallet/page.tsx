@@ -4,7 +4,6 @@ import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import StatusChip from "../../../components/StatusChip";
-import InfoBox from "../../../components/InfoBox";
 import { tetapkanWallet } from "./actions";
 
 /** UI-ADM-03 / FR-04: Konfigurasi wallet custodial dosen. */
@@ -24,13 +23,7 @@ export default async function WalletPage() {
       title="Konfigurasi Wallet Dosen"
       subtitle="Penetapan wallet address untuk setiap akun dosen (dikelola sistem)"
     >
-      <InfoBox>
-        <b>Info:</b> Wallet bersifat custodial — dosen tidak perlu memahami blockchain. Address
-        diturunkan deterministik dari HD wallet server (path m/44&apos;/60&apos;/0&apos;/0/index);
-        private key tidak pernah keluar dari server.
-      </InfoBox>
-
-      <div className="mt-4">
+      <div>
         <DataTable
           columns={[
             { label: "No", width: "50px" },

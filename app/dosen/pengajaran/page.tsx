@@ -9,7 +9,7 @@ import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
 import { IconEye, IconUpload } from "../../../components/Icons";
 
-/** Menu Pengajaran (frame 29:2): kolom sesuai mockup; sumber PDDikti, read-only. */
+/** Menu Pengajaran (frame 29:2): kolom sesuai mockup; sumber penugasan, read-only. */
 export default async function PengajaranPage() {
   const session = await getServerSession(authOptions);
   const [periode, dosen] = await Promise.all([
@@ -48,7 +48,7 @@ export default async function PengajaranPage() {
       deskripsi="Dosen, D3 Teknik Informatika"
       breadcrumb={["Beranda", "Pelaksanaan pendidikan", "Pengajaran"]}
       title="Pengajaran"
-      subtitle="Kegiatan perkuliahan yang Anda input pada periode berjalan"
+      subtitle="Kegiatan perkuliahan sesuai penugasan Anda pada periode berjalan"
       actions={
         <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
           {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
@@ -56,7 +56,8 @@ export default async function PengajaranPage() {
       }
     >
       <InfoBox>
-        Data pengajaran ditarik otomatis, tidak dapat diedit manual. Yang perlu Anda lakukan:{" "}
+        Data pengajaran berasal dari penugasan (dicatat admin atau hasil ekstraksi Surat Penugasan
+        Pengajaran), tidak dapat diedit manual. Yang perlu Anda lakukan:{" "}
         <b>unggah dokumen bukti</b> lewat tombol unggah di kolom Aksi — titik merah menandai
         kegiatan yang belum punya artefak. Klaim ke laporan lewat <b>Layanan BKD → Rekap
         Kegiatan</b>.
@@ -74,7 +75,7 @@ export default async function PengajaranPage() {
           {kegiatan.length === 0 ? (
             <tr>
               <td colSpan={kolom.length + 3} className="!text-center !text-crumb">
-                Belum ada data pengajaran dari PDDikti maupun Surat Penugasan Pengajaran untuk
+                Belum ada data pengajaran dari admin maupun Surat Penugasan Pengajaran untuk
                 periode ini.
               </td>
             </tr>
