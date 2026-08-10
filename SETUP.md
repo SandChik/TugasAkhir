@@ -53,13 +53,13 @@ dari dokumen resmi di `backend-extract` (ST Pengajaran 408/KO/AK.04.01/2025, ST 
 header berkasnya) — bukan data dummy. **33 di antaranya membawa kode dosen** (kolom
 "Kd Dosen"), sehingga hasil ekstraksi SK/ST langsung cocok ke akunnya.
 
-- Login dev: `<kode dosen lowercase>@jtk.test` (mis. `ko019n@jtk.test`) / `dosen123`.
-  Domain `.test` adalah TLD khusus pengujian (RFC 2606) — dipilih agar tidak pernah
-  tertukar dengan alamat `@polban.ac.id` yang asli. Dosen tanpa kode memakai
-  `nama.belakang@jtk.test`.
-- Dijalankan berulang aman: cocok lewat email, password yang sudah diubah tidak
-  direset, wallet custodial hanya diberikan sekali (index lanjut dari yang terpakai),
-  dan NIP/kode yang sudah diisi admin tidak ditimpa oleh nilai kosong.
+- Login dev: `<dua kata pertama nama, dipisah titik>@polban.ac.id` (mis.
+  `ade.chandra@polban.ac.id`) / `dosen123`. Gelar depan/belakang dibuang saat
+  menyintesis email; alamat ini bukan email resmi, sekadar kredensial dev.
+- Dijalankan berulang aman: cocok lewat email (atau kode dosen/nama untuk akun
+  ber-email format lama, emailnya lalu dimigrasikan), password yang sudah diubah
+  tidak direset, wallet custodial hanya diberikan sekali (index lanjut dari yang
+  terpakai), dan NIP/kode yang sudah diisi admin tidak ditimpa oleh nilai kosong.
 - Seed juga **melepas kode dosen ganda** dari akun lain (akun demo lama sering
   memegang kode milik dosen nyata), karena kode kembar membuat pencocokan ekstraksi
   dianggap ambigu.

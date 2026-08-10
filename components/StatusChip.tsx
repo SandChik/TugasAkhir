@@ -15,7 +15,6 @@ export type ChipVariant = keyof typeof VARIANTS;
 /** Pemetaan status domain -> varian warna (konsisten dengan mockup) */
 export const STATUS_VARIAN: Record<string, ChipVariant> = {
   selesai: "success",
-  berlanjut: "info",
   gagal: "danger",
   beban_lebih: "navy",
   aktif: "success",

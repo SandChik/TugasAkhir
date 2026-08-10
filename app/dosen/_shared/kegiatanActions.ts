@@ -100,7 +100,6 @@ export async function tambahKegiatan(formData: FormData) {
       sks_dihitung_x100: sksX100,
       status_perhitungan: statusPerhitungan,
       status: "diajukan",
-      status_capaian: "berlanjut",
       sumber_data: "manual",
       diklaim: true, // input manual langsung masuk LKD
       tanggal_pengajuan: new Date(),
@@ -182,6 +181,55 @@ export async function ubahKegiatan(formData: FormData) {
         ? "Perubahan disimpan, tetapi perhitungan kontrak gagal (cek koneksi blockchain)"
         : "Perubahan disimpan (dinilai manual oleh asesor)";
   redirect(`/dosen/${slug}?ok=${encodeURIComponent(pesan)}`);
+}
+
+/**
+ * Edit inline rincian bimbingan dari halaman detail. Berbeda dengan
+ * ubahKegiatan, aksi ini SENGAJA menerima kegiatan hasil ekstraksi/PDDikti:
+ * dosen boleh melengkapi/meralat rincian dokumennya (parameter perhitungan SKS
+ * tidak ikut diubah di sini). Kunci tetap berlaku: pemilik, LKD belum permanen,
+ * dan fase pengisian.
+ */
+export async function simpanDetailBimbingan(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const id = String(formData.get("id_kegiatan") ?? "");
+  const slug = String(formData.get("slug") ?? "bimbingan-mahasiswa");
+  const jalur = `/dosen/${slug}/${id}`;
+
+  const kegiatan = await prisma.kegiatan.findUnique({
+    where: { id_kegiatan: id },
+    include: { lkd: true },
+  });
+  if (!kegiatan || kegiatan.lkd.id_pengguna !== session.user.id)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
+  if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
+    redirect(`${jalur}?err=${encodeURIComponent("Di luar masa pengisian - rincian tidak dapat diubah")}`);
+
+  const judul = String(formData.get("judul") ?? "").trim();
+  if (!judul) redirect(`${jalur}?err=${encodeURIComponent("Judul aktivitas wajib diisi")}`);
+
+  const teks = (nama: string) => String(formData.get(nama) ?? "").trim() || null;
+  const lama = (kegiatan!.detail_kegiatan as any) ?? {};
+  await prisma.kegiatan.update({
+    where: { id_kegiatan: id },
+    data: {
+      judul,
+      detail_kegiatan: {
+        ...lama,
+        lokasi: teks("lokasi"),
+        no_sk: teks("no_sk"),
+        tgl_sk: teks("tgl_sk"),
+        keterangan: teks("keterangan"),
+        komunal: String(formData.get("komunal")) === "ya",
+        program_studi: teks("program_studi"),
+        diedit_dosen: true,
+      },
+    } as any,
+  });
+
+  revalidatePath(jalur);
+  redirect(`${jalur}?ok=${encodeURIComponent("Rincian bimbingan disimpan")}`);
 }
 
 /** Hapus kegiatan manual (fase pengisian). */

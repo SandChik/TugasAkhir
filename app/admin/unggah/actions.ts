@@ -410,7 +410,6 @@ export async function terapkanUnggahan(formData: FormData) {
           id_referensi: ref.id_referensi,
           ...isi,
           status: "diajukan",
-          status_capaian: "berlanjut",
           sumber_data: "surat_tugas",
           diklaim: false,
           id_unggahan: rec!.id_unggahan,

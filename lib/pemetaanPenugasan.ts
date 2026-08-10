@@ -12,6 +12,7 @@
  *   ST Pembimbing   -> EDU202 satu kegiatan per dosen (per semester)
  *   ST Penguji TA   -> EDU301 per peran penguji (Ketua / Anggota)
  *   SK Pembina      -> EDU401 per organisasi yang dibina
+ *   Artefak umum    -> EDU202/203/301/401 menurut peran dosen di dokumen
  */
 
 import type { JenisUnggahan } from "./parserDokumen";
@@ -169,9 +170,13 @@ function petakanPengajaran(hasil: any, noSk: string | null, tglSk: string | null
 // SK Pembimbing Tugas Akhir -> EDU203 per peran (Pembimbing 1 = utama)
 // ---------------------------------------------------------------------------
 
+// "Pembimbing I/1" = Pembimbing Utama, "Pembimbing II/2" = Pembimbing
+// Pendamping — dokumen menulis angka Arab maupun Romawi.
 const PERAN_PEMBIMBING: Record<string, "PembimbingUtama" | "PembimbingPendamping"> = {
   "Pembimbing 1": "PembimbingUtama",
+  "Pembimbing I": "PembimbingUtama",
   "Pembimbing 2": "PembimbingPendamping",
+  "Pembimbing II": "PembimbingPendamping",
 };
 
 const SEBUTAN_PERAN = {
@@ -197,7 +202,7 @@ function petakanBimbinganTA(hasil: any, noSk: string | null, tglSk: string | nul
         nip: teks(dosen?.nip),
         kodeDosen: null,
         kodeRule: "EDU203",
-        judul: `${SEBUTAN_PERAN[peran]} Tugas Akhir (${daftar.length} mahasiswa)`,
+        judul: `${SEBUTAN_PERAN[peran]} Tugas Akhir`,
         detail: {
           no_sk: noSk,
           tgl_sk: tglSk,
@@ -243,7 +248,7 @@ function petakanBimbingan(hasil: any, noSk: string | null, tglSk: string | null)
       nip: teks(dosen?.nip),
       kodeDosen: null,
       kodeRule: "EDU202",
-      judul: `Membimbing PKL (${penugasan.length} mahasiswa)`,
+      judul: "Membimbing PKL",
       detail: {
         no_sk: noSk,
         tgl_sk: tglSk,
@@ -350,6 +355,87 @@ function petakanPembinaan(hasil: any): TanpaTanda[] {
 }
 
 // ---------------------------------------------------------------------------
+// Artefak dokumen umum (parser VLM universal) -> rubrik menurut peran dosen
+// ---------------------------------------------------------------------------
+
+/**
+ * Peran yang bermakna beban BKD pada skema umum parser artefak. Peran lain
+ * (koordinator, direktur, mengetahui, dst.) hanyalah penanda tangan dokumen dan
+ * sengaja tidak dijadikan kegiatan.
+ *
+ * Artefak umumnya formulir per mahasiswa (peran `pengaju`), jadi jumlah
+ * mahasiswa diberi nilai awal 1 — admin dapat mengoreksinya di pratinjau.
+ */
+const PERAN_ARTEFAK: Record<
+  string,
+  { kodeRule: string; sebutan: string; parameter: (peranAsli: string | null) => Record<string, unknown> }
+> = {
+  pembimbing_1: {
+    kodeRule: "EDU203",
+    sebutan: "Pembimbing Utama",
+    parameter: () => ({ peran: "PembimbingUtama", jenisTugasAkhir: "TugasAkhir", jumlahMahasiswa: 1 }),
+  },
+  pembimbing_2: {
+    kodeRule: "EDU203",
+    sebutan: "Pembimbing Pendamping",
+    parameter: () => ({ peran: "PembimbingPendamping", jenisTugasAkhir: "TugasAkhir", jumlahMahasiswa: 1 }),
+  },
+  pembimbing: {
+    kodeRule: "EDU202",
+    sebutan: "Pembimbing",
+    parameter: () => ({ jumlahSemester: 1 }),
+  },
+  penguji: {
+    kodeRule: "EDU301",
+    sebutan: "Penguji",
+    parameter: (peranAsli) => ({
+      peranPenguji: /1|ketua/i.test(peranAsli ?? "") ? "Ketua" : "Anggota",
+      jumlahMahasiswa: 1,
+    }),
+  },
+  pembina: {
+    kodeRule: "EDU401",
+    sebutan: "Pembina",
+    parameter: () => ({ jumlahSemester: 1 }),
+  },
+};
+
+function petakanArtefak(hasil: any): TanpaTanda[] {
+  const dok = hasil?.dokumen ?? {};
+  const jenisDok = teks(dok.jenis_dokumen) ?? "Artefak dokumen";
+  const out: TanpaTanda[] = [];
+
+  for (const dosen of hasil?.per_dosen ?? []) {
+    for (const p of dosen?.penugasan ?? []) {
+      const peta = PERAN_ARTEFAK[String(p?.jenis ?? "")];
+      if (!peta) continue; // penanda tangan, bukan beban BKD
+
+      const peranAsli = teks(p?.peran_asli);
+      out.push({
+        namaDokumen: String(dosen?.nama ?? ""),
+        nip: teks(dosen?.nip),
+        kodeDosen: null,
+        kodeRule: peta.kodeRule,
+        judul: `${peranAsli ?? peta.sebutan} — ${jenisDok}`,
+        detail: {
+          no_sk: teks(dok.nomor_dokumen),
+          tgl_sk: teks(p?.tanggal),
+          kode_formulir: teks(dok.kode_formulir),
+          tahun_akademik: teks(dok.tahun_akademik),
+          peran_dokumen: teks(p?.jenis),
+          peran_asli: peranAsli,
+          tulisan_tangan: Boolean(p?.tulisan_tangan),
+          sumber: "Artefak dokumen (parser VLM universal)",
+        },
+        parameter: peta.parameter(peranAsli),
+        ringkas: `${peta.sebutan} · ${jenisDok}${peranAsli ? ` · tertulis "${peranAsli}"` : ""}`,
+      });
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 
 /** Terjemahkan respons parser menjadi daftar calon kegiatan + metadata surat. */
 export function petakanDokumen(jenis: JenisUnggahan, hasil: any): PemetaanDokumen {
@@ -368,6 +454,9 @@ export function petakanDokumen(jenis: JenisUnggahan, hasil: any): PemetaanDokume
       break;
     case "sk_pembinaan":
       penugasan = petakanPembinaan(hasil);
+      break;
+    case "artefak":
+      penugasan = petakanArtefak(hasil);
       break;
   }
 

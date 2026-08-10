@@ -73,8 +73,12 @@ export default function ModalUbahStatus({
               id={`status-${idKegiatan}`}
               name="capaian"
               defaultValue={capaian}
+              required
               className="rounded-md border border-line bg-white px-3 py-2 text-[11.5px] outline-none focus:border-primary"
             >
+              <option value="" disabled hidden>
+                Pilih status
+              </option>
               {opsi.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}

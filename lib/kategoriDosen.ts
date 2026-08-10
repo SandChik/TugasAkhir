@@ -34,26 +34,6 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
     kodeRules: ["EDU401", "EDU402"],
     sumberPddikti: true,
   },
-  "visiting-scientist": {
-    label: "Visiting Scientist",
-    subtitle: "Pendampingan mahasiswa di luar institusi sesuai kebijakan Kementerian",
-    kodeRules: ["EDU901"],
-  },
-  detasering: {
-    label: "Detasering",
-    subtitle: "Detasering dan pencangkokan di luar institusi",
-    kodeRules: ["EDU802"],
-  },
-  "orasi-ilmiah": {
-    label: "Orasi Ilmiah",
-    subtitle: "Menyampaikan orasi ilmiah",
-    kodeRules: ["EDU601"],
-  },
-  "pembimbing-dosen": {
-    label: "Pembimbing Dosen",
-    subtitle: "Membimbing dosen yang lebih rendah jabatannya",
-    kodeRules: ["EDU801"],
-  },
   "tugas-tambahan": {
     label: "Tugas Tambahan",
     subtitle: "Jabatan pimpinan PT, pendidikan formal, dan pengembangan diri",

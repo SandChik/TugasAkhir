@@ -57,7 +57,6 @@ export async function sinkronPddikti() {
           sks_dihitung_x100: t.sks,
           status_perhitungan: "berhasil",
           status: "diajukan",
-          status_capaian: "berlanjut",
           sumber_data: "pddikti",
           diklaim: false,
         } as any,

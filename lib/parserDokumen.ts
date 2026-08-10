@@ -16,7 +16,8 @@ export type JenisUnggahan =
   | "st_pengajaran"
   | "st_bimbingan"
   | "st_pengujian"
-  | "sk_pembinaan";
+  | "sk_pembinaan"
+  | "artefak";
 
 export type SpekJenis = {
   key: JenisUnggahan;
@@ -75,6 +76,20 @@ export const JENIS_UNGGAHAN: SpekJenis[] = [
     kodeRule: "EDU401",
     petunjukNama: /pembina|ormawa|kemahasiswaan/i,
     petunjukTeks: "pembina, ormawa, kemahasiswaan",
+  },
+  // Sengaja paling akhir: bila nama berkas juga cocok dengan jenis spesifik di
+  // atas, deteksiJenis memilih yang lebih dulu — parser universal jadi jaring
+  // pengaman, bukan pengganti parser khusus.
+  {
+    key: "artefak",
+    label: "Artefak Dokumen Umum",
+    dokumen:
+      "Dokumen dosen lain-lain (formulir, berita acara, lembar persetujuan) — peran dosen dikenali dari isi memakai skema umum (parser VLM universal)",
+    endpoint: "/parse/artefak",
+    mesin: "vlm",
+    kodeRule: "EDU202/203/301/401 (menurut peran di dokumen)",
+    petunjukNama: /artefak|berita[_ -]?acara|persetujuan|formulir/i,
+    petunjukTeks: "artefak, berita acara, persetujuan, formulir",
   },
 ];
 

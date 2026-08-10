@@ -217,7 +217,7 @@ function AksiCell({ lkd, k, editable }: { lkd: any; k: any; editable: boolean })
         idKegiatan={k.id_kegiatan}
         idLkd={lkd.id_lkd}
         judul={k.judul}
-        capaian={k.status_capaian ?? "berlanjut"}
+        capaian={k.status_capaian ?? ""}
         opsi={Object.entries(CAPAIAN_LABEL)}
       />
       <form action={batalKlaim}>

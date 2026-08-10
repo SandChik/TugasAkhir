@@ -52,7 +52,6 @@ enum status_kegiatan {
 // Status capaian kegiatan (modal "Ubah Status" di mockup)
 enum status_capaian {
   selesai
-  berlanjut
   gagal
   beban_lebih
 }
@@ -86,6 +85,7 @@ enum jenis_unggahan {
   st_bimbingan  // ST Pembimbing PKL            (parser offline/pdfplumber)
   st_pengujian  // ST Penguji Tugas Akhir       (parser offline/pdfplumber)
   sk_pembinaan  // SK Pembina Ormawa (pindai)   (parser VLM)
+  artefak       // Artefak dokumen umum         (parser VLM universal)
 }
 
 enum status_unggahan {
@@ -321,6 +321,10 @@ model dokumen_kegiatan {
   file_url       String?  @db.Text
   keterangan     String?  @db.Text
   tanggal_upload DateTime @default(now()) @db.Timestamp(6)
+
+  // Hasil verifikasi nama via parser VLM universal (anti-kecurangan bukti):
+  // { status, nama_akun, nama_cocok?, nama_terdeteksi[], jenis_dokumen?, pesan?, diperiksa_pada }
+  verifikasi Json?
 
   created_at DateTime  @default(now()) @db.Timestamp(6)
   updated_at DateTime? @updatedAt @db.Timestamp(6)

@@ -29,9 +29,10 @@
  *   - NIDN dan NIP (selain 1 baris di atas)
  *   - jabatan fungsional
  *   - program studi per dosen; dipakai unit jurusan sesuai dokumen
- *   - email institusi: dokumen tidak memuatnya. Seed memakai alamat sintetis
- *     berdomain `.test` (TLD khusus pengujian, RFC 2606) supaya tidak pernah
- *     tertukar dengan alamat @polban.ac.id yang asli.
+ *   - email institusi: dokumen tidak memuatnya. Email disintesis dari DUA KATA
+ *     PERTAMA nama (gelar dibuang), mis. "Ade Chandra Nugraha, S.Si., M.T."
+ *     -> ade.chandra@polban.ac.id. Bukan alamat resmi — sekadar format kredensial
+ *     dev yang mudah diingat.
  *
  * Isi data di atas lewat menu Manajemen Pengguna bila nanti tersedia.
  */
@@ -45,6 +46,22 @@ const MNEMONIC =
   process.env.WALLET_MNEMONIC || "test test test test test test test test test test test junk";
 const PASSWORD_DEV = "dosen123";
 const UNIT = "Teknik Komputer dan Informatika";
+const DOMAIN_EMAIL = "polban.ac.id";
+
+/**
+ * Email dev dari dua kata pertama nama; gelar depan (Dr., Drs., Dra., dst.)
+ * dan gelar belakang (setelah koma) dibuang.
+ * "Ade Chandra Nugraha, S.Si., M.T." -> "ade.chandra@polban.ac.id"
+ * "Suprihanto, BSEE., M.Sc."         -> "suprihanto@polban.ac.id"
+ */
+function emailDariNama(nama) {
+  const kata = nama
+    .split(",")[0]
+    .trim()
+    .split(/\s+/)
+    .filter((k) => !/^[A-Za-z]+\.$/.test(k)); // buang gelar depan berformat singkatan
+  return `${kata.slice(0, 2).join(".").toLowerCase()}@${DOMAIN_EMAIL}`;
+}
 
 function deriveAddress(index) {
   const wallet = HDNodeWallet.fromMnemonic(Mnemonic.fromPhrase(MNEMONIC), `m/44'/60'/0'/0/${index}`);
@@ -56,49 +73,54 @@ function deriveAddress(index) {
  * `perlu_verifikasi` menandai baris yang berasal dari parser VLM.
  */
 const DOSEN_JTK = [
-  { nama: "Ade Chandra Nugraha, S.Si., M.T.", kode_dosen: "KO001N", email: "ko001n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Ade Hodijah, S.Kom., M.T.", kode_dosen: "KO060N", email: "ko060n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Akhmad Bakhrun, S.Kom., M.T.", kode_dosen: null, email: "akhmad.bakhrun@jtk.test", sumber: "ST PKL + ST Penguji" },
-  { nama: "Ani Rahmani, S.Si., M.T.", kode_dosen: "KO002N", email: "ko002n@jtk.test", sumber: "ST Pengajaran" },
-  { nama: "Aprianti Nanda Sari, S.T., M.Kom.", kode_dosen: "KO065N", email: "ko065n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Ardhian Ekawijana, S.T., M.T.", kode_dosen: null, email: "ardhian.ekawijana@jtk.test", sumber: "ST PKL + ST Penguji" },
-  { nama: "Asri Maspupah, S.ST., M.T.", kode_dosen: "KO067N", email: "ko067n@jtk.test", sumber: "ST Pengajaran + ST PKL" },
-  { nama: "Bambang Wisnuadhi, S.Si., M.T.", kode_dosen: "KO003N", email: "ko003n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Beri Noviansyah, S.Kom., M.T.", kode_dosen: null, email: "beri.noviansyah@jtk.test", sumber: "ST PKL + ST Penguji" },
-  { nama: "Cahaya Juniarti, M.Pd.", kode_dosen: "KO082N", email: "ko082n@jtk.test", sumber: "ST Pengajaran" },
-  { nama: "Cholid Fauzi, S.T., M.T.", kode_dosen: null, email: "cholid.fauzi@jtk.test", sumber: "ST PKL" },
-  { nama: "Djoko Cahyo Utomo Lieharyani, S.Kom., M.MT.", kode_dosen: "KO070N", email: "ko070n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Drs. Eddy Bambang Soewono, M.Kom.", kode_dosen: "KO016N", email: "ko016n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Fitri Diani, S.Si., S.T., M.T.", kode_dosen: "KO057N", email: "ko057n@jtk.test", sumber: "ST Pengajaran + ST PKL" },
-  { nama: "Hashri Hayati, S.T., M.T.", kode_dosen: "KO071N", email: "ko071n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Ade Chandra Nugraha, S.Si., M.T.", kode_dosen: "KO001N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Ade Hodijah, S.Kom., M.T.", kode_dosen: "KO060N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Akhmad Bakhrun, S.Kom., M.T.", kode_dosen: null, sumber: "ST PKL + ST Penguji" },
+  { nama: "Ani Rahmani, S.Si., M.T.", kode_dosen: "KO002N", sumber: "ST Pengajaran" },
+  { nama: "Aprianti Nanda Sari, S.T., M.Kom.", kode_dosen: "KO065N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Ardhian Ekawijana, S.T., M.T.", kode_dosen: null, sumber: "ST PKL + ST Penguji" },
+  { nama: "Asri Maspupah, S.ST., M.T.", kode_dosen: "KO067N", sumber: "ST Pengajaran + ST PKL" },
+  { nama: "Bambang Wisnuadhi, S.Si., M.T.", kode_dosen: "KO003N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Beri Noviansyah, S.Kom., M.T.", kode_dosen: null, sumber: "ST PKL + ST Penguji" },
+  { nama: "Cahaya Juniarti, M.Pd.", kode_dosen: "KO082N", sumber: "ST Pengajaran" },
+  { nama: "Cholid Fauzi, S.T., M.T.", kode_dosen: null, sumber: "ST PKL" },
+  { nama: "Djoko Cahyo Utomo Lieharyani, S.Kom., M.MT.", kode_dosen: "KO070N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Drs. Eddy Bambang Soewono, M.Kom.", kode_dosen: "KO016N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Fitri Diani, S.Si., S.T., M.T.", kode_dosen: "KO057N", sumber: "ST Pengajaran + ST PKL" },
+  { nama: "Hashri Hayati, S.T., M.T.", kode_dosen: "KO071N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
   // ejaan gelar dibiarkan apa adanya seperti terbaca di SK — belum terverifikasi
-  { nama: "Ida Suhartini, MMSI", kode_dosen: null, email: "ida.suhartini@jtk.test", sumber: "SK Pembina Ormawa (parser VLM)", perlu_verifikasi: true },
-  { nama: "Irwan Setiawan, S.Si., M.T.", kode_dosen: "KO045N", email: "ko045n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Dr. Iwan Awaludin, S.T., M.T.", kode_dosen: "KO023N", email: "ko023n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Joe Lian Min, B.Eng., M.Eng.", kode_dosen: "KO007N", email: "ko007n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Jonner Hutahaean, BSET., M.Info.Sys.", kode_dosen: "KO018N", email: "ko018n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Muhammad Riza Alifi, S.T., M.T.", kode_dosen: "KO073N", email: "ko073n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Muhammad Rizqi Sholahuddin, S.Si., M.T.", kode_dosen: "KO074N", email: "ko074n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Dr. Dra. Nurjannah Syakrani, M.T.", kode_dosen: "KO008N", email: "ko008n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Dr. Priyanto Hidayatullah, S.T., M.Sc.", kode_dosen: "KO048N", email: "ko048n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Rahil Jumiyani, S.ST., M.Sc.", kode_dosen: "KO062N", email: "ko062n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Santi Sundari, S.Si., M.T.", kode_dosen: "KO009N", email: "ko009n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Setiadi Rachmat, B.Eng., M.Eng.", kode_dosen: "KO021N", email: "ko021n@jtk.test", sumber: "ST Pengajaran" },
-  { nama: "Siti Dwi Setiarini, S.Si., M.T.", kode_dosen: "KO075N", email: "ko075n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Sofy Fitriani, S.ST., M.Kom.", kode_dosen: "KO077N", email: "ko077n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Sri Ratna Wulan, S.Pd., M.T.", kode_dosen: "KO076N", email: "ko076n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Suprihanto, BSEE., M.Sc.", kode_dosen: "KO022N", email: "ko022n@jtk.test", sumber: "ST Pengajaran + ST Penguji" },
-  { nama: "Tarekh Febriana Putra, S.Pd., M.Pd.", kode_dosen: "KO081N", email: "ko081n@jtk.test", sumber: "ST Pengajaran" },
-  { nama: "Dr. Transmissia Semiawan, BSCS., M.IT.", kode_dosen: "KO019N", email: "ko019n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Trisna Gelar Abdillah, S.T., M.Kom.", kode_dosen: "KO078N", email: "ko078n@jtk.test", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
-  { nama: "Urip Teguh Setijohatmo, BSCS., M.Kom.", kode_dosen: "KO012N", email: "ko012n@jtk.test", sumber: "ST Pengajaran" },
-  { nama: "Wendi Wirasta, S.T., M.T.", kode_dosen: "KO079N", email: "ko079n@jtk.test", sumber: "ST Pengajaran + ST PKL" },
+  { nama: "Ida Suhartini, MMSI", kode_dosen: null, sumber: "SK Pembina Ormawa (parser VLM)", perlu_verifikasi: true },
+  { nama: "Irwan Setiawan, S.Si., M.T.", kode_dosen: "KO045N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Dr. Iwan Awaludin, S.T., M.T.", kode_dosen: "KO023N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Joe Lian Min, B.Eng., M.Eng.", kode_dosen: "KO007N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Jonner Hutahaean, BSET., M.Info.Sys.", kode_dosen: "KO018N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Muhammad Riza Alifi, S.T., M.T.", kode_dosen: "KO073N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Muhammad Rizqi Sholahuddin, S.Si., M.T.", kode_dosen: "KO074N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Dr. Dra. Nurjannah Syakrani, M.T.", kode_dosen: "KO008N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Dr. Priyanto Hidayatullah, S.T., M.Sc.", kode_dosen: "KO048N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Rahil Jumiyani, S.ST., M.Sc.", kode_dosen: "KO062N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Santi Sundari, S.Si., M.T.", kode_dosen: "KO009N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Setiadi Rachmat, B.Eng., M.Eng.", kode_dosen: "KO021N", sumber: "ST Pengajaran" },
+  { nama: "Siti Dwi Setiarini, S.Si., M.T.", kode_dosen: "KO075N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Sofy Fitriani, S.ST., M.Kom.", kode_dosen: "KO077N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Sri Ratna Wulan, S.Pd., M.T.", kode_dosen: "KO076N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Suprihanto, BSEE., M.Sc.", kode_dosen: "KO022N", sumber: "ST Pengajaran + ST Penguji" },
+  { nama: "Tarekh Febriana Putra, S.Pd., M.Pd.", kode_dosen: "KO081N", sumber: "ST Pengajaran" },
+  { nama: "Dr. Transmissia Semiawan, BSCS., M.IT.", kode_dosen: "KO019N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Trisna Gelar Abdillah, S.T., M.Kom.", kode_dosen: "KO078N", sumber: "ST Pengajaran + ST PKL + ST Penguji" },
+  { nama: "Urip Teguh Setijohatmo, BSCS., M.Kom.", kode_dosen: "KO012N", sumber: "ST Pengajaran" },
+  { nama: "Wendi Wirasta, S.T., M.T.", kode_dosen: "KO079N", sumber: "ST Pengajaran + ST PKL" },
   // NIP satu-satunya yang diseed: terbaca sama di lampiran 1 & 2 SK (status "ok").
-  { nama: "Yudi Widhiyasana, S.Si., M.T.", kode_dosen: "KO013N", email: "ko013n@jtk.test", nip: "197407182001121002", sumber: "ST Pengajaran + ST PKL + ST Penguji + SK Pembina (NIP)" },
-  { nama: "Zulkifli Arsyad, S.Kom., M.T.", kode_dosen: "KO061N", email: "ko061n@jtk.test", sumber: "ST Pengajaran + ST PKL" },
+  { nama: "Yudi Widhiyasana, S.Si., M.T.", kode_dosen: "KO013N", nip: "197407182001121002", sumber: "ST Pengajaran + ST PKL + ST Penguji + SK Pembina (NIP)" },
+  { nama: "Zulkifli Arsyad, S.Kom., M.T.", kode_dosen: "KO061N", sumber: "ST Pengajaran + ST PKL" },
 ];
 
 async function main() {
+  const semuaEmail = DOSEN_JTK.map((d) => emailDariNama(d.nama));
+  const ganda = semuaEmail.filter((e, i) => semuaEmail.indexOf(e) !== i);
+  if (ganda.length)
+    throw new Error(`Email hasil sintesis ganda, perbaiki dulu: ${[...new Set(ganda)].join(", ")}`);
+
   const hash = bcrypt.hashSync(PASSWORD_DEV, 10);
 
   // Wallet custodial: lanjutkan index dari yang sudah terpakai di DB.
@@ -113,7 +135,16 @@ async function main() {
   const kodeDiseed = new Map(); // kode_dosen -> email pemilik sah
 
   for (const d of DOSEN_JTK) {
-    const lama = await prisma.pengguna.findUnique({ where: { email: d.email } });
+    const email = emailDariNama(d.nama);
+
+    // Akun lama mungkin masih memakai email format lama (kode dosen @jtk.test):
+    // cocokkan juga lewat kode dosen atau nama, lalu migrasikan emailnya.
+    const lama =
+      (await prisma.pengguna.findUnique({ where: { email } })) ??
+      (d.kode_dosen
+        ? await prisma.pengguna.findFirst({ where: { kode_dosen: d.kode_dosen } })
+        : null) ??
+      (await prisma.pengguna.findFirst({ where: { nama: d.nama } }));
 
     // wallet hanya diberikan sekali; jangan geser index akun yang sudah ada
     const wallet =
@@ -123,6 +154,7 @@ async function main() {
     if (lama?.wallet_index == null) indexBerikut++;
 
     const data = {
+      email,
       nama: d.nama,
       peran: "dosen",
       aktif: true,
@@ -134,13 +166,14 @@ async function main() {
       ...wallet,
     };
 
-    await prisma.pengguna.upsert({
-      where: { email: d.email },
-      update: data,
-      create: { email: d.email, ...data },
-    });
+    if (lama) {
+      if (lama.email !== email) console.log(`  email dimigrasikan: ${lama.email} -> ${email}`);
+      await prisma.pengguna.update({ where: { id_pengguna: lama.id_pengguna }, data });
+    } else {
+      await prisma.pengguna.create({ data });
+    }
 
-    if (d.kode_dosen) kodeDiseed.set(d.kode_dosen, d.email);
+    if (d.kode_dosen) kodeDiseed.set(d.kode_dosen, email);
     lama ? diperbarui++ : dibuat++;
   }
 
@@ -173,7 +206,9 @@ async function main() {
       `${kodeDibersihkan} kode dosen bentrok dibersihkan.`
   );
   console.log(`Total akun dosen di DB: ${total} (berkode dosen: ${berkode}).`);
-  console.log(`Login dev: <email>@jtk.test / ${PASSWORD_DEV} (ganti sebelum dipakai selain dev).`);
+  console.log(
+    `Login dev: <nama.depan>@${DOMAIN_EMAIL} (mis. ${emailDariNama(DOSEN_JTK[0].nama)}) / ${PASSWORD_DEV} (ganti sebelum dipakai selain dev).`
+  );
   if (perluVerifikasi.length) {
     console.log(`Perlu verifikasi manual (sumber parser VLM): ${perluVerifikasi.join("; ")}`);
   }

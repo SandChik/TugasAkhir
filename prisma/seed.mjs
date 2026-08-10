@@ -310,7 +310,6 @@ async function main() {
         sks_dihitung_x100: it.sks,
         status_perhitungan: "berhasil",
         status: "diajukan",
-        status_capaian: "berlanjut",
         sumber_data: "pddikti",
         diklaim: false,
       },

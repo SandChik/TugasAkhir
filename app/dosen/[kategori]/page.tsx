@@ -9,7 +9,7 @@ import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
-import { IconEye, IconPencil, IconTrash } from "../../../components/Icons";
+import { IconDoc, IconEye, IconPencil, IconTrash } from "../../../components/Icons";
 import { hapusKegiatan } from "../_shared/kegiatanActions";
 
 /** Menu kategori dosen: kolom mengikuti frame Figma masing-masing + aksi lihat/edit/hapus. */
@@ -110,6 +110,13 @@ export default async function KategoriPage({ params }: { params: { kategori: str
                         title="Lihat detail"
                       >
                         <IconEye size={13} />
+                      </Link>
+                      <Link
+                        href={`/dosen/${params.kategori}/${k.id_kegiatan}/bukti`}
+                        className="rounded-md bg-primary p-2 text-white"
+                        title="Bukti kegiatan"
+                      >
+                        <IconDoc size={13} />
                       </Link>
                       {manual && bisaInput && (
                         <>
