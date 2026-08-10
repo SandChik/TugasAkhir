@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import PasswordInput from "../../components/PasswordInput";
 
 /** Halaman login sesuai mockup Figma "Login - Sistem Penilaian BKD" (UID-01). */
 export default function LoginPage() {
@@ -89,13 +90,13 @@ export default function LoginPage() {
             />
 
             <label className="mt-5 block text-xs font-medium text-cell">Password</label>
-            <input
-              type="password"
+            <PasswordInput
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••"
-              className="mt-1.5 w-full rounded-lg border border-line px-4 py-3 text-sm outline-none placeholder:text-crumb focus:border-primary"
+              wrapperClassName="mt-1.5"
+              className="w-full rounded-lg border border-line px-4 py-3 text-sm outline-none placeholder:text-crumb focus:border-primary"
             />
 
             <div className="mt-3 text-right">
