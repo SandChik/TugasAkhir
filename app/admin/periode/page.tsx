@@ -5,7 +5,6 @@ import { faseAktif, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import StatusChip from "../../../components/StatusChip";
-import InfoBox from "../../../components/InfoBox";
 import { createPeriode, aktifkanPeriode, nonaktifkanPeriode, setFaseOverride } from "./actions";
 
 const fmt = (d: Date | null) =>
@@ -27,13 +26,8 @@ export default async function PeriodePage() {
       title="Manajemen Periode BKD"
       subtitle="Kelola periode semester dan fase (pengisian, penilaian, perbaikan)"
     >
-      <InfoBox>
-        <b>Info:</b> Hanya satu periode aktif pada satu waktu. Fase aktif dihitung dari rentang
-        tanggal, atau dapat dipaksa lewat override manual. Tampilan dosen &amp; asesor mengikuti fase.
-      </InfoBox>
-
       {/* Form tambah periode + fase */}
-      <form action={createPeriode} className="mt-4 rounded-[10px] border border-line p-4">
+      <form action={createPeriode} className="rounded-[10px] border border-line p-4">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <div>
             <label className="text-[11px] font-medium text-cell">Tahun Ajaran</label>

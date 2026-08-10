@@ -32,13 +32,7 @@ export default async function PenggunaPage() {
       {/* Form tambah pengguna — client component: field mengikuti peran terpilih */}
       <FormTambahPengguna />
 
-      <p className="mt-3 text-[11px] text-muted">
-        <b>{berkode}</b> dari {pengajar.length} akun dosen &amp; asesor sudah memiliki <b>kode dosen</b> (kolom
-        &ldquo;Kd Dosen&rdquo; pada surat tugas). Baris ST Pengajaran milik dosen tanpa kode tidak
-        dapat dicocokkan otomatis saat unggah SK &amp; ST.
-      </p>
-
-      <div className="mt-2">
+      <div className="mt-3">
         <DataTable
           columns={[
             { label: "No", width: "50px" },

@@ -13,6 +13,7 @@ import { labelParameter, tampilNilai } from "../../../../lib/tampilNilai";
 import { LABEL_JENIS, spekJenis, type JenisUnggahan } from "../../../../lib/parserDokumen";
 import { gabungKoreksi, petakanDokumen } from "../../../../lib/pemetaanPenugasan";
 import { buatPencocokDosen } from "../../../../lib/namaDosen";
+import { fieldFormulir } from "../../../../lib/parameterKegiatan";
 import {
   terapkanUnggahan,
   simpanKoreksiBaris,
@@ -357,14 +358,12 @@ export default async function PratinjauUnggahanPage({
         <StatTile
           label="Semua baris"
           nilai={penugasan.length}
-          catatan="hasil pemetaan dokumen"
           href={url({ f: undefined, hal: undefined, edit: undefined, sorot: undefined })}
           aktif={!filter}
         />
         <StatTile
           label="Siap diterapkan"
           nilai={jumlah.siap}
-          catatan="akun dosen sudah cocok"
           nada="siap"
           href={url({ f: "siap", hal: undefined, edit: undefined, sorot: undefined })}
           aktif={filter === "siap"}
@@ -372,7 +371,6 @@ export default async function PratinjauUnggahanPage({
         <StatTile
           label="Perlu perhatian"
           nilai={jumlah.masalah}
-          catatan="tanpa akun / ambigu"
           nada="masalah"
           href={url({ f: "masalah", hal: undefined, edit: undefined, sorot: undefined })}
           aktif={filter === "masalah"}
@@ -380,7 +378,6 @@ export default async function PratinjauUnggahanPage({
         <StatTile
           label="Dikoreksi admin"
           nilai={jumlah.dikoreksi}
-          catatan="berbeda dari hasil parser"
           nada="koreksi"
           href={url({ f: "dikoreksi", hal: undefined, edit: undefined, sorot: undefined })}
           aktif={filter === "dikoreksi"}
@@ -388,7 +385,6 @@ export default async function PratinjauUnggahanPage({
         <StatTile
           label="Ditandai lewati"
           nilai={jumlah.dilewati}
-          catatan="tidak akan diterapkan"
           nada="redup"
           href={url({ f: "dilewati", hal: undefined, edit: undefined, sorot: undefined })}
           aktif={filter === "dilewati"}
@@ -451,6 +447,8 @@ export default async function PratinjauUnggahanPage({
           const ref: any = refPerKode.get(p.kodeRule);
           const fields: any[] = ref?.skema_parameter?.fields ?? [];
           const skema = new Map<string, any>(fields.map((f) => [f.name, f]));
+          // jumlahSemester dikunci periode (parser sudah mengisi 1) — tak dikoreksi.
+          const fieldsIsian = fieldFormulir(fields);
           const sedangDiubah = barisDiubah === i;
           const disorot = barisSorot === i;
 
@@ -601,13 +599,13 @@ export default async function PratinjauUnggahanPage({
                       </div>
                     </div>
 
-                    {fields.length > 0 && (
+                    {fieldsIsian.length > 0 && (
                       <div className="mt-3">
                         <p className={labelKecil}>
                           Parameter perhitungan — SKS dihitung ulang saat Terapkan
                         </p>
                         <div className="mt-1.5 grid grid-cols-2 gap-3 md:grid-cols-3">
-                          {fields.map((f) => {
+                          {fieldsIsian.map((f) => {
                             const nilai = p.parameter[f.name];
                             const asli = p.parameterAsli[f.name];
                             const berubah = String(nilai) !== String(asli);

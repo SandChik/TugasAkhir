@@ -8,6 +8,7 @@ import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
 import { faseAktif, bolehDosenInput } from "../../../lib/fase";
 import { DETAIL_FIELDS } from "../../../lib/kolomKategori";
+import { bacaParameterForm } from "../../../lib/parameterKegiatan";
 
 /** Kumpulkan field detail (d_*) sesuai DETAIL_FIELDS kategori → objek detail_kegiatan. */
 function ambilDetail(slug: string, formData: FormData): Record<string, string | null> {
@@ -68,14 +69,7 @@ export async function tambahKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("LKD terkunci")}`);
 
   const fields: any[] = (referensi!.skema_parameter as any)?.fields ?? [];
-  const parameter: Record<string, any> = {};
-  const rawValues: Record<string, string> = {};
-  for (const f of fields) {
-    const raw = String(formData.get(`p_${f.name}`) ?? "");
-    rawValues[f.name] = raw;
-    parameter[f.name] =
-      f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
-  }
+  const { parameter, rawValues } = bacaParameterForm(fields, formData);
 
   let sksX100: number | null = null;
   let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
@@ -131,7 +125,7 @@ export async function ubahKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
   if ((kegiatan as any).sumber_data !== "manual")
     redirect(
-      `/dosen/${slug}?err=${encodeURIComponent("Data hasil tarikan PDDikti / dokumen SK-ST tidak dapat diedit")}`
+      `/dosen/${slug}?err=${encodeURIComponent("Kegiatan penugasan dari admin / dokumen SK-ST tidak dapat diedit")}`
     );
   if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian - tidak dapat mengubah kegiatan")}`);
@@ -142,14 +136,7 @@ export async function ubahKegiatan(formData: FormData) {
 
   const referensi = kegiatan!.referensi_kegiatan;
   const fields: any[] = (referensi.skema_parameter as any)?.fields ?? [];
-  const parameter: Record<string, any> = {};
-  const rawValues: Record<string, string> = {};
-  for (const f of fields) {
-    const raw = String(formData.get(`p_${f.name}`) ?? "");
-    rawValues[f.name] = raw;
-    parameter[f.name] =
-      f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
-  }
+  const { parameter, rawValues } = bacaParameterForm(fields, formData);
 
   let sksX100: number | null = null;
   let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
@@ -199,7 +186,7 @@ export async function hapusKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
   if ((kegiatan as any).sumber_data !== "manual")
     redirect(
-      `/dosen/${slug}?err=${encodeURIComponent("Data hasil tarikan PDDikti / dokumen SK-ST tidak dapat dihapus")}`
+      `/dosen/${slug}?err=${encodeURIComponent("Kegiatan penugasan dari admin / dokumen SK-ST tidak dapat dihapus")}`
     );
   if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian")}`);

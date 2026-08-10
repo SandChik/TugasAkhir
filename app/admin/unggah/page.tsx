@@ -356,14 +356,12 @@ export default async function UnggahPage({
         <StatTile
           label="Semua unggahan"
           nilai={total}
-          catatan="seluruh dokumen SK & ST"
           href={tautan({ status: "" })}
           aktif={!status}
         />
         <StatTile
           label="Perlu diperiksa"
           nilai={hitung("terparse")}
-          catatan="menunggu pratinjau & terapkan"
           nada="koreksi"
           href={tautan({ status: "terparse" })}
           aktif={status === "terparse"}
@@ -371,7 +369,6 @@ export default async function UnggahPage({
         <StatTile
           label="Sudah diterapkan"
           nilai={hitung("diterapkan")}
-          catatan="kegiatan sudah dibuat"
           nada="siap"
           href={tautan({ status: "diterapkan" })}
           aktif={status === "diterapkan"}
@@ -379,7 +376,6 @@ export default async function UnggahPage({
         <StatTile
           label="Ekstraksi gagal"
           nilai={hitung("gagal")}
-          catatan="perlu diunggah ulang"
           nada="masalah"
           href={tautan({ status: "gagal" })}
           aktif={status === "gagal"}

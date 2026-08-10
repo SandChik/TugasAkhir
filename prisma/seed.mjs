@@ -276,9 +276,9 @@ async function main() {
     });
   }
 
-  // R7: portofolio hasil "sinkron PDDikti" - kegiatan BELUM diklaim ke LKD.
-  // Ini bukan teks dummy: merepresentasikan data feeder yang menunggu diklaim dosen.
-  console.log("Seeding portofolio PDDikti (belum diklaim) untuk Dosen Satu...");
+  // R7: portofolio kegiatan penugasan yang dicatat admin - BELUM diklaim ke LKD.
+  // Contoh isi menu "Input Kegiatan Dosen": menunggu ditarik dosen ke laporan.
+  console.log("Seeding portofolio kegiatan penugasan (belum diklaim) untuk Dosen Satu...");
   const refP = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU101" } });
   const refBimb = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU203" } });
   const refUji = await prisma.referensi_kegiatan.findUnique({ where: { kode_rule: "EDU301" } });
@@ -311,13 +311,13 @@ async function main() {
         status_perhitungan: "berhasil",
         status: "diajukan",
         status_capaian: "berlanjut",
-        sumber_data: "pddikti",
+        sumber_data: "admin",
         diklaim: false,
       },
     });
   }
 
-  console.log("Seed selesai (master + portofolio PDDikti belum diklaim).");
+  console.log("Seed selesai (master + portofolio penugasan belum diklaim).");
 }
 
 main()

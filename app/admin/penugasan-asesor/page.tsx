@@ -125,14 +125,12 @@ export default async function PenugasanAsesorPage({
             <StatTile
               label="LKD periode ini"
               nilai={total}
-              catatan="dokumen laporan dosen"
               href={url({ f: "" })}
               aktif={f === "semua"}
             />
             <StatTile
               label="Belum lengkap"
               nilai={belum}
-              catatan="asesor kurang dari dua"
               nada="masalah"
               href={url({ f: "belum" })}
               aktif={f === "belum"}
@@ -140,7 +138,6 @@ export default async function PenugasanAsesorPage({
             <StatTile
               label="Sudah lengkap"
               nilai={lengkap}
-              catatan="dua asesor ditetapkan"
               nada="siap"
               href={url({ f: "lengkap" })}
               aktif={f === "lengkap"}
@@ -148,7 +145,6 @@ export default async function PenugasanAsesorPage({
             <StatTile
               label="Penilaian berjalan"
               nilai={dinilai}
-              catatan="tidak dapat diganti lagi"
               nada="koreksi"
               href={url({ f: "dinilai" })}
               aktif={f === "dinilai"}
@@ -163,9 +159,6 @@ export default async function PenugasanAsesorPage({
             <input type="hidden" name="kembali" value={kembali} />
             <div className="md:col-span-3">
               <h2 className="text-[12px] font-semibold text-navy">Isi slot yang masih kosong</h2>
-              <p className="mt-0.5 text-[10.5px] text-muted">
-                Hanya mengisi slot kosong — penugasan yang sudah ada tidak akan tertimpa.
-              </p>
             </div>
             <div>
               <label className="text-[11px] font-medium text-cell">Asesor ke-1</label>

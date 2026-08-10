@@ -22,7 +22,7 @@ export default async function EditKegiatanPage({
     include: { lkd: true, referensi_kegiatan: true },
   });
   if (!kegiatan || kegiatan.lkd.id_pengguna !== session!.user.id) notFound();
-  // Data PDDikti tidak dapat diedit manual
+  // Kegiatan penugasan (input admin / SK-ST) tidak dapat diedit dosen
   if ((kegiatan as any).sumber_data !== "manual") redirect(`/dosen/${params.kategori}`);
 
   return (
