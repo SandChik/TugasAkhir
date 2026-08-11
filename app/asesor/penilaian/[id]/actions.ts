@@ -7,6 +7,7 @@ import { authOptions } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 import { faseAktif, bolehAsesorNilai } from "../../../../lib/fase";
 import { hashPenilaian, mintSks } from "../../../../lib/blockchain";
+import { bisaDiverifikasi, verifikasiNamaBukti } from "../../../../lib/verifikasiBukti";
 
 function flash(id: string, msg: { ok?: string; err?: string }) {
   const q = new URLSearchParams();
@@ -22,6 +23,129 @@ async function penugasanMilikAsesor(idPenugasan: string, idAsesor: string) {
   });
   if (!pn || pn.id_asesor !== idAsesor) return null;
   return pn;
+}
+
+/**
+ * Periksa (ulang) keaslian satu dokumen bukti dari halaman bukti asesor:
+ * parser VLM universal membaca nama-nama di dokumen, lalu dibandingkan dengan
+ * nama dosen pemilik laporan. Untuk dokumen yang diunggah sebelum fitur
+ * auto-verifikasi ada, atau saat parser sempat mati.
+ */
+export async function periksaBukti(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const idPenugasan = String(formData.get("id_penugasan") ?? "");
+  const idDokumen = String(formData.get("id_dokumen") ?? "");
+  const idKegiatan = String(formData.get("id_kegiatan") ?? "");
+  const kembali = (msg: { ok?: string; err?: string }) => {
+    const q = new URLSearchParams();
+    if (msg.ok) q.set("ok", msg.ok);
+    if (msg.err) q.set("err", msg.err);
+    return `/asesor/penilaian/${idPenugasan}/bukti/${idKegiatan}?${q.toString()}`;
+  };
+
+  const pn = await penugasanMilikAsesor(idPenugasan, session.user.id);
+  if (!pn) redirect(flash(idPenugasan, { err: "Penugasan tidak ditemukan" }));
+
+  const dok = await prisma.dokumen_kegiatan.findUnique({
+    where: { id_dokumen: idDokumen },
+    include: {
+      kegiatan: {
+        include: { lkd: { include: { pengguna: true } }, referensi_kegiatan: true },
+      },
+    },
+  });
+  if (!dok || dok.kegiatan.id_lkd !== pn!.id_lkd)
+    redirect(kembali({ err: "Dokumen tidak ditemukan pada laporan ini" }));
+  if (!bisaDiverifikasi(dok!))
+    redirect(
+      kembali({ err: "Dokumen ini tidak dapat diperiksa (bukan PDF unggahan lokal, atau layanan parser belum aktif)" })
+    );
+
+  const hasil = await verifikasiNamaBukti(
+    dok!.file_url!,
+    dok!.nama_file,
+    dok!.kegiatan.lkd.pengguna.nama,
+    {
+      kodeRule: (dok!.kegiatan as any).referensi_kegiatan?.kode_rule,
+      parameter: dok!.kegiatan.parameter,
+    }
+  );
+  await prisma.dokumen_kegiatan.update({
+    where: { id_dokumen: idDokumen },
+    data: { verifikasi: hasil } as any,
+  });
+
+  revalidatePath(`/asesor/penilaian/${idPenugasan}/bukti/${idKegiatan}`);
+  const pesan =
+    hasil.status === "cocok"
+      ? `Nama dosen ditemukan pada dokumen ("${hasil.nama_cocok}")`
+      : hasil.status === "peran_tidak_sesuai"
+        ? `Peran tidak sesuai: kegiatan diklaim ${hasil.peran_diharapkan}, dokumen menulis "${hasil.peran_terdeteksi}"`
+        : hasil.status === "tidak_cocok"
+          ? "Nama dosen TIDAK ditemukan pada dokumen — periksa keasliannya"
+          : hasil.status === "tanpa_nama"
+            ? "Parser tidak menemukan nama orang pada dokumen"
+            : `Pemeriksaan gagal: ${hasil.pesan ?? "kesalahan tak dikenal"}`;
+  redirect(kembali(hasil.status === "gagal" ? { err: pesan } : { ok: pesan }));
+}
+
+/**
+ * ACC manual hasil verifikasi: bila asesor menilai parser VLM gagal/salah
+ * ekstrak, verdict-nya dikesampingkan — penanda ketidaksesuaian hilang dari
+ * halaman penilaian, tetapi hasil parser tetap tersimpan sebagai jejak.
+ * Kirim `batal=1` untuk mencabut ACC.
+ */
+export async function accVerifikasiBukti(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const idPenugasan = String(formData.get("id_penugasan") ?? "");
+  const idKegiatan = String(formData.get("id_kegiatan") ?? "");
+  const idDokumen = String(formData.get("id_dokumen") ?? "");
+  const batal = String(formData.get("batal") ?? "") === "1";
+  const kembali = (msg: { ok?: string; err?: string }) => {
+    const q = new URLSearchParams();
+    if (msg.ok) q.set("ok", msg.ok);
+    if (msg.err) q.set("err", msg.err);
+    return `/asesor/penilaian/${idPenugasan}/bukti/${idKegiatan}?${q.toString()}`;
+  };
+
+  const pn = await penugasanMilikAsesor(idPenugasan, session.user.id);
+  if (!pn) redirect(flash(idPenugasan, { err: "Penugasan tidak ditemukan" }));
+
+  const dok = await prisma.dokumen_kegiatan.findUnique({
+    where: { id_dokumen: idDokumen },
+    include: { kegiatan: { select: { id_lkd: true } } },
+  });
+  if (!dok || dok.kegiatan.id_lkd !== pn!.id_lkd)
+    redirect(kembali({ err: "Dokumen tidak ditemukan pada laporan ini" }));
+
+  const v: any = (dok as any).verifikasi;
+  if (!v) redirect(kembali({ err: "Belum ada hasil pemeriksaan yang bisa di-ACC" }));
+
+  const baru: any = { ...v };
+  if (batal) delete baru.acc;
+  else
+    baru.acc = {
+      oleh: session.user.name ?? "asesor",
+      id_asesor: session.user.id,
+      pada: new Date().toISOString(),
+    };
+
+  await prisma.dokumen_kegiatan.update({
+    where: { id_dokumen: idDokumen },
+    data: { verifikasi: baru } as any,
+  });
+
+  revalidatePath(`/asesor/penilaian/${idPenugasan}/bukti/${idKegiatan}`);
+  revalidatePath(`/asesor/penilaian/${idPenugasan}`);
+  redirect(
+    kembali(
+      batal
+        ? { ok: "ACC dicabut — penanda verifikasi berlaku kembali" }
+        : { ok: "Pemeriksaan di-ACC — penanda ketidaksesuaian dokumen ini diabaikan" }
+    )
+  );
 }
 
 /** FR-14..16: simpan penilaian seluruh kegiatan untuk penugasan ini. */

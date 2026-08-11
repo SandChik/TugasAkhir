@@ -100,6 +100,21 @@ export const IconPlus = ({ size, className }: P) => (
   </svg>
 );
 
+export const IconAlert = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <path d="M12 9v4M12 17h.01" />
+  </svg>
+);
+
+export const IconUsers = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
 export const IconBack = ({ size, className }: P) => (
   <svg {...base(size)} className={className}>
     <path d="M19 12H5M12 19l-7-7 7-7" />

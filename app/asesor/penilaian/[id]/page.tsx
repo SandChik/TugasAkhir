@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
-import { SEKSI_BKD, CAPAIAN_LABEL } from "../../../../lib/seksiBkd";
+import { SEKSI_BKD } from "../../../../lib/seksiBkd";
 import { faseAktif, bolehAsesorNilai, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
 import InfoBox from "../../../../components/InfoBox";
 import { simpanPenilaian, sahkanPenilaian } from "./actions";
-import { IconSave, IconShield, IconDoc, IconBack } from "../../../../components/Icons";
+import { IconSave, IconShield, IconDoc, IconBack, IconAlert } from "../../../../components/Icons";
 import SubmitButton from "../../../../components/SubmitButton";
 
 const inputCls =
@@ -34,7 +34,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
               // Jumlah bukti = artefak unggahan dosen; lampiran surat otomatis
               // dari admin dikecualikan agar angkanya jujur soal kelengkapan.
               unggahan_dokumen: { select: { file_url: true } },
-              dokumen_kegiatan: { select: { file_url: true } },
+              dokumen_kegiatan: { select: { file_url: true, verifikasi: true } },
             },
             orderBy: { created_at: "asc" },
           },
@@ -62,6 +62,19 @@ export default async function PenilaianPage({ params }: { params: { id: string }
     const surat = k.unggahan_dokumen?.file_url ?? null;
     return k.dokumen_kegiatan.filter((d: any) => !surat || d.file_url !== surat).length;
   };
+  // Hasil verifikasi nama (parser VLM): bukti yang namanya tidak cocok dengan
+  // pemilik akun ATAU perannya bertentangan dengan klaim ditandai agar asesor
+  // waspada saat menilai.
+  const buktiTakSesuai = (k: any) => {
+    const surat = k.unggahan_dokumen?.file_url ?? null;
+    return k.dokumen_kegiatan.filter(
+      (d: any) =>
+        (!surat || d.file_url !== surat) &&
+        ["tidak_cocok", "peran_tidak_sesuai"].includes((d.verifikasi as any)?.status) &&
+        !(d.verifikasi as any)?.acc // sudah di-ACC manual asesor -> bukan temuan lagi
+    ).length;
+  };
+  const kegiatanBermasalah = claimed.filter((k: any) => buktiTakSesuai(k) > 0);
 
   return (
     <AppShell
@@ -113,6 +126,32 @@ export default async function PenilaianPage({ params }: { params: { id: string }
         <form action={simpanPenilaian}>
           <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
 
+          {kegiatanBermasalah.length > 0 && (
+            <div className="mb-4 rounded-[10px] border border-danger bg-danger-soft px-4 py-3">
+              <p className="text-[11.5px] font-semibold text-danger">
+                Verifikasi nama menemukan bukti yang tidak sesuai
+              </p>
+              <p className="mt-1 text-[11px] leading-snug text-danger">
+                Nama <b>{lkd.pengguna.nama}</b> tidak ditemukan atau perannya bertentangan pada
+                bukti kegiatan berikut:
+              </p>
+              <ul className="mt-1.5 space-y-1">
+                {kegiatanBermasalah.map((k: any) => (
+                  <li key={k.id_kegiatan} className="text-[11px] text-danger">
+                    •{" "}
+                    <Link
+                      href={`/asesor/penilaian/${penugasan.id_penugasan}/bukti/${k.id_kegiatan}`}
+                      className="font-medium underline hover:opacity-80"
+                    >
+                      {k.judul}
+                    </Link>{" "}
+                    — {buktiTakSesuai(k)} dokumen bermasalah
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {bisaNilai ? (
             <InfoBox>
               <b>Info:</b> SKS hasil smart contract adalah acuan deterministik. Isi SKS keputusan,
@@ -143,7 +182,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                       <table className="w-full border-collapse text-left">
                         <thead>
                           <tr className="bg-head-bg">
-                            {["No", "Nama Kegiatan", "Bukti", "Capaian", "SKS Kontrak", "Penilaian (sks)", "Status", "Komentar"].map((h) => (
+                            {["No", "Nama Kegiatan", "Bukti", "SKS Kontrak", "Penilaian (sks)", "Status", "Komentar"].map((h) => (
                               <th key={h} className="border-l border-line-grid px-3 py-2.5 text-[11px] font-medium text-head-tx first:border-l-0">
                                 {h}
                               </th>
@@ -161,19 +200,24 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                                   <span className="block text-[10px] text-crumb">{k.referensi_kegiatan.kode_rule}</span>
                                 </td>
                                 <td className="w-24">
-                                  <Link
-                                    href={`/asesor/penilaian/${penugasan.id_penugasan}/bukti/${k.id_kegiatan}`}
-                                    className={`inline-block rounded-md px-2.5 py-1.5 text-[10px] font-medium ${
-                                      jumlahArtefak(k) > 0 ? "bg-primary text-white" : "bg-danger-soft text-danger"
-                                    }`}
-                                  >
-                                    <span className="inline-flex items-center gap-1"><IconDoc size={10}/> {jumlahArtefak(k)}</span>
-                                  </Link>
-                                </td>
-                                <td className="w-24">
-                                  {k.status_capaian ? (
-                                    <StatusChip label={CAPAIAN_LABEL[k.status_capaian]} variant={STATUS_VARIAN[k.status_capaian] ?? "neutral"} />
-                                  ) : "-"}
+                                  <span className="inline-flex items-center gap-1.5">
+                                    <Link
+                                      href={`/asesor/penilaian/${penugasan.id_penugasan}/bukti/${k.id_kegiatan}`}
+                                      className={`inline-block rounded-md px-2.5 py-1.5 text-[10px] font-medium ${
+                                        jumlahArtefak(k) > 0 ? "bg-primary text-white" : "bg-danger-soft text-danger"
+                                      }`}
+                                    >
+                                      <span className="inline-flex items-center gap-1"><IconDoc size={10}/> {jumlahArtefak(k)}</span>
+                                    </Link>
+                                    {buktiTakSesuai(k) > 0 && (
+                                      <span
+                                        title={`Nama/peran dosen tidak sesuai pada ${buktiTakSesuai(k)} dokumen bukti`}
+                                        className="cursor-help text-danger"
+                                      >
+                                        <IconAlert size={13} />
+                                      </span>
+                                    )}
+                                  </span>
                                 </td>
                                 <td className="w-24">
                                   {k.sks_dihitung_x100 != null ? (k.sks_dihitung_x100 / 100).toFixed(2) : "manual"}

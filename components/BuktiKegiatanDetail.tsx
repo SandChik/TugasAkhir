@@ -22,11 +22,14 @@ export default function BuktiKegiatanDetail({
   returnTo,
   backHref,
   canUpload = true,
+  infoOverride,
 }: {
   kegiatan: any;
   returnTo: string;
   backHref: string;
   canUpload?: boolean;
+  /** Susunan baris kartu info khusus (mis. bimbingan, frame 249:2); default mengikuti pengajaran */
+  infoOverride?: [string, string][];
 }) {
   const p: any = kegiatan.parameter ?? {};
   const d: any = kegiatan.detail_kegiatan ?? {};
@@ -39,7 +42,7 @@ export default function BuktiKegiatanDetail({
   );
   const fields: any[] = (kegiatan.referensi_kegiatan.skema_parameter as any)?.fields ?? [];
 
-  const info: [string, string][] = [
+  const info: [string, string][] = infoOverride ?? [
     ["Rubrik", "Pelaksanaan Pendidikan"],
     ["Kegiatan", kegiatan.referensi_kegiatan.nama_kegiatan],
     ["Nama Kegiatan", kegiatan.judul],
@@ -72,14 +75,12 @@ export default function BuktiKegiatanDetail({
         ))}
       </div>
 
-      <h2 className="mt-5 text-[13px] font-semibold text-navy">Artefak yang Anda unggah</h2>
-
       {dokumen.length === 0 ? (
-        <div className="mt-2 rounded-lg bg-danger-soft px-4 py-4 text-xs font-medium text-danger">
-          Belum ada artefak yang Anda unggah
+        <div className="mt-5 rounded-lg bg-danger-soft px-4 py-4 text-xs font-medium text-danger">
+          Tidak ada bukti dokumen
         </div>
       ) : (
-        <div className="mt-2">
+        <div className="mt-5">
           <DataTable
             columns={[
               { label: "No", width: "45px" },

@@ -9,7 +9,7 @@ import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
 import DataTable from "../../../components/DataTable";
 import InfoBox from "../../../components/InfoBox";
-import { IconEye, IconPencil, IconTrash } from "../../../components/Icons";
+import { IconDoc, IconEye, IconPencil, IconTrash } from "../../../components/Icons";
 import { hapusKegiatan } from "../_shared/kegiatanActions";
 
 /** Menu kategori dosen: kolom mengikuti frame Figma masing-masing + aksi lihat/edit/hapus. */
@@ -55,7 +55,7 @@ export default async function KategoriPage({ params }: { params: { kategori: str
           <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
             {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
           </span>
-          {!kategori.sumberPddikti && bisaInput && (
+          {!kategori.sumberPenugasan && bisaInput && (
             <Link
               href={`/dosen/${params.kategori}/tambah`}
               className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white"
@@ -66,10 +66,10 @@ export default async function KategoriPage({ params }: { params: { kategori: str
         </>
       }
     >
-      {kategori.sumberPddikti && (
+      {kategori.sumberPenugasan && (
         <InfoBox>
-          <b>Info:</b> Data {kategori.label.toLowerCase()} ditarik otomatis dari Feeder PDDikti dan
-          dari hasil ekstraksi dokumen SK/ST yang diunggah admin, sehingga tidak dapat
+          <b>Info:</b> Data {kategori.label.toLowerCase()} berasal dari penugasan institusi —
+          diinput admin atau hasil ekstraksi dokumen SK/ST yang diunggah admin, sehingga tidak dapat
           ditambah/diedit manual. Klaim data ini ke laporan melalui{" "}
           <b>Layanan BKD → Rekap Kegiatan</b>.
         </InfoBox>
@@ -87,8 +87,8 @@ export default async function KategoriPage({ params }: { params: { kategori: str
           {kegiatan.length === 0 ? (
             <tr>
               <td colSpan={kolom.length + 3} className="!text-center !text-crumb">
-                {kategori.sumberPddikti
-                  ? "Belum ada data dari PDDikti maupun dokumen SK/ST untuk periode ini."
+                {kategori.sumberPenugasan
+                  ? "Belum ada data penugasan dari admin maupun dokumen SK/ST untuk periode ini."
                   : "Belum ada kegiatan. Gunakan tombol Tambah kegiatan."}
               </td>
             </tr>
@@ -110,6 +110,13 @@ export default async function KategoriPage({ params }: { params: { kategori: str
                         title="Lihat detail"
                       >
                         <IconEye size={13} />
+                      </Link>
+                      <Link
+                        href={`/dosen/${params.kategori}/${k.id_kegiatan}/bukti`}
+                        className="rounded-md bg-primary p-2 text-white"
+                        title="Bukti kegiatan"
+                      >
+                        <IconDoc size={13} />
                       </Link>
                       {manual && bisaInput && (
                         <>

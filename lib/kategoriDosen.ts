@@ -6,8 +6,9 @@ export type KategoriDosen = {
   label: string;
   subtitle: string;
   kodeRules: string[];
-  // R7: true = data ditarik dari Feeder PDDikti (tidak bisa tambah manual)
-  sumberPddikti?: boolean;
+  // R7: true = kegiatan lahir dari penugasan resmi (diinput admin / ekstraksi
+  // SK-ST), bukan diisi sendiri oleh dosen.
+  sumberPenugasan?: boolean;
 };
 
 export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
@@ -15,13 +16,13 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
     label: "Bimbingan Mahasiswa",
     subtitle: "Seminar, KKN/PKL/magang, dan pembimbingan tugas akhir",
     kodeRules: ["EDU201", "EDU202", "EDU203"],
-    sumberPddikti: true,
+    sumberPenugasan: true,
   },
   "pengujian-mahasiswa": {
     label: "Pengujian Mahasiswa",
     subtitle: "Bertugas sebagai penguji pada ujian akhir/profesi",
     kodeRules: ["EDU301"],
-    sumberPddikti: true,
+    sumberPenugasan: true,
   },
   "bahan-ajar": {
     label: "Bahan Ajar",
@@ -32,31 +33,37 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
     label: "Pembinaan Mahasiswa",
     subtitle: "Pembinaan kegiatan akademik dan kemahasiswaan",
     kodeRules: ["EDU401", "EDU402"],
-    sumberPddikti: true,
-  },
-  "visiting-scientist": {
-    label: "Visiting Scientist",
-    subtitle: "Pendampingan mahasiswa di luar institusi sesuai kebijakan Kementerian",
-    kodeRules: ["EDU901"],
-  },
-  detasering: {
-    label: "Detasering",
-    subtitle: "Detasering dan pencangkokan di luar institusi",
-    kodeRules: ["EDU802"],
-  },
-  "orasi-ilmiah": {
-    label: "Orasi Ilmiah",
-    subtitle: "Menyampaikan orasi ilmiah",
-    kodeRules: ["EDU601"],
-  },
-  "pembimbing-dosen": {
-    label: "Pembimbing Dosen",
-    subtitle: "Membimbing dosen yang lebih rendah jabatannya",
-    kodeRules: ["EDU801"],
+    sumberPenugasan: true,
   },
   "tugas-tambahan": {
     label: "Tugas Tambahan",
     subtitle: "Jabatan pimpinan PT, pendidikan formal, dan pengembangan diri",
     kodeRules: ["EDU701", "EDU001", "EDU902"],
   },
+};
+
+/**
+ * R7: kegiatan yang HARUS diinput admin (menu "Input Kegiatan Dosen"), yaitu
+ * kegiatan yang dasarnya penugasan institusi — dosen tidak boleh mengarang
+ * sendiri beban perkuliahan, bimbingan, pengujian, dan pembinaannya.
+ *
+ * Nilai = slug kategori dosen; dipakai untuk memilih kolom detail
+ * (`DETAIL_FIELDS`) yang tampil pada tabel menu dosen terkait.
+ * Pengajaran tidak ada di `KATEGORI_DOSEN` karena punya halaman sendiri.
+ */
+export const KATEGORI_INPUT_ADMIN: Record<string, string> = {
+  EDU101: "pengajaran",
+  EDU201: "bimbingan-mahasiswa",
+  EDU202: "bimbingan-mahasiswa",
+  EDU203: "bimbingan-mahasiswa",
+  EDU301: "pengujian-mahasiswa",
+  EDU401: "pembinaan-mahasiswa",
+  EDU402: "pembinaan-mahasiswa",
+};
+
+/** Label `kegiatan.sumber_data` untuk ditampilkan ke pengguna. */
+export const SUMBER_LABEL: Record<string, string> = {
+  manual: "Input dosen",
+  admin: "Input admin",
+  surat_tugas: "Ekstraksi SK/ST",
 };

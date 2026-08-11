@@ -49,10 +49,6 @@ export default async function ReferensiPage() {
           </tr>
         ))}
       </DataTable>
-      <p className="mt-3 text-[11px] text-crumb">
-        Kegiatan bertanda &quot;Manual Asesor&quot; memiliki nilai SKS maksimum pada rubrik dan
-        dinilai langsung oleh asesor (tidak diotomatisasi oleh smart contract).
-      </p>
     </AppShell>
   );
 }

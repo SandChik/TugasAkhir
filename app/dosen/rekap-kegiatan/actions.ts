@@ -135,7 +135,7 @@ export async function ubahCapaian(formData: FormData) {
   const idKegiatan = String(formData.get("id_kegiatan") ?? "");
   const idLkd = String(formData.get("id_lkd") ?? "");
   const capaian = String(formData.get("capaian") ?? "");
-  if (!["selesai", "berlanjut", "gagal", "beban_lebih"].includes(capaian))
+  if (!["selesai", "gagal", "beban_lebih"].includes(capaian))
     redirect(url(idLkd, "pendidikan", { err: "Status capaian tidak dikenal" }));
 
   const kegiatan = await prisma.kegiatan.findUnique({

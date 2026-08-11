@@ -8,6 +8,7 @@ import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
 import { faseAktif, bolehDosenInput } from "../../../lib/fase";
 import { DETAIL_FIELDS } from "../../../lib/kolomKategori";
+import { bacaParameterForm } from "../../../lib/parameterKegiatan";
 
 /** Kumpulkan field detail (d_*) sesuai DETAIL_FIELDS kategori → objek detail_kegiatan. */
 function ambilDetail(slug: string, formData: FormData): Record<string, string | null> {
@@ -68,14 +69,7 @@ export async function tambahKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("LKD terkunci")}`);
 
   const fields: any[] = (referensi!.skema_parameter as any)?.fields ?? [];
-  const parameter: Record<string, any> = {};
-  const rawValues: Record<string, string> = {};
-  for (const f of fields) {
-    const raw = String(formData.get(`p_${f.name}`) ?? "");
-    rawValues[f.name] = raw;
-    parameter[f.name] =
-      f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
-  }
+  const { parameter, rawValues } = bacaParameterForm(fields, formData);
 
   let sksX100: number | null = null;
   let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
@@ -100,7 +94,6 @@ export async function tambahKegiatan(formData: FormData) {
       sks_dihitung_x100: sksX100,
       status_perhitungan: statusPerhitungan,
       status: "diajukan",
-      status_capaian: "berlanjut",
       sumber_data: "manual",
       diklaim: true, // input manual langsung masuk LKD
       tanggal_pengajuan: new Date(),
@@ -131,7 +124,7 @@ export async function ubahKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
   if ((kegiatan as any).sumber_data !== "manual")
     redirect(
-      `/dosen/${slug}?err=${encodeURIComponent("Data hasil tarikan PDDikti / dokumen SK-ST tidak dapat diedit")}`
+      `/dosen/${slug}?err=${encodeURIComponent("Kegiatan penugasan dari admin / dokumen SK-ST tidak dapat diedit")}`
     );
   if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian - tidak dapat mengubah kegiatan")}`);
@@ -142,14 +135,7 @@ export async function ubahKegiatan(formData: FormData) {
 
   const referensi = kegiatan!.referensi_kegiatan;
   const fields: any[] = (referensi.skema_parameter as any)?.fields ?? [];
-  const parameter: Record<string, any> = {};
-  const rawValues: Record<string, string> = {};
-  for (const f of fields) {
-    const raw = String(formData.get(`p_${f.name}`) ?? "");
-    rawValues[f.name] = raw;
-    parameter[f.name] =
-      f.type === "boolean" ? raw === "true" || raw === "on" : f.type === "number" ? Number(raw) : raw;
-  }
+  const { parameter, rawValues } = bacaParameterForm(fields, formData);
 
   let sksX100: number | null = null;
   let statusPerhitungan: "berhasil" | "gagal" | "tidak_diotomatisasi" = "tidak_diotomatisasi";
@@ -184,6 +170,55 @@ export async function ubahKegiatan(formData: FormData) {
   redirect(`/dosen/${slug}?ok=${encodeURIComponent(pesan)}`);
 }
 
+/**
+ * Edit inline rincian bimbingan dari halaman detail. Berbeda dengan
+ * ubahKegiatan, aksi ini SENGAJA menerima kegiatan hasil ekstraksi/PDDikti:
+ * dosen boleh melengkapi/meralat rincian dokumennya (parameter perhitungan SKS
+ * tidak ikut diubah di sini). Kunci tetap berlaku: pemilik, LKD belum permanen,
+ * dan fase pengisian.
+ */
+export async function simpanDetailBimbingan(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session) return;
+  const id = String(formData.get("id_kegiatan") ?? "");
+  const slug = String(formData.get("slug") ?? "bimbingan-mahasiswa");
+  const jalur = `/dosen/${slug}/${id}`;
+
+  const kegiatan = await prisma.kegiatan.findUnique({
+    where: { id_kegiatan: id },
+    include: { lkd: true },
+  });
+  if (!kegiatan || kegiatan.lkd.id_pengguna !== session.user.id)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
+  if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
+    redirect(`${jalur}?err=${encodeURIComponent("Di luar masa pengisian - rincian tidak dapat diubah")}`);
+
+  const judul = String(formData.get("judul") ?? "").trim();
+  if (!judul) redirect(`${jalur}?err=${encodeURIComponent("Judul aktivitas wajib diisi")}`);
+
+  const teks = (nama: string) => String(formData.get(nama) ?? "").trim() || null;
+  const lama = (kegiatan!.detail_kegiatan as any) ?? {};
+  await prisma.kegiatan.update({
+    where: { id_kegiatan: id },
+    data: {
+      judul,
+      detail_kegiatan: {
+        ...lama,
+        lokasi: teks("lokasi"),
+        no_sk: teks("no_sk"),
+        tgl_sk: teks("tgl_sk"),
+        keterangan: teks("keterangan"),
+        komunal: String(formData.get("komunal")) === "ya",
+        program_studi: teks("program_studi"),
+        diedit_dosen: true,
+      },
+    } as any,
+  });
+
+  revalidatePath(jalur);
+  redirect(`${jalur}?ok=${encodeURIComponent("Rincian bimbingan disimpan")}`);
+}
+
 /** Hapus kegiatan manual (fase pengisian). */
 export async function hapusKegiatan(formData: FormData) {
   const session = await getServerSession(authOptions);
@@ -199,7 +234,7 @@ export async function hapusKegiatan(formData: FormData) {
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Kegiatan tidak ditemukan")}`);
   if ((kegiatan as any).sumber_data !== "manual")
     redirect(
-      `/dosen/${slug}?err=${encodeURIComponent("Data hasil tarikan PDDikti / dokumen SK-ST tidak dapat dihapus")}`
+      `/dosen/${slug}?err=${encodeURIComponent("Kegiatan penugasan dari admin / dokumen SK-ST tidak dapat dihapus")}`
     );
   if (kegiatan!.lkd.simpan_permanen || !(await pastikanFasePengisian()))
     redirect(`/dosen/${slug}?err=${encodeURIComponent("Di luar masa pengisian")}`);

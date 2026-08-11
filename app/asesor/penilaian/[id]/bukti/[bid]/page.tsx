@@ -5,9 +5,10 @@ import { authOptions } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/prisma";
 import AppShell from "../../../../../../components/AppShell";
 import DataTable from "../../../../../../components/DataTable";
-import { IconDoc, IconBack } from "../../../../../../components/Icons";
-import PratinjauPdf from "../../../../../../components/PratinjauPdf";
+import BarisDokumenBukti from "../../../../../../components/BarisDokumenBukti";
+import { IconBack } from "../../../../../../components/Icons";
 import { adalahPdf, tampilNilai } from "../../../../../../lib/tampilNilai";
+import { bisaDiverifikasi } from "../../../../../../lib/verifikasiBukti";
 
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat("id-ID", {
@@ -18,7 +19,11 @@ const fmt = (d: Date) =>
     minute: "2-digit",
   }).format(d);
 
-/** Viewer bukti untuk asesor (mockup "Dashboard Asesor - Bukti ..."): info + Dokumen Pendukung. */
+/**
+ * Viewer bukti untuk asesor (mockup "Dashboard Asesor - Bukti ..."):
+ * info + Dokumen Pendukung. Tiap baris dokumen bisa dibentangkan untuk melihat
+ * hasil verifikasi nama (parser VLM) beserta peran tiap nama di dokumen.
+ */
 export default async function BuktiAsesorPage({
   params,
 }: {
@@ -96,53 +101,37 @@ export default async function BuktiAsesorPage({
             { label: "No", width: "50px" },
             { label: "Nama file" },
             { label: "Dokumen", width: "120px" },
-            { label: "Waktu Unggah", width: "300px" },
+            { label: "Verifikasi Nama", width: "230px" },
+            { label: "Waktu Unggah", width: "220px" },
           ]}
         >
           {kegiatan.dokumen_kegiatan.length === 0 ? (
             <tr>
-              <td colSpan={4} className="!bg-danger-soft !text-center !font-medium !text-danger">
+              <td colSpan={5} className="!bg-danger-soft !text-center !font-medium !text-danger">
                 Tidak ada bukti dokumen
               </td>
             </tr>
           ) : (
             kegiatan.dokumen_kegiatan.map((dok: any, i: number) => (
-              <tr key={dok.id_dokumen}>
-                <td>{i + 1}</td>
-                <td>
-                  {dok.nama_dokumen}
-                  {suratAdmin && dok.file_url === suratAdmin && (
-                    <span className="ml-1.5 inline-block rounded bg-head-bg px-1.5 py-0.5 text-[9px] font-medium text-muted">
-                      surat tugas dari admin
-                    </span>
-                  )}
-                  {dok.nama_file && (
-                    <span className="block text-[10px] text-crumb">{dok.nama_file}</span>
-                  )}
-                </td>
-                <td>
-                  {!dok.file_url ? (
-                    "-"
-                  ) : adalahPdf(dok) ? (
-                    <PratinjauPdf
-                      url={dok.file_url}
-                      judul={dok.nama_dokumen}
-                      className="inline-block rounded-md bg-primary px-2.5 py-1.5 text-[10.5px] font-medium text-white"
-                    >
-                      <IconDoc size={12} />
-                    </PratinjauPdf>
-                  ) : (
-                    <a
-                      href={dok.file_url}
-                      target="_blank"
-                      className="inline-block rounded-md bg-primary px-2.5 py-1.5 text-[10.5px] font-medium text-white"
-                    >
-                      <IconDoc size={12} />
-                    </a>
-                  )}
-                </td>
-                <td className="!text-muted">diunggah pada tgl {fmt(dok.tanggal_upload)}</td>
-              </tr>
+              <BarisDokumenBukti
+                key={dok.id_dokumen}
+                no={i + 1}
+                namaDokumen={dok.nama_dokumen}
+                namaFile={dok.nama_file}
+                suratAdmin={Boolean(suratAdmin && dok.file_url === suratAdmin)}
+                fileUrl={dok.file_url}
+                pdf={adalahPdf(dok)}
+                waktuUnggah={fmt(dok.tanggal_upload)}
+                waktuPeriksa={
+                  dok.verifikasi?.diperiksa_pada ? fmt(new Date(dok.verifikasi.diperiksa_pada)) : null
+                }
+                verifikasi={dok.verifikasi ?? null}
+                bisaPeriksa={bisaDiverifikasi(dok) && dok.file_url !== suratAdmin}
+                namaAkun={penugasan.lkd.pengguna.nama}
+                idPenugasan={params.id}
+                idKegiatan={params.bid}
+                idDokumen={dok.id_dokumen}
+              />
             ))
           )}
         </DataTable>

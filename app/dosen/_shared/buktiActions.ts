@@ -10,6 +10,10 @@ import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { bolehDosenInput, faseAktif } from "../../../lib/fase";
 import { withFlash } from "../../../lib/flash";
+import { bisaDiverifikasi, verifikasiNamaBukti } from "../../../lib/verifikasiBukti";
+
+/** Rubrik bimbingan: bukti (lembar pengesahan, dsb.) diverifikasi otomatis. */
+const RULE_VERIFIKASI = ["EDU201", "EDU202", "EDU203"];
 
 const JENIS_DOKUMEN = [
   "Berita Acara Perkuliahan",
@@ -25,7 +29,10 @@ const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
 async function pastikanMilikDosen(idKegiatan: string, idPengguna: string) {
   const kegiatan = await prisma.kegiatan.findUnique({
     where: { id_kegiatan: idKegiatan },
-    include: { lkd: { include: { periode_bkd: true } } },
+    include: {
+      lkd: { include: { periode_bkd: true, pengguna: { select: { nama: true } } } },
+      referensi_kegiatan: { select: { kode_rule: true } },
+    },
   });
   if (!kegiatan || kegiatan.lkd.id_pengguna !== idPengguna) return null;
   return kegiatan;
@@ -89,6 +96,25 @@ export async function uploadBukti(formData: FormData) {
     redirect(withFlash(returnTo, { err: "Pilih file atau isi tautan dokumen" }));
   }
 
+  // Anti-kecurangan bukti bimbingan: lembar pengesahan diekstrak parser VLM
+  // universal, nama di dokumen dibandingkan dengan nama akun pengunggah.
+  // Best-effort — kegagalan parser tidak menggagalkan unggahan.
+  let verifikasi: any = null;
+  if (
+    RULE_VERIFIKASI.includes((kegiatan as any).referensi_kegiatan?.kode_rule) &&
+    bisaDiverifikasi({ file_url: fileUrl, jenis_file: jenisFile })
+  ) {
+    verifikasi = await verifikasiNamaBukti(
+      fileUrl!,
+      namaFile,
+      (kegiatan as any).lkd.pengguna?.nama ?? "",
+      {
+        kodeRule: (kegiatan as any).referensi_kegiatan?.kode_rule,
+        parameter: kegiatan!.parameter,
+      }
+    );
+  }
+
   await prisma.dokumen_kegiatan.create({
     data: {
       id_kegiatan: idKegiatan,
@@ -98,11 +124,22 @@ export async function uploadBukti(formData: FormData) {
       jenis_dokumen: jenis,
       file_url: fileUrl,
       keterangan,
-    },
+      verifikasi,
+    } as any,
   });
 
+  const pesanVerifikasi =
+    verifikasi?.status === "cocok"
+      ? " Nama Anda terverifikasi pada dokumen."
+      : verifikasi?.status === "peran_tidak_sesuai"
+        ? ` Perhatian: kegiatan diklaim ${verifikasi.peran_diharapkan}, di dokumen tertulis "${verifikasi.peran_terdeteksi}".`
+        : verifikasi?.status === "tidak_cocok"
+          ? " Perhatian: nama Anda tidak ditemukan pada dokumen."
+          : verifikasi?.status === "tanpa_nama"
+            ? " Parser tidak menemukan nama pada dokumen."
+            : "";
   revalidatePath(returnTo);
-  redirect(withFlash(returnTo, { ok: "Dokumen bukti berhasil diunggah" }));
+  redirect(withFlash(returnTo, { ok: `Dokumen bukti berhasil diunggah.${pesanVerifikasi}` }));
 }
 
 export async function hapusBukti(formData: FormData) {

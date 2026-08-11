@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 import { SEKSI_BKD, CAPAIAN_LABEL } from "../../../../lib/seksiBkd";
+import { SUMBER_LABEL } from "../../../../lib/kategoriDosen";
 import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
@@ -217,7 +218,7 @@ function AksiCell({ lkd, k, editable }: { lkd: any; k: any; editable: boolean })
         idKegiatan={k.id_kegiatan}
         idLkd={lkd.id_lkd}
         judul={k.judul}
-        capaian={k.status_capaian ?? "berlanjut"}
+        capaian={k.status_capaian ?? ""}
         opsi={Object.entries(CAPAIAN_LABEL)}
       />
       <form action={batalKlaim}>
@@ -384,7 +385,8 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
                             <td>
                               {k.judul}
                               <span className="block text-[10px] text-crumb">
-                                {k.referensi_kegiatan.kode_rule} · {k.sumber_data}
+                                {k.referensi_kegiatan.kode_rule} ·{" "}
+                                {SUMBER_LABEL[k.sumber_data] ?? k.sumber_data}
                               </span>
                               <BuktiBadge lkdId={lkd.id_lkd} k={k} />
                             </td>
