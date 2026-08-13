@@ -93,15 +93,19 @@ Bandung, ...... ............................ 2026
 
 # **ABSTRAK** {#abstrak}
 
-\[Isi abstrak dalam bahasa indonesia, times new roman, ft. 10, spacing 1.0\]
+**\[Format: times new roman, ft. 10, spacing 1.0. Angka hasil pengujian dilengkapi setelah eksekusi pengujian selesai.\]**
 
-**Kata Kunci:** \[Maksimal 5\]
+Penilaian Beban Kinerja Dosen (BKD) bidang pendidikan pada praktik yang berjalan masih menempatkan perhitungan kredit kegiatan pada kalkulasi manual asesor. Wawancara dengan asesor BKD menunjukkan dua celah pada tahap verifikasi. Pertama, asesor cenderung mempercayai data yang diinput dosen tanpa memeriksa ulang ke Surat Keputusan sebagai sumber parameter, sehingga dua asesor dapat menghasilkan nilai berbeda untuk kegiatan yang sama dan hasilnya ditetapkan melalui perata-rataan, bukan melalui penerapan aturan. Kedua, dokumen bukti yang diunggah dosen tidak diperiksa kesesuaiannya terhadap identitas pengunggah maupun peran yang diklaim. Tugas akhir ini mengembangkan sistem penilaian BKD bidang pendidikan berbasis *smart contract* yang menjawab kedua celah tersebut. Sistem dibangun di atas tiga lapisan terintegrasi, yaitu lapisan *on-chain* berisi kontrak kalkulator sebagai *rule engine* aturan PO BKD 2021 dan kontrak token SKS berbasis ERC-20 *non-transferable*, lapisan aplikasi web berbasis Next.js dengan basis data PostgreSQL, serta lapisan ekstraksi dokumen berbasis FastAPI yang memadukan ekstraksi deterministik dan model bahasa visual. Parameter kegiatan diperoleh langsung dari Surat Keputusan dan Surat Tugas melalui ekstraksi dokumen, dokumen bukti diperiksa keasliannya melalui pencocokan nama dan peran, perhitungan kredit dijalankan *smart contract* secara deterministik, dan hasil yang telah disahkan dua asesor diterbitkan sebagai token pada jaringan Base Sepolia dengan *hash* keccak-256 atas simpulan penilaian sebagai referensi transaksi. Pengembangan dilaksanakan menggunakan model *Waterfall* dengan pemodelan terstruktur. Hasil pengujian menunjukkan **\[LENGKAPI: persentase kelulusan pengujian unit, integrasi, sistem, dan uji akurasi perhitungan\]**, sehingga aturan penilaian terbukti dijalankan secara konsisten dan hasilnya dapat ditelusuri secara mandiri melalui *transaction hash* tanpa memerlukan akses ke basis data internal institusi.
+
+**Kata Kunci:** BKD, *smart contract*, *blockchain*, ekstraksi dokumen, verifikasi bukti
 
 # **ABSTRACT** {#abstract}
 
-\[Isi abstrak dalam inggris, italic, times new roman, ft. 10, spacing 1.0\]
+**\[Format: italic, times new roman, ft. 10, spacing 1.0. Figures are to be completed once test execution is finished.\]**
 
-**Keywords:** \[Maksimal 5\]
+*The current practice of assessing lecturer workload (Beban Kinerja Dosen, BKD) in the education component still relies on manual credit calculation by assessors. Interviews with a BKD assessor revealed two gaps at the verification stage. First, assessors tend to trust the data entered by lecturers without cross-checking it against the Decree (Surat Keputusan) that serves as the source of activity parameters; consequently, two assessors may produce different values for the same activity, and the recorded result is set by averaging rather than by applying the rules. Second, the supporting documents uploaded by lecturers are not checked against the uploader's identity or the claimed role. This final project develops a smart contract-based BKD assessment system for the education component that addresses both gaps. The system is built on three integrated layers: an on-chain layer comprising a calculator contract that acts as a rule engine for the 2021 PO BKD rubric and a non-transferable ERC-20 credit token contract; a Next.js web application layer backed by a PostgreSQL database; and a FastAPI document extraction layer that combines deterministic extraction with a vision language model. Activity parameters are obtained directly from Decrees and Assignment Letters through document extraction, supporting documents are checked for authenticity through name and role matching, credit calculation is executed deterministically by the smart contract, and results ratified by two assessors are issued as tokens on the Base Sepolia network, using the keccak-256 hash of the assessment summary as the transaction reference. Development followed the Waterfall model with structured analysis and design. Testing results show* **\[LENGKAPI: pass rates for unit, integration, system, and calculation accuracy testing\]***, demonstrating that the assessment rules are applied consistently and that results can be independently traced through the transaction hash without requiring access to the institution's internal database.*
+
+**Keywords:** *BKD, smart contract, blockchain, document extraction, evidence verification*
 
 # **KATA PENGANTAR** {#kata-pengantar}
 
@@ -128,154 +132,283 @@ Bandung, ...... ............................ 2026
 
 # **DAFTAR ISI** {#daftar-isi}
 
-[**ABSTRAK	9**](#abstrak)  
-[**ABSTRACT	10**](#abstract)  
-[**KATA PENGANTAR	11**](#kata-pengantar)  
-[**DAFTAR ISI	13**](#daftar-isi)  
-[**DAFTAR GAMBAR	18**](#daftar-gambar)  
-[**DAFTAR TABEL	19**](#daftar-tabel)  
-[**DAFTAR RUMUS	20**](#daftar-rumus)  
-[**DAFTAR ISTILAH	21**](#daftar-istilah)  
-[**DAFTAR SINGKATAN	22**](#daftar-singkatan)  
-[**BAB I PENDAHULUAN	23**](#bab-i-pendahuluan)  
-[I.1	Latar Belakang	23](#latar-belakang)  
-[I.2	Rumusan Masalah	25](#rumusan-masalah)  
-[I.3	Tujuan Pengembangan Sistem	25](#tujuan-pengembangan-sistem)  
-[I.4	Pemangku Kepentingan dan Manfaat Hasil Pengembangan Sistem	26](#pemangku-kepentingan-dan-manfaat-hasil-pengembangan-sistem)  
-[I.5	Dukungan Data	27](#dukungan-data)  
-[I.6	Ruang Lingkup & Batasan	28](#ruang-lingkup-&-batasan)  
-[I.6.1	Ruang Lingkup	28](#ruang-lingkup)  
-[I.6.2	Batasan	29](#batasan)  
-[I.7	Sistematika Penulisan	30](#sistematika-penulisan)  
-[**BAB II TINJAUAN PUSTAKA	32**](#bab-ii-tinjauan-pustaka)  
-[II.1	Dasar Teori	32](#dasar-teori)  
-[II.1.1	Blockchain	32](#blockchain)  
-[II.1.2	Smart Contract	33](#smart-contract)  
-[II.1.3	Ethereum Virtual Machine (EVM)	34](#ethereum-virtual-machine-\(evm\))  
-[II.1.4	Hash Kriptografi	34](#heading=h.oeafv4bc5uua)  
-[II.1.5	Beban Kinerja Dosen (BKD)	35](#beban-kinerja-dosen-\(bkd\))  
-[II.1.6	PostgreSQL	35](#postgresql)  
-[II.2	Karya Ilmiah Sejenis	36](#karya-ilmiah-sejenis)  
-[**BAB III METODOLOGI PENGEMBANGAN SISTEM	37**](#bab-iii-metodologi-pengembangan-sistem)  
-[III.1	Penjelasan Pengembangan Sistem	37](#penjelasan-pengembangan-sistem)  
-[III.2	Data Pengembangan Sistem	39](#data-pengembangan-sistem)  
-[III.3	Objek Pengembangan Sistem	40](#objek-pengembangan-sistem)  
-[III.4	Perangkat Pendukung	40](#perangkat-pendukung)  
-[III.5	Tahapan Pelaksanaan Pengembangan Sistem	41](#tahapan-pelaksanaan-pengembangan-sistem)  
-[III.1.1	Increment I: Pengembangan Smart Contract Sistem Penilaian BKD Pendidikan	43](#increment-i:-pengembangan-smart-contract-sistem-penilaian-bkd-pendidikan)  
-[III.1.2	Increment II: Pengembangan dan Integrasi Aplikasi Web	44](#increment-ii:-pengembangan-dan-integrasi-aplikasi-web)  
-[III.6	Rancangan Jadwal Pelaksanaan Tugas Akhir	45](#heading=h.6kb3nq59sqnw)  
-[III.7	Perencanaan Biaya	46](#heading=h.go7902b5eaqx)  
-[**BAB IV HASIL DAN PEMBAHASAN	47**](#bab-iv-pembahasan-dan-implementasi-solusi)  
-[IV.1	Analisis Sitem Berjalan	47](#analisis-sitem-berjalan)  
-[IV.1	Analisis Proses Pengajuan Kegiatan BKD Pendidikan	50](#analisis-proses-pengajuan-kegiatan-bkd-pendidikan)  
-[IV.2	Analisis Proses Penilaian oleh Asesor	50](#analisis-proses-penilaian-oleh-asesor)  
-[IV.2.1	Analisis Aturan Perhitungan BKD Pendidikan	51](#analisis-aturan-perhitungan-bkd-pendidikan)  
-[IV.2.2	Hasil Evaluasi Analisis Sistem Berjalan	52](#hasil-evaluasi-analisis-sistem-berjalan)  
-[IV.3	Analisis Sistem yang Akan Dikembangkan	53](#analisis-sistem-yang-akan-dikembangkan)  
-[IV.3.1	Identifikasi Kebutuhan Sistem	54](#identifikasi-kebutuhan-sistem)  
-[IV.3.2	Environment	55](#environment)  
-[IV.3.2.1	Item Produced	56](#item-produced)  
-[IV.3.2.2	Alur Proses Aplikasi	57](#alur-proses-aplikasi)  
-[IV.4	Iterasi I: Pengembangan *Smart Contract* Penilaian BKD dan *Token Standard*	59](#iterasi-i:-pengembangan-smart-contract-penilaian-bkd-dan-token-standard)  
-[IV.4.1	Analisis	59](#analisis)  
-[IV.4.1.1	Tujuan dan Fokus Increment I	59](#tujuan-dan-fokus-increment-i)  
-[IV.4.1.1	Analisis Kebutuhan Smart Contract Penilaian BKD Pendidikan	60](#analisis-kebutuhan-smart-contract-penilaian-bkd-pendidikan)  
-[IV.4.2	Design	66](#design)  
-[IV.4.2.1	Data Design	66](#data-design)  
-[IV.4.2.1.1	Data Design Smart Contract Penilaian	66](#data-design-smart-contract-penilaian)  
-[IV.4.2.1	Data Design Smart Contract Token Standard	69](#data-design-smart-contract-token-standard)  
-[IV.4.2.2	Architectural Design	71](#architectural-design)  
-[IV.4.2.3	Component Design	75](#component-design)  
-[IV.4.3	Implementasi	82](#implementasi)  
-[IV.4.3.1	Lingkungan Pengembangan	82](#lingkungan-pengembangan)  
-[IV.4.3.2	Matriks Implementasi	82](#matriks-implementasi)  
-[IV.4.3.3	Hasil Implementasi	83](#hasil-implementasi)  
-[IV.4.4	Testing	93](#testing)  
-[IV.5	Increment II: Pengembangan *Web Application*	93](#increment-ii:-pengembangan-web-application)  
-[IV.5.1	Analisis	93](#analisis-1)  
-[IV.5.1.1	Tujuan dan Fokus Increment II	94](#tujuan-dan-fokus-increment-ii)  
-[IV.5.1.2	Analisis Kebutuhan Aplikasi Web	94](#analisis-kebutuhan-aplikasi-web)  
-[IV.5.2	Design	96](#design-1)  
-[IV.5.2.1	Data Design	96](#data-design-1)  
-[IV.5.2.2	Architectural Design	96](#architectural-design-1)  
-[IV.5.2.3	Entity Relationship Diagram (ERD)	97](#entity-relationship-diagram-\(erd\))  
-[IV.5.2.4	User Interface Design	100](#user-interface-design)  
-[IV.5.2.4.1	Tampilan Antarmuka	101](#tampilan-antarmuka)  
-> > [IV.5.2.4.1.1	Halaman Login	101](#halaman-login)  
-> > [IV.5.2.4.1.2	Halaman Dashboard Pengajaran	102](#halaman-dashboard-pengajaran)  
-[IV.5.3	Implementasi	104](#implementasi-1)  
-[IV.5.4	Testing	104](#testing-1)  
-[**DAFTAR PUSTAKA	105**](#daftar-pustaka)
+**\[CATATAN: nomor halaman pada daftar isi, daftar gambar, dan daftar tabel diisi melalui pemutakhiran *field* Table of Contents di Microsoft Word setelah dokumen difinalisasi. Judul dan hierarki di bawah ini telah disesuaikan dengan struktur bab terkini.\]**
+
+[**ABSTRAK**](#abstrak)  
+[**ABSTRACT**](#abstract)  
+[**KATA PENGANTAR**](#kata-pengantar)  
+[**DAFTAR ISI**](#daftar-isi)  
+[**DAFTAR GAMBAR**](#daftar-gambar)  
+[**DAFTAR TABEL**](#daftar-tabel)  
+[**DAFTAR RUMUS**](#daftar-rumus)  
+[**DAFTAR ISTILAH**](#daftar-istilah)  
+[**DAFTAR SINGKATAN**](#daftar-singkatan)  
+[**BAB I PENDAHULUAN**](#bab-i-pendahuluan)  
+[I.1	Latar Belakang](#latar-belakang)  
+[I.2	Rumusan Masalah](#rumusan-masalah)  
+[I.3	Tujuan Pengembangan Sistem](#tujuan-pengembangan-sistem)  
+[I.4	Pemangku Kepentingan dan Manfaat Hasil Pengembangan Sistem](#pemangku-kepentingan-dan-manfaat-hasil-pengembangan-sistem)  
+[I.5	Dukungan Data](#dukungan-data)  
+[I.6	Ruang Lingkup & Batasan](#ruang-lingkup-&-batasan)  
+[I.6.1	Ruang Lingkup](#ruang-lingkup)  
+[I.6.2	Batasan](#batasan)  
+[I.7	Sistematika Penulisan](#sistematika-penulisan)  
+[**BAB II TINJAUAN PUSTAKA**](#bab-ii-tinjauan-pustaka)  
+[II.1	Dasar Teori](#dasar-teori)  
+[II.1.1	Blockchain](#blockchain)  
+[II.1.2	Smart Contract](#smart-contract)  
+[II.1.3	Ethereum Virtual Machine (EVM)](#ethereum-virtual-machine-\(evm\))  
+[II.1.4	Beban Kinerja Dosen (BKD)](#beban-kinerja-dosen-\(bkd\))  
+[II.1.5	PostgreSQL](#postgresql)  
+[II.1.6	Standar Token ERC-20 dan Pustaka OpenZeppelin](#standar-token-erc-20-dan-pustaka-openzeppelin)  
+[II.1.7	Hash Kriptografi](#hash-kriptografi)  
+[II.1.8	Ekstraksi Dokumen dan Model Bahasa Visual](#ekstraksi-dokumen-dan-model-bahasa-visual)  
+[II.1.9	Verifikasi Keaslian Dokumen melalui Pencocokan Nama](#verifikasi-keaslian-dokumen-melalui-pencocokan-nama)  
+[II.1.10	Model Pengembangan *Waterfall*](#model-pengembangan-waterfall)  
+[II.1.11	*Structured Analysis and Structured Design*](#structured-analysis-and-structured-design)  
+[II.1.11.1	*Data Flow Diagram* (DFD)](#data-flow-diagram-dfd)  
+[II.1.11.2	Kamus Data (*Data Dictionary*)](#kamus-data-data-dictionary)  
+[II.1.11.3	Spesifikasi Proses (*Process Specification*)](#spesifikasi-proses-process-specification)  
+[II.1.11.4	*Structure Chart*](#structure-chart)  
+[II.1.12	*Entity Relationship Diagram* (ERD)](#entity-relationship-diagram)  
+[II.2	Karya Ilmiah Sejenis](#karya-ilmiah-sejenis)  
+[**BAB III METODOLOGI PENGEMBANGAN SISTEM**](#bab-iii-metodologi-pengembangan-sistem)  
+[III.1	Penjelasan Pengembangan Sistem](#penjelasan-pengembangan-sistem)  
+[III.1.1	Waktu Pengembangan](#penjelasan-pengembangan-sistem)  
+[III.1.2	Tempat Pelaksanaan](#penjelasan-pengembangan-sistem)  
+[III.1.3	Jenis Pengembangan](#penjelasan-pengembangan-sistem)  
+[III.2	Data Pengembangan Sistem](#data-pengembangan-sistem)  
+[III.3	Objek Pengembangan Sistem](#objek-pengembangan-sistem)  
+[III.4	Perangkat Pendukung](#perangkat-pendukung)  
+[III.5	Tahapan Pelaksanaan Pengembangan Sistem](#tahapan-pelaksanaan-pengembangan-sistem)  
+[III.5.1	Analisis dan Penetapan Spesifikasi Persyaratan Perangkat Lunak](#analisis-dan-penetapan-spesifikasi-persyaratan-perangkat-lunak)  
+[III.5.2	Perancangan](#perancangan)  
+[III.5.3	Implementasi](#implementasi)  
+[III.5.4	Pengujian](#pengujian)  
+[III.5.5	*Operation* dan *Maintenance*](#operation-dan-maintenance)  
+[**BAB IV PEMBAHASAN DAN IMPLEMENTASI SOLUSI**](#bab-iv-pembahasan-dan-implementasi-solusi)  
+[IV.1	Analisis](#analisis)  
+[IV.1.1	Analisis Sistem Berjalan](#analisis-sistem-berjalan)  
+[IV.1.1.1	Analisis Proses Pengajuan Kegiatan BKD Pendidikan](#analisis-proses-pengajuan-kegiatan-bkd-pendidikan)  
+[IV.1.1.2	Analisis Proses Penilaian oleh Asesor](#analisis-proses-penilaian-oleh-asesor)  
+[IV.1.1.3	Analisis Aturan Perhitungan BKD Pendidikan](#analisis-aturan-perhitungan-bkd-pendidikan)  
+[IV.1.2	Kesimpulan Analisis dan Usulan Pemecahan Masalah](#kesimpulan-analisis-dan-usulan-pemecahan-masalah)  
+[IV.1.3	Analisis Sistem yang Akan Dikembangkan](#analisis-sistem-yang-akan-dikembangkan)  
+[IV.1.3.1	Identifikasi Kebutuhan Sistem](#identifikasi-kebutuhan-sistem)  
+[IV.1.3.2	Analisis Pemilihan Metode/Teknologi](#analisis-pemilihan-metodeteknologi)  
+[IV.1.3.3	Alur Proses Sistem yang Diusulkan](#alur-proses-sistem-yang-diusulkan)  
+[IV.1.4	Analisis Aturan Penilaian BKD Pendidikan yang Diimplementasikan](#analisis-aturan-penilaian-bkd-pendidikan-yang-diimplementasikan)  
+[IV.1.5	Penetapan *Requirement* Sistem yang Dikembangkan](#penetapan-requirement-sistem-yang-dikembangkan)  
+[IV.2	Perancangan](#perancangan-1)  
+[IV.2.1	Perancangan Arsitektur Sistem](#perancangan-arsitektur-sistem)  
+[IV.2.2	Perancangan Proses](#perancangan-proses)  
+[IV.2.2.1	Diagram Konteks](#diagram-konteks)  
+[IV.2.2.2	Diagram Aliran Data Level 1](#diagram-aliran-data-level-1)  
+[IV.2.2.3	Diagram Aliran Data Level 2](#diagram-aliran-data-level-2)  
+[IV.2.2.4	Kamus Data](#kamus-data)  
+[IV.2.2.5	Spesifikasi Proses](#spesifikasi-proses)  
+[IV.2.3	Perancangan Modul](#perancangan-modul)  
+[IV.2.3.1	*Structure Chart* Kontrak Kalkulator BKD Pendidikan](#structure-chart-kontrak-kalkulator)  
+[IV.2.3.2	*Structure Chart* Kontrak Token SKS](#structure-chart-kontrak-token-sks)  
+[IV.2.3.3	Spesifikasi Modul](#spesifikasi-modul)  
+[IV.2.4	Perancangan Basis Data](#perancangan-basis-data)  
+[IV.2.5	Perancangan Antarmuka Pengguna](#perancangan-antarmuka-pengguna)  
+[IV.2.5.1	Arsitektur Navigasi](#arsitektur-navigasi)  
+[IV.2.5.2	Rancangan Tampilan Antarmuka](#rancangan-tampilan-antarmuka)  
+[IV.3	Implementasi](#implementasi-bab-iv)  
+[IV.3.1	Lingkungan Pengembangan](#lingkungan-pengembangan)  
+[IV.3.2	Matriks Implementasi](#matriks-implementasi)  
+[IV.3.3	Implementasi Modul *Smart Contract* Kalkulator BKD Pendidikan](#implementasi-modul-kalkulator)  
+[IV.3.4	Implementasi Modul *Smart Contract* Token SKS](#implementasi-modul-token-sks)  
+[IV.3.5	Implementasi Modul Integrasi *Blockchain*](#implementasi-modul-integrasi-blockchain)  
+[IV.3.6	Implementasi Modul Autentikasi dan Otorisasi](#implementasi-modul-autentikasi-dan-otorisasi)  
+[IV.3.7	Implementasi Modul Ekstraksi dan Penerapan Dokumen](#implementasi-modul-ekstraksi-dan-penerapan-dokumen)  
+[IV.3.8	Implementasi Modul Pengelolaan Kegiatan dan Dokumen BKD](#implementasi-modul-pengelolaan-kegiatan)  
+[IV.3.9	Implementasi Modul Verifikasi Keaslian Dokumen Bukti](#implementasi-modul-verifikasi-bukti)  
+[IV.3.10	Implementasi Modul Penilaian, Simpulan, dan Penerbitan Token](#implementasi-modul-penilaian-simpulan-token)  
+[IV.3.11	Implementasi Modul Administrasi, Log, dan Rekapitulasi](#implementasi-modul-administrasi-log-rekapitulasi)  
+[IV.4	Pengujian](#pengujian-bab-iv)  
+[IV.4.1	*Test Plan*](#test-plan)  
+[IV.4.2	*Unit Testing*](#unit-testing)  
+[IV.4.3	*Integration Testing*](#integration-testing)  
+[IV.4.4	*System Testing*](#system-testing)  
+[IV.4.5	Uji Akurasi Perhitungan Kredit](#uji-akurasi-perhitungan-kredit)  
+[IV.4.6	Pengujian Aspek Nonfungsional](#pengujian-aspek-nonfungsional)  
+[IV.4.7	Kesimpulan Hasil Pengujian](#kesimpulan-hasil-pengujian)  
+[IV.5	*Operation* dan *Maintenance*](#operation-dan-maintenance-bab-iv)  
+[IV.5.1	Operasi Sistem](#operasi-sistem)  
+[IV.5.2	Pemeliharaan Sistem](#pemeliharaan-sistem)  
+[**DAFTAR PUSTAKA**](#daftar-pustaka)
 
 # **DAFTAR GAMBAR** {#daftar-gambar}
 
-[Gambar II.1. Struktur Blockchain.	31](#gambar-ii.1.-struktur-blockchain,-sumber:-https://www.geeksforgeeks.org/ethical-hacking/blockchain-structure/,2025.)  
-[Gambar II.2. Cara kerja Smart Contract.	32](#gambar-ii.2.-cara-kerja-smart-contract,-sumber:-https://coindcx.com/blog/crypto-basics/what-is-a-smart-contract/,-2025.)
+[Gambar II.1. Struktur Blockchain](#bab-ii-tinjauan-pustaka)  
+[Gambar II.2. Cara kerja Smart Contract](#bab-ii-tinjauan-pustaka)  
+[Gambar II.3. Model *Waterfall* (Sommerville, 2011)](#model-pengembangan-waterfall)
 
-[Gambar III.1. Alur Proses Sistem Secara Umum	36](#gambar-iii.1.-alur-proses-sistem-secara-umum)  
-[Gambar III.2. Tahapan pengembangan sistem, sumber: https://medium.com/@nassyaputririyani/metode-pengembangan-perangkat-lunak-42a4ebdff5aa	40](#gambar-iii.2.-tahapan-pengembangan-sistem,-sumber:-https://medium.com/@nassyaputririyani/metode-pengembangan-perangkat-lunak-42a4ebdff5aa)
+[Gambar III.1. Alur Proses Sistem Secara Umum](#penjelasan-pengembangan-sistem)  
+[Gambar III.2. Metodologi Pengembangan Sistem Penilaian BKD](#tahapan-pelaksanaan-pengembangan-sistem)
 
-[Gambar IV.1. Flowchart sistem berjalan bagian 1	46](#gambar-iv.1.-flowchart-sistem-berjalan-bagian-1)  
-[Gambar IV.2. Flowchart sistem berjalan bagian 2	47](#gambar-iv.2.-flowchart-sistem-berjalan-bagian-2)  
-[Gambar IV.3. Flowchat alur proses sistem yang dikembangkan bagian 1	55](#gambar-iv.3.-flowchat-alur-proses-sistem-yang-dikembangkan-bagian-1)  
-[Gambar IV.4. Flowchat alur proses sistem yang dikembangkan bagian 2	56](#gambar-iv.4.-flowchat-alur-proses-sistem-yang-dikembangkan-bagian-2)  
-[Gambar IV.5. Structure chart Smart Contract Penilaian BKD	70](#gambar-iv.5.-structure-chart-smart-contract-penilaian-bkd)  
-[Gambar IV.6. Sturcture chart Smart Contract Token SKS	72](#gambar-iv.6.-sturcture-chart-smart-contract-token-sks)  
-[Gambar IV.7. Arsitektur Sistem Penilaian BKD Berbasis Smart Contract	95](#gambar-iv.7.-arsitektur-sistem-penilaian-bkd-berbasis-smart-contract)  
-[Gambar IV.8. Entity Relationship Diagram	97](#gambar-iv.8.-entity-relationship-diagram)  
-[Gambar IV.9. Design Antarmuka Halaman Login	99](#gambar-iv.9.-design-antarmuka-halaman-login)  
-[Gambar IV.10. Gambar IV. 8 Design Dashboard Halaman Pengajaran	101](#gambar-iv.10.-gambar-iv.-8-design-dashboard-halaman-pengajaran)
+[Gambar IV.1. *Flowchart* sistem berjalan bagian 1](#analisis-sistem-berjalan)  
+[Gambar IV.2. *Flowchart* sistem berjalan bagian 2](#analisis-sistem-berjalan)  
+[Gambar IV.3. *Flowchart* alur proses sistem yang dikembangkan bagian 1](#alur-proses-sistem-yang-diusulkan)  
+[Gambar IV.4. *Flowchart* alur proses sistem yang dikembangkan bagian 2](#alur-proses-sistem-yang-diusulkan)  
+[Gambar IV.5. Arsitektur Sistem Penilaian BKD Berbasis *Smart Contract*](#perancangan-arsitektur-sistem)  
+[Gambar IV.6. Diagram Konteks Sistem Penilaian BKD](#diagram-konteks)  
+[Gambar IV.7. Diagram Aliran Data Level 1](#diagram-aliran-data-level-1)  
+[Gambar IV.8. Diagram Aliran Data Level 2 Proses Ekstraksi dan Penerapan Dokumen](#diagram-aliran-data-level-2)  
+[Gambar IV.9. Diagram Aliran Data Level 2 Proses Perhitungan Kredit Kegiatan](#diagram-aliran-data-level-2)  
+[Gambar IV.10. Diagram Aliran Data Level 2 Proses Penilaian, Simpulan, dan Penerbitan Token](#diagram-aliran-data-level-2)  
+[Gambar IV.11. Diagram Aliran Data Level 2 Proses Verifikasi Keaslian Dokumen Bukti](#diagram-aliran-data-level-2)  
+[Gambar IV.12. *Structure Chart* Kontrak Kalkulator BKD Pendidikan](#structure-chart-kontrak-kalkulator)  
+[Gambar IV.13. *Structure Chart* Kontrak Token SKS](#structure-chart-kontrak-token-sks)  
+[Gambar IV.14. *Entity Relationship Diagram* Sistem Penilaian BKD](#perancangan-basis-data)  
+[Gambar IV.15. Rancangan Antarmuka Halaman Masuk](#halaman-masuk)  
+[Gambar IV.16. Rancangan Antarmuka Daftar Kegiatan Pengajaran](#halaman-daftar-kegiatan-pengajaran)  
+[Gambar IV.17. Kontrak Terverifikasi pada Penjelajah Blok](#deployment-dan-verifikasi-smart-contract)
 
 # **DAFTAR TABEL** {#daftar-tabel}
 
-[Tabel III.1. Data Pengembangan Sistem	41](#tabel-iii.1.-data-pengembangan-sistem)  
-[Tabel III.2. Perangkat Pendukung	42](#heading=h.2qyjozjl8gl1)  
-[Tabel III.3. Rincian Increment Pengembangan Sistem	44](#tabel-iii.3.-rincian-increment-pengembangan-sistem)  
-[Tabel III.4. Rancangan jadwal pelaksanaan tugas akhir	47](#heading=h.rppr471v7nhw)  
-[Tabel III.5. Tabel Perencanaan Biaya	48](#heading=h.bw77yz184zlc)
+[Tabel II.1. Literatur sejenis dan penulisnya](#karya-ilmiah-sejenis)
 
-[Tabel IV.1. I-P-O pada proses pengajuan kegiatan BKD pendidikan	53](#tabel-iv.1.-i-p-o-pada-proses-pengajuan-kegiatan-bkd-pendidikan)  
-[Tabel IV.2. I-P-O pada Proses Penilaian BKD oleh Asesor	54](#tabel-iv.2.-i-p-o-pada-proses-penilaian-bkd-oleh-asesor)  
-[Tabel IV.3. I-P-O pada Proses Perhitungan Aturan BKD Pendidikan	55](#tabel-iv.3.-i-p-o-pada-proses-perhitungan-aturan-bkd-pendidikan)  
-[Tabel IV.4. Keunggulan dan Keterbatasan Sistem Berjalan	55](#tabel-iv.4.-keunggulan-dan-keterbatasan-sistem-berjalan)  
-[Tabel IV.5. Fitur sistem penilaian BKD pendidikan berbasis Smart Contract	57](#tabel-iv.5.-fitur-sistem-penilaian-bkd-pendidikan-berbasis-smart-contract)  
-[Tabel IV.6. Entitas eksternal sistem	58](#tabel-iv.6.-entitas-eksternal-sistem)  
-[Tabel IV.7. Klasifikasi Data Berdasarkan Input, Proses, dan Output (I-P-O)	59](#tabel-iv.7.-klasifikasi-data-berdasarkan-input,-proses,-dan-output-\(i-p-o\))  
-[Tabel IV.8. Tabel aturan penilaian BKD bidang pendidikan	65](#tabel-iv.8.-tabel-aturan-penilaian-bkd-bidang-pendidikan)  
-[Tabel IV.9. Struktur Data Komposit Smart Contract Penilaian	69](#tabel-iv.9.-struktur-data-komposit-smart-contract-penilaian)  
-[Tabel IV.10. Struktur Data Elementer Smart Contract Penilaian	70](#tabel-iv.10.-struktur-data-elementer-smart-contract-penilaian)  
-[Tabel IV.11. Struktur data komposit Smart Contract Token	72](#tabel-iv.11.-struktur-data-komposit-smart-contract-token)  
-[Tabel IV.12. Struktur data elementer Smart Contract Token	73](#tabel-iv.12.-struktur-data-elementer-smart-contract-token)  
-[Tabel IV.13. CD-001: Smart Contract Penilaian BKD	78](#tabel-iv.13.-cd-001:-smart-contract-penilaian-bkd)  
-[Tabel IV.14. CD-002: Smart Contract Token Standard	83](#tabel-iv.14.-cd-002:-smart-contract-token-standard)  
-[Tabel IV.15. Lingkungan Pengembangan	85](#tabel-iv.15.-lingkungan-pengembangan)  
-[Tabel IV.16. Matriks Implementasi	85](#tabel-iv.16.-matriks-implementasi)  
-[Tabel IV.17. IM-01: Smart Contract Penilaian BKD	85](#tabel-iv.17.-im-01:-smart-contract-penilaian-bkd)  
-[Tabel IV.18. I-P-O Aplikasi Web	98](#tabel-iv.18.-i-p-o-aplikasi-web)  
-[Tabel IV.19. Rancangan Antarmuka Halaman Login	105](#tabel-iv.19.-rancangan-antarmuka-halaman-login)  
-[Tabel IV.20. Rancangan Antarmuka Dashboard Pengajaran	106](#tabel-iv.20.-rancangan-antarmuka-dashboard-pengajaran)
+[Tabel III.1. Dokumen Penugasan sebagai Sumber Data Pengembangan](#data-pengembangan-sistem)  
+[Tabel III.2. Cakupan Pencocokan Hasil Ekstraksi terhadap Data Induk Dosen](#data-pengembangan-sistem)  
+[Tabel III.3. Referensi Kegiatan BKD Unsur Pendidikan yang Dimuat ke Sistem](#data-pengembangan-sistem)  
+[Tabel III.4. Tahapan, Aktivitas, dan Luaran Pengembangan Sistem](#tahapan-pelaksanaan-pengembangan-sistem)
+
+[Tabel IV.1. I-P-O pada proses pengajuan kegiatan BKD pendidikan](#analisis-proses-pengajuan-kegiatan-bkd-pendidikan)  
+[Tabel IV.2. I-P-O pada Proses Penilaian BKD oleh Asesor](#analisis-proses-penilaian-oleh-asesor)  
+[Tabel IV.3. I-P-O pada Proses Perhitungan Aturan BKD Pendidikan](#analisis-aturan-perhitungan-bkd-pendidikan)  
+[Tabel IV.4. Keunggulan dan Keterbatasan Sistem Berjalan](#kesimpulan-analisis-dan-usulan-pemecahan-masalah)  
+[Tabel IV.5. Fitur sistem penilaian BKD pendidikan berbasis *Smart Contract*](#analisis-sistem-yang-akan-dikembangkan)  
+[Tabel IV.6. Identifikasi *Environment* Sistem Penilaian BKD](#identifikasi-kebutuhan-sistem)  
+[Tabel IV.7. Identifikasi *Items Produced* (Data *Input*–*Proses*–*Output*)](#identifikasi-kebutuhan-sistem)  
+[Tabel IV.8. Identifikasi *Modes of Operation* Sistem Penilaian BKD](#identifikasi-kebutuhan-sistem)  
+[Tabel IV.9. Aturan penilaian BKD bidang pendidikan yang diimplementasikan](#analisis-aturan-penilaian-bkd-pendidikan-yang-diimplementasikan)  
+[Tabel IV.10. Ringkasan Persyaratan Fungsional per Modul](#penetapan-requirement-sistem-yang-dikembangkan)  
+[Tabel IV.11. Ringkasan Persyaratan Nonfungsional](#penetapan-requirement-sistem-yang-dikembangkan)  
+[Tabel IV.12. Deskripsi Lapisan Arsitektur Sistem](#perancangan-arsitektur-sistem)  
+[Tabel IV.13. Pustaka yang Digunakan pada Setiap Lapisan Arsitektur](#perancangan-arsitektur-sistem)  
+[Tabel IV.14. Deskripsi Proses pada Diagram Aliran Data Level 1](#diagram-aliran-data-level-1)  
+[Tabel IV.15. Penyimpanan Data pada Diagram Aliran Data Level 1](#diagram-aliran-data-level-1)  
+[Tabel IV.16. Struktur Data Komposit Kontrak Kalkulator BKD Pendidikan](#kamus-data-kontrak-kalkulator)  
+[Tabel IV.17. Struktur Data Elementer Kontrak Kalkulator BKD Pendidikan](#kamus-data-kontrak-kalkulator)  
+[Tabel IV.18. Struktur Data Komposit Kontrak Token SKS](#kamus-data-kontrak-token-sks)  
+[Tabel IV.19. Struktur Data Elementer Kontrak Token SKS](#kamus-data-kontrak-token-sks)  
+[Tabel IV.20. Daftar Spesifikasi Proses](#spesifikasi-proses)  
+[Tabel IV.21. Pemetaan Butir Aturan PO BKD terhadap Modul Perhitungan](#structure-chart-kontrak-kalkulator)  
+[Tabel IV.22. CD-001: Modul *Smart Contract* Kalkulator BKD Pendidikan](#spesifikasi-modul)  
+[Tabel IV.23. CD-002: Modul *Smart Contract* Token SKS](#spesifikasi-modul)  
+[Tabel IV.24. Rekapitulasi Entitas Basis Data](#perancangan-basis-data)  
+[Tabel IV.25. Daftar Tipe Enumerasi pada Basis Data](#perancangan-basis-data)  
+[Tabel IV.26. Daftar Halaman Sistem per Peran](#arsitektur-navigasi)  
+[Tabel IV.27. Rancangan Antarmuka Halaman Masuk](#halaman-masuk)  
+[Tabel IV.28. Rancangan Antarmuka Daftar Kegiatan Pengajaran](#halaman-daftar-kegiatan-pengajaran)  
+[Tabel IV.29. Lingkungan Pengembangan](#lingkungan-pengembangan)  
+[Tabel IV.30. Matriks Implementasi](#matriks-implementasi)  
+[Tabel IV.31. IM-01: Implementasi *Smart Contract* Kalkulator BKD Pendidikan](#implementasi-modul-kalkulator)  
+[Tabel IV.32. IM-02: Implementasi *Smart Contract* Token SKS](#implementasi-modul-token-sks)  
+[Tabel IV.33. IM-03: Fungsi pada Modul Integrasi *Blockchain*](#implementasi-modul-integrasi-blockchain)  
+[Tabel IV.34. IM-05: Titik Akhir Layanan Ekstraksi Dokumen](#implementasi-modul-ekstraksi-dan-penerapan-dokumen)  
+[Tabel IV.35. IM-07: Langkah Pengesahan Penilaian dan Penerbitan Token](#implementasi-modul-penilaian-simpulan-token)  
+[Tabel IV.36. Jenis Pengujian Sistem Penilaian BKD](#test-plan)  
+[Tabel IV.37. Klasifikasi Skenario Pengujian](#test-plan)  
+[Tabel IV.38. Objek Pengujian dan Keterkaitan dengan Persyaratan Fungsional](#test-plan)  
+[Tabel IV.39. Spesifikasi Lingkungan Pengujian](#test-plan)  
+[Tabel IV.40. Skenario Pengujian Unit Kontrak Kalkulator BKD Pendidikan](#unit-testing)  
+[Tabel IV.41. Skenario Pengujian Unit Kontrak Token SKS](#unit-testing)  
+[Tabel IV.42. Rekapitulasi Pengujian Unit](#unit-testing)  
+[Tabel IV.43. Skenario Pengujian Integrasi](#integration-testing)  
+[Tabel IV.44. Skenario Pengujian Sistem Berbasis Alur Pengguna](#system-testing)  
+[Tabel IV.45. Hasil Uji Akurasi Perhitungan Kredit terhadap Perhitungan Manual](#uji-akurasi-perhitungan-kredit)  
+[Tabel IV.46. Rekapitulasi Uji Akurasi Perhitungan Kredit](#uji-akurasi-perhitungan-kredit)  
+[Tabel IV.47. Hasil Verifikasi Persyaratan Nonfungsional](#pengujian-aspek-nonfungsional)  
+[Tabel IV.48. Identitas Penempatan *Smart Contract*](#deployment-dan-verifikasi-smart-contract)  
+[Tabel IV.49. Konfigurasi Operasional Sistem](#pengoperasian-aplikasi-web)  
+[Tabel IV.50. Rekapitulasi Kegiatan Pemeliharaan Sistem](#pemeliharaan-sistem)
 
 # **DAFTAR RUMUS** {#daftar-rumus}
+
+Laporan ini tidak memuat rumus matematis yang dinomori tersendiri. Seluruh formula perhitungan kredit BKD unsur pendidikan disajikan sebagai spesifikasi proses dan spesifikasi modul dalam bentuk *pseudocode* pada subbab IV.2.2.5 dan IV.2.3.3, mengikuti pendekatan perancangan terstruktur yang diuraikan pada subbab II.1.11.
 
 # **DAFTAR ISTILAH** {#daftar-istilah}
 
 | Istilah | Definisi |
 | ----- | ----- |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| *Blockchain* | Buku besar digital terdistribusi yang menyimpan transaksi dalam blok-blok yang saling terhubung melalui fungsi *hash* kriptografi, sehingga catatan yang telah tersimpan tidak dapat diubah tanpa terdeteksi. |
+| *Smart contract* | Program yang disimpan dan dieksekusi pada *blockchain*, yang menjalankan aturan tertentu secara otomatis dan deterministik ketika kondisi yang ditetapkan terpenuhi. |
+| *Rule engine* | Komponen perangkat lunak yang tugasnya menjalankan sekumpulan aturan atas masukan tertentu untuk menghasilkan keputusan atau nilai. Pada sistem ini, peran tersebut dijalankan *smart contract* kalkulator. |
+| Deterministik | Sifat suatu proses yang selalu menghasilkan keluaran identik untuk masukan yang sama, berapa kali pun dijalankan dan di mana pun dijalankan. |
+| Probabilistik | Sifat suatu proses yang keluarannya tidak dijamin identik pada pemanggilan berulang atas masukan yang sama. Sifat ini melekat pada keluaran model bahasa visual. |
+| *Immutable* | Sifat tidak dapat diubah. Kode *smart contract* bersifat *immutable* setelah ditempatkan, sehingga perubahan aturan menuntut penempatan ulang kontrak. |
+| *Non-transferable* | Sifat token yang tidak dapat dipindahkan antar-alamat. Token kredit SKS dibuat *non-transferable* agar melekat pada dosen yang dinilai. |
+| *Mint* | Operasi penerbitan token baru ke suatu alamat, dijalankan setelah penilaian disahkan kedua asesor. |
+| *Burn* | Operasi penghapusan token dari saldo suatu alamat, dijalankan administrator untuk keperluan koreksi. |
+| *Wallet* kustodian | Alamat *blockchain* milik dosen yang kunci privatnya dikelola penyelenggara sistem, bukan oleh dosen, sehingga dosen tidak perlu memasang dompet kripto sendiri. |
+| *Transaction hash* | Pengenal unik suatu transaksi pada *blockchain* yang dapat digunakan siapa pun untuk menelusuri transaksi tersebut melalui penjelajah blok. |
+| *Gas* | Biaya komputasi yang dibayarkan untuk mengeksekusi transaksi pada jaringan berbasis EVM. |
+| Layer-2 | Jaringan yang beroperasi di atas jaringan utama untuk menurunkan biaya dan meningkatkan kapasitas transaksi, dengan tetap mewarisi jaminan keamanan jaringan di bawahnya. |
+| *Testnet* | Jaringan uji yang menggunakan mata uang tanpa nilai ekonomis, dipakai untuk menguji perilaku kontrak tanpa risiko finansial. |
+| *Block explorer* | Layanan yang menyediakan akses terindeks terhadap data transaksi, alamat, dan kode sumber kontrak pada suatu jaringan *blockchain*. |
+| Model bahasa visual | Model pembelajaran mesin multimodal yang menerima citra beserta instruksi tekstual dan menghasilkan keluaran tekstual, sehingga mampu menafsirkan isi dan tata letak dokumen langsung dari representasi visualnya. |
+| Parser artefak universal | Jalur ekstraksi berbasis model bahasa visual dengan skema keluaran umum, yang dipakai membaca dokumen dosen yang formatnya tidak diketahui sebelumnya. |
+| Ekstraksi deterministik | Jalur ekstraksi berbasis posisi kolom dan garis tabel pada berkas PDF digital, yang keluarannya dapat direproduksi secara identik pada setiap eksekusi. |
+| Verifikasi keaslian bukti | Pemeriksaan kesesuaian isi dokumen bukti terhadap klaim dosen, yaitu pencocokan nama pada dokumen terhadap pemilik akun dan pemeriksaan kesesuaian peran. Berbeda dari autentikasi keabsahan dokumen yang berada di luar lingkup pengembangan. |
+| Idempoten | Sifat suatu operasi yang menghasilkan keadaan akhir sama meskipun dijalankan berulang kali. Penerapan hasil ekstraksi dirancang idempoten agar tidak menggandakan kegiatan. |
+| Fase BKD | Tahap yang sedang berjalan pada suatu periode penilaian, yaitu pengisian, penilaian, perbaikan, atau selesai, yang menentukan aksi apa saja yang boleh dijalankan setiap peran. |
+| Simpulan BKD | Rekapitulasi hasil penilaian satu dokumen BKD setelah kedua asesor mengesahkan, memuat total kredit dan status memenuhi atau tidak memenuhi. |
+| Aksi peladen | Fungsi yang dituliskan pada berkas sisi peladen namun dapat dipanggil langsung dari komponen antarmuka tanpa mendefinisikan titik akhir tersendiri. |
 
 # **DAFTAR SINGKATAN** {#daftar-singkatan}
 
 | Singkatan | Kepanjangan |
 | ----- | ----- |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| ABI | *Application Binary Interface* |
+| ACID | *Atomicity, Consistency, Isolation, Durability* |
+| API | *Application Programming Interface* |
+| ASGI | *Asynchronous Server Gateway Interface* |
+| BKD | Beban Kinerja Dosen |
+| CD | *Component Design* |
+| DFD | *Data Flow Diagram* |
+| ERC | *Ethereum Request for Comments* |
+| ERD | *Entity Relationship Diagram* |
+| EVM | *Ethereum Virtual Machine* |
+| FR | *Functional Requirement* |
+| HTTP | *Hypertext Transfer Protocol* |
+| IM | *Implementation Matrix* |
+| I-P-O | *Input*–*Process*–*Output* |
+| ISO/IEC | *International Organization for Standardization / International Electrotechnical Commission* |
+| JSON | *JavaScript Object Notation* |
+| JSONB | *JavaScript Object Notation Binary* |
+| JTK | Jurusan Teknik Komputer dan Informatika |
+| JWT | *JSON Web Token* |
+| LKD | Laporan Kinerja Dosen |
+| MIME | *Multipurpose Internet Mail Extensions* |
+| NFR | *Non-Functional Requirement* |
+| NIDN | Nomor Induk Dosen Nasional |
+| NIP | Nomor Induk Pegawai |
+| OCR | *Optical Character Recognition* |
+| ORM | *Object-Relational Mapping* |
+| Ormawa | Organisasi Kemahasiswaan |
+| PDF | *Portable Document Format* |
+| PKL | Praktik Kerja Lapangan |
+| PO BKD | Pedoman Operasional Beban Kerja Dosen |
+| PSPEC | *Process Specification* |
+| RBAC | *Role-Based Access Control* |
+| RPC | *Remote Procedure Call* |
+| RPS | Rencana Pembelajaran Semester |
+| SASD | *Structured Analysis and Structured Design* |
+| SHA | *Secure Hash Algorithm* |
+| SISTER | Sistem Informasi Sumberdaya Terintegrasi |
+| SK | Surat Keputusan |
+| SKS | Satuan Kredit Semester |
+| SQL | *Structured Query Language* |
+| SRS | *Software Requirements Specification* |
+| SSH | *Secure Shell* |
+| ST | Surat Tugas |
+| TA | Tugas Akhir |
+| UUID | *Universally Unique Identifier* |
+| VLM | *Vision Language Model* |
 
 # **BAB I** **PENDAHULUAN** {#bab-i-pendahuluan}
 
@@ -289,7 +422,9 @@ Pada tahap verifikasi, asesor tidak selalu memeriksa Surat Keputusan (SK) sebaga
 	Persoalan tersebut menuntut pendekatan yang mengurangi ketergantungan pada pembacaan manual SK oleh asesor, sekaligus menjamin konsistensi perhitungan atas parameter yang telah diverifikasi. Aplikasi web konvensional mampu menjalankan formula perhitungan yang sama untuk semua kasus, sehingga menghilangkan variasi hasil yang muncul dari kalkulasi manual. Namun aplikasi web konvensional dengan basis data terpusat menyimpan catatan hasil penilaian di basis data yang dikelola administrator institusi, sehingga penelusuran riwayat penilaian dilakukan melalui sistem internal. Karakteristik ini berbeda dengan pendekatan berbasis blockchain yang menyimpan catatan pada *ledger* terdistribusi, sehingga penelusuran hasil dapat dilakukan langsung oleh dosen yang dinilai maupun pihak yang diberi wewenang oleh institusi melalui *transaction hash*.  
 	Teknologi blockchain dan smart contract menyediakan mekanisme yang berbeda dari sistem berbasis basis data terpusat. Blockchain merupakan buku besar digital terdistribusi yang menyimpan transaksi secara permanen dan dapat ditelusuri (Nakamoto, 2008). Di atas blockchain, smart contract menjalankan logika tertentu secara otomatis dan deterministik, sehingga untuk input dan aturan yang sama akan selalu menghasilkan keluaran yang sama.  
 	Penerapan smart contract pada sistem penilaian BKD memberikan empat keunggulan yang tidak tersedia pada aplikasi web konvensional. Pertama, determinisme eksekusi memastikan bahwa aturan PO BKD dijalankan secara konsisten lintas asesor dan lintas waktu, sehingga ketidakkonsistenan hasil perhitungan yang muncul akibat perhitungan manual dapat dihilangkan pada tahap kalkulasi (Turkanović et al., 2018). Kedua, kode smart contract bersifat *immutable* setelah *deploy*, artinya aturan perhitungan yang telah disepakati tidak dapat diubah oleh administrator sistem maupun pengembang tanpa melalui mekanisme *deploy* ulang yang juga tercatat di blockchain. Ini berbeda dengan aplikasi web konvensional, di mana kode *backend* yang berisi rumus perhitungan dapat dimodifikasi oleh administrator server tanpa jejak yang dapat diverifikasi pihak luar. Ketiga, setiap pemanggilan fungsi dan penerbitan kredit menghasilkan *transaction hash* yang tersimpan permanen dan dapat ditelusuri melalui *block explorer* publik oleh dosen, auditor akreditasi, maupun pihak eksternal, tanpa memerlukan akses ke basis data internal institusi (Silaghi et al., 2025). Keempat, setiap operasi tercatat dengan informasi pengirim (alamat *wallet* asesor atau administrator) dan waktu eksekusi, sehingga alur akuntabilitas atas siapa menyetujui parameter mana dan kapan menjadi eksplisit dan tidak dapat dimodifikasi setelah tercatat.  
-	Berdasarkan kondisi tersebut, tugas akhir ini mengembangkan Sistem Penilaian BKD Bidang Pendidikan Berbasis Smart Contract pada jaringan blockchain berbasis *Ethereum Virtual Machine* (EVM). Sistem ini mengintegrasikan tiga komponen utama untuk mengatasi persoalan yang telah dipaparkan. Pertama, tools ekstraksi dokumen yang membaca struktur tabel pada file Surat Keputusan (SK) dan menghasilkan parameter kegiatan dalam format terstruktur, sehingga parameter penugasan yang diproses sistem berasal langsung dari dokumen sumber, bukan dari input manual yang dapat berbeda dengan SK. Kedua, mekanisme verifikasi oleh asesor terhadap hasil ekstraksi sebelum diproses lebih lanjut, sehingga asesor tetap memegang kewenangan penilaian dengan pemeriksaan kesesuaian parameter terhadap SK sebagai langkah eksplisit dalam alur. Ketiga, smart contract yang menjalankan aturan PO BKD secara deterministik terhadap parameter yang telah diverifikasi asesor, kemudian menerbitkan kredit SKS sebagai token ERC-20 *non-transferable* yang melekat pada *wallet* dosen dan tercatat permanen pada blockchain.
+	Persoalan verifikasi tersebut tidak berhenti pada parameter penugasan, melainkan berlanjut pada dokumen bukti yang dilampirkan dosen. Sebagian kegiatan pendidikan, khususnya pembimbingan seminar, pembimbingan Praktik Kerja Lapangan, dan pembimbingan Tugas Akhir, tidak seluruhnya tercakup dalam satu Surat Tugas kolektif, sehingga pembuktiannya bersandar pada dokumen yang diunggah dosen sendiri, seperti lembar pengesahan, berita acara, atau lembar persetujuan. Pada dokumen semacam ini, kebenaran klaim ditentukan oleh dua hal, yaitu apakah nama dosen benar-benar tercantum pada dokumen tersebut, dan apakah peran yang tertulis pada dokumen sesuai dengan peran yang diklaim dosen pada sistem. Kecenderungan asesor mempercayai data yang diinput dosen tanpa pemeriksaan ulang ke dokumen sumber (Nurjannah, 2026) berlaku pula pada tahap ini. Akibatnya, dokumen bukti milik dosen lain dapat lolos sebagai bukti, dan klaim peran yang lebih tinggi bobotnya, misalnya klaim sebagai Pembimbing Utama padahal dokumen menuliskan Pembimbing Pendamping, tidak selalu terdeteksi. Kedua bentuk ketidaksesuaian tersebut berdampak langsung pada nilai kredit karena peran menjadi salah satu parameter perhitungan pada rubrik PO BKD.
+
+	Berdasarkan kondisi tersebut, tugas akhir ini mengembangkan Sistem Penilaian BKD Bidang Pendidikan Berbasis Smart Contract pada jaringan blockchain berbasis *Ethereum Virtual Machine* (EVM). Sistem ini mengintegrasikan empat komponen utama untuk mengatasi persoalan yang telah dipaparkan. Pertama, tools ekstraksi dokumen yang membaca struktur tabel pada file Surat Keputusan (SK) dan Surat Tugas (ST) dan menghasilkan parameter kegiatan dalam format terstruktur, sehingga parameter penugasan yang diproses sistem berasal langsung dari dokumen sumber, bukan dari input manual yang dapat berbeda dengan SK. Kedua, mekanisme verifikasi keaslian dokumen bukti berbasis model bahasa visual, yaitu pembacaan dokumen yang diunggah dosen untuk mengenali nama-nama orang beserta perannya pada dokumen tersebut, kemudian mencocokkannya dengan identitas pemilik akun dan peran yang diklaim, sehingga ketidaksesuaian bukti ditandai kepada asesor sebelum penilaian ditetapkan. Ketiga, mekanisme verifikasi oleh asesor terhadap hasil ekstraksi maupun hasil pemeriksaan bukti sebelum diproses lebih lanjut, sehingga asesor tetap memegang kewenangan penilaian dengan pemeriksaan kesesuaian sebagai langkah eksplisit dalam alur. Keempat, smart contract yang menjalankan aturan PO BKD secara deterministik terhadap parameter yang telah diverifikasi asesor, kemudian menerbitkan kredit SKS sebagai token ERC-20 *non-transferable* yang melekat pada *wallet* dosen dan tercatat permanen pada blockchain.
 
 2. ## **Rumusan Masalah** {#rumusan-masalah}
 
@@ -297,24 +432,26 @@ Pada tahap verifikasi, asesor tidak selalu memeriksa Surat Keputusan (SK) sebaga
 Adapun rumusan masalah dalam pengembangan ini adalah sebagai berikut:
 
 1. Verifikasi parameter kegiatan terhadap SK sebagai dokumen sumber tidak dilakukan secara konsisten oleh asesor, sehingga parameter yang digunakan untuk perhitungan tidak selalu sesuai dengan penugasan yang tercantum di SK.  
-2. Perhitungan kredit BKD bidang pendidikan yang dilakukan secara manual menghasilkan nilai kredit yang tidak konsisten antar-asesor untuk kegiatan yang sama, sehingga hasil penilaian ditetapkan melalui praktik perata-rataan yang bukan merupakan penerapan aturan PO BKD.  
-3. Catatan hasil penilaian yang tersimpan pada basis data terpusat tidak menyediakan mekanisme penelusuran hasil yang dapat dilakukan secara mandiri oleh dosen yang dinilai maupun pihak yang diberi wewenang oleh institusi.
+2. Dokumen bukti yang diunggah dosen tidak diperiksa kesesuaiannya terhadap identitas pengunggah maupun peran yang diklaim, sehingga bukti yang bukan milik dosen bersangkutan atau yang perannya berbeda dengan klaim dapat diterima sebagai dasar penilaian.  
+3. Perhitungan kredit BKD bidang pendidikan yang dilakukan secara manual menghasilkan nilai kredit yang tidak konsisten antar-asesor untuk kegiatan yang sama, sehingga hasil penilaian ditetapkan melalui praktik perata-rataan yang bukan merupakan penerapan aturan PO BKD.  
+4. Catatan hasil penilaian yang tersimpan pada basis data terpusat tidak menyediakan mekanisme penelusuran hasil yang dapat dilakukan secara mandiri oleh dosen yang dinilai maupun pihak yang diberi wewenang oleh institusi.
 
 3. ## **Tujuan Pengembangan Sistem** {#tujuan-pengembangan-sistem}
 
 Tujuan pengembangan sistem ini adalah menyediakan mekanisme penilaian BKD bidang pendidikan yang mengurangi ketergantungan pada pembacaan manual SK oleh asesor, menjamin konsistensi hasil perhitungan atas parameter yang telah diverifikasi, serta mencatat hasil penilaian pada blockchain sehingga dapat ditelusuri melalui *transaction hash* oleh pihak berkepentingan.  
 Secara rinci, tujuan pengembangan sistem ini adalah sebagai berikut:
 
-1. Menyediakan mekanisme ekstraksi parameter kegiatan dari file Surat Keputusan (SK) berbasis kecerdasan buatan, sehingga parameter yang diproses sistem berasal langsung dari dokumen sumber dan dapat diverifikasi oleh asesor.  
-2. Mengimplementasikan aturan penilaian BKD bidang pendidikan sesuai PO BKD 2021 ke dalam smart contract sebagai *rule engine* yang menjalankan eksekusi aturan secara otomatis dan deterministik, sehingga hasil perhitungan kredit konsisten lintas asesor dan lintas waktu.  
-3. Menyediakan mekanisme pencatatan hasil penilaian melalui token ERC-20 *non-transferable* yang diterbitkan pada blockchain, sehingga riwayat penerbitan dan koreksi kredit tersimpan permanen dan dapat ditelusuri melalui *transaction hash*.  
-4. Mengintegrasikan tools ekstraksi, smart contract, dan antarmuka web sehingga seluruh alur penilaian, mulai dari upload SK, ekstraksi parameter, verifikasi oleh asesor, hingga penerbitan kredit, dapat berjalan secara terpadu
+1. Menyediakan mekanisme ekstraksi parameter kegiatan dari file Surat Keputusan (SK) dan Surat Tugas (ST) berbasis kecerdasan buatan, sehingga parameter yang diproses sistem berasal langsung dari dokumen sumber dan dapat diverifikasi oleh asesor.  
+2. Menyediakan mekanisme verifikasi keaslian dokumen bukti berbasis model bahasa visual yang mencocokkan nama dan peran pada dokumen unggahan dosen terhadap identitas pemilik akun dan peran yang diklaim, sehingga ketidaksesuaian bukti tersaji kepada asesor sebagai temuan sebelum penilaian ditetapkan.  
+3. Mengimplementasikan aturan penilaian BKD bidang pendidikan sesuai PO BKD 2021 ke dalam smart contract sebagai *rule engine* yang menjalankan eksekusi aturan secara otomatis dan deterministik, sehingga hasil perhitungan kredit konsisten lintas asesor dan lintas waktu.  
+4. Menyediakan mekanisme pencatatan hasil penilaian melalui token ERC-20 *non-transferable* yang diterbitkan pada blockchain, sehingga riwayat penerbitan dan koreksi kredit tersimpan permanen dan dapat ditelusuri melalui *transaction hash*.  
+5. Mengintegrasikan tools ekstraksi, mekanisme verifikasi bukti, smart contract, dan antarmuka web sehingga seluruh alur penilaian, mulai dari upload SK dan ST, ekstraksi parameter, unggah dan pemeriksaan bukti, verifikasi oleh asesor, hingga penerbitan kredit, dapat berjalan secara terpadu.
 
 4. ## **Pemangku Kepentingan dan Manfaat Hasil Pengembangan Sistem** {#pemangku-kepentingan-dan-manfaat-hasil-pengembangan-sistem}
 
  Sistem yang dikembangkan memberikan manfaat berupa konsistensi hasil perhitungan kredit BKD bidang pendidikan, tersedianya draft parameter kegiatan yang bersumber langsung dari SK, serta pencatatan hasil penilaian pada blockchain yang dapat ditelusuri secara mandiri. Pemangku kepentingan yang memperoleh manfaat dari sistem ini meliputi dosen, asesor, program studi, serta institusi perguruan tinggi.  
 	Dosen sebagai pihak yang dinilai memperoleh manfaat berupa kejelasan sumber parameter penilaian, karena parameter yang diproses sistem bersumber langsung dari SK yang menugaskan dosen pada kegiatan tersebut. Melalui sistem ini, dosen memperoleh hasil perhitungan kredit kegiatan yang konsisten dengan aturan PO BKD 2021 dan tidak bergantung pada asesor yang menilai. Dosen juga dapat menelusuri sendiri riwayat penerbitan kredit pada periode-periode sebelumnya melalui *transaction hash* yang tercatat pada blockchain.  
-Asesor sebagai pihak yang melakukan penilaian memperoleh manfaat berupa tersedianya draft parameter kegiatan yang telah diekstrak dari SK, sehingga asesor tidak perlu memindahkan data dari SK ke sistem secara manual. Asesor tetap memegang kewenangan verifikasi, dengan alur kerja yang menempatkan pemeriksaan kesesuaian antara SK dan parameter sebagai langkah eksplisit sebelum kredit diterbitkan. Perhitungan kredit dijalankan otomatis oleh sistem, sehingga asesor dapat memfokuskan perhatian pada verifikasi kesesuaian data dengan SK.  
+Asesor sebagai pihak yang melakukan penilaian memperoleh manfaat berupa tersedianya draft parameter kegiatan yang telah diekstrak dari SK, sehingga asesor tidak perlu memindahkan data dari SK ke sistem secara manual. Asesor juga memperoleh hasil pemeriksaan awal atas dokumen bukti yang diunggah dosen, berupa daftar nama beserta peran yang terbaca pada dokumen dan penanda apakah nama pemilik akun ditemukan serta perannya sesuai dengan yang diklaim. Penanda tersebut mengarahkan perhatian asesor pada dokumen yang benar-benar patut ditinjau, alih-alih menuntut pembacaan seluruh lampiran satu per satu. Asesor tetap memegang kewenangan verifikasi, dengan alur kerja yang menempatkan pemeriksaan kesesuaian antara dokumen sumber dan parameter sebagai langkah eksplisit sebelum kredit diterbitkan, dan dengan kewenangan untuk menyetujui secara manual apabila hasil pemeriksaan otomatis dinilai keliru. Perhitungan kredit dijalankan otomatis oleh sistem, sehingga asesor dapat memfokuskan perhatian pada verifikasi kesesuaian data dengan dokumen sumber.  
 Program studi sebagai unit pengelola akademik memperoleh manfaat berupa hasil penilaian BKD yang konsisten antar-dosen dan antar-periode, karena setiap hasil dijalankan dengan aturan dan mekanisme yang sama. Program studi juga memperoleh akses ke rekam penerbitan kredit yang tersimpan permanen pada blockchain, sehingga dapat menelusuri riwayat penilaian tanpa bergantung pada laporan administrator basis data.  
 Institusi perguruan tinggi memperoleh manfaat berupa mekanisme penilaian BKD yang hasilnya dapat ditelusuri secara mandiri oleh pihak yang diberi wewenang. Ketika institusi membutuhkan verifikasi rekam kinerja dosen untuk keperluan internal seperti persiapan akreditasi program studi atau evaluasi tahunan, verifikasi dapat dilakukan melalui *transaction hash* pada blockchain tanpa memerlukan intervensi administrator sistem penilaian.
 
@@ -328,23 +465,22 @@ Subbab ini menetapkan cakupan pekerjaan tugas akhir agar arah pengembangan tetap
 
 1. ### **Ruang Lingkup** {#ruang-lingkup}
 
- 	  Ruang lingkup pengembangan sistem meliputi tiga komponen utama yang terintegrasi. Pertama, pengembangan tools ekstraksi berbasis kecerdasan buatan yang membaca file Surat Keputusan (SK) dan menghasilkan draft parameter kegiatan dalam format terstruktur. Kedua, pengembangan smart contract pada jaringan blockchain berbasis *Ethereum Virtual Machine* (EVM) yang berfungsi sebagai *rule engine* untuk menjalankan aturan penilaian BKD bidang pendidikan secara deterministik. Ketiga, pengembangan aplikasi berbasis web sebagai antarmuka pengguna yang mengintegrasikan tools ekstraksi, verifikasi hasil ekstraksi oleh asesor, dan pemanggilan smart contract.  
-Aturan penilaian yang diimplementasikan ke dalam smart contract mengacu pada Pedoman Operasional Beban Kerja Dosen (PO BKD) tahun 2021 pada unsur pendidikan. Kategori kegiatan yang menjadi fokus implementasi mencakup pelaksanaan perkuliahan, pembimbingan Kerja Praktik, dan pengujian Tugas Akhir. Pengujian sistem dilakukan menggunakan data yang bersumber dari SK yang diperoleh dari Koordinator Program Studi Jurusan Teknik Komputer dan Informatika Politeknik Negeri Bandung, sehingga parameter yang diproses sistem berasal dari penugasan yang tercantum pada dokumen resmi institusi.
+ 	  Ruang lingkup pengembangan sistem meliputi empat komponen utama yang terintegrasi. Pertama, pengembangan tools ekstraksi berbasis kecerdasan buatan yang membaca file Surat Keputusan (SK) dan Surat Tugas (ST) dan menghasilkan draft parameter kegiatan dalam format terstruktur. Kedua, pengembangan mekanisme verifikasi keaslian dokumen bukti yang membaca dokumen unggahan dosen menggunakan model bahasa visual, mengenali nama orang beserta perannya pada dokumen tersebut, lalu mencocokkannya terhadap identitas pemilik akun dan peran yang diklaim pada kegiatan. Ketiga, pengembangan smart contract pada jaringan blockchain berbasis *Ethereum Virtual Machine* (EVM) yang berfungsi sebagai *rule engine* untuk menjalankan aturan penilaian BKD bidang pendidikan secara deterministik. Keempat, pengembangan aplikasi berbasis web sebagai antarmuka pengguna yang mengintegrasikan tools ekstraksi, mekanisme verifikasi bukti, verifikasi hasil ekstraksi oleh asesor, dan pemanggilan smart contract.  
+Aturan penilaian yang diimplementasikan ke dalam smart contract mengacu pada Pedoman Operasional Beban Kerja Dosen (PO BKD) tahun 2021 pada unsur pendidikan. Kategori kegiatan yang menjadi fokus implementasi mencakup pelaksanaan perkuliahan, pembimbingan seminar, pembimbingan Praktik Kerja Lapangan, pembimbingan Tugas Akhir, pengujian Tugas Akhir, dan pembinaan kegiatan kemahasiswaan. Verifikasi keaslian dokumen bukti diterapkan pada rumpun kegiatan pembimbingan, yaitu butir aturan yang pembuktiannya bersandar pada dokumen unggahan dosen dan yang nilai kreditnya dipengaruhi peran. Pengujian sistem dilakukan menggunakan data yang bersumber dari SK dan ST yang diperoleh dari Koordinator Program Studi Jurusan Teknik Komputer dan Informatika Politeknik Negeri Bandung, sehingga parameter yang diproses sistem berasal dari penugasan yang tercantum pada dokumen resmi institusi.
 
 2. ### **Batasan** {#batasan}
 
  	Sistem yang dikembangkan berupa prototipe fungsional dan tidak terintegrasi langsung dengan sistem akademik resmi perguruan tinggi maupun sistem BKD nasional. *Deployment* smart contract dilakukan pada testnet Base Sepolia. *Deployment* ke jaringan produksi (Base *mainnet*) berada di luar lingkup pengembangan ini.  
 Pengembangan ini dibatasi pada unsur pendidikan dalam BKD dan tidak mencakup unsur penelitian, unsur pengabdian kepada masyarakat, maupun unsur penunjang. Pada unsur pendidikan sendiri, implementasi difokuskan pada kategori kegiatan yang memiliki karakteristik perhitungan berbasis parameter terukur.  
 Data pengujian sistem terbatas pada SK yang diperoleh dari Jurusan Teknik Komputer dan Informatika Politeknik Negeri Bandung. Sistem tidak diuji dengan data dari program studi atau jurusan lain, sehingga kesesuaian dengan variasi format SK di luar konteks tersebut tidak dijamin.  
-Tools ekstraksi berbasis kecerdasan buatan tidak dijamin memberikan akurasi 100% pada setiap dokumen SK yang diproses. Oleh karena itu, verifikasi hasil ekstraksi oleh asesor menjadi bagian wajib dari alur sebelum parameter diproses smart contract. Sistem tidak menangani verifikasi keaslian SK, seperti pemeriksaan tanda tangan atau stempel, karena aspek tersebut membutuhkan pendekatan teknis yang berada di luar fokus pengembangan.  
+Tools ekstraksi berbasis kecerdasan buatan tidak dijamin memberikan akurasi 100% pada setiap dokumen SK yang diproses. Oleh karena itu, verifikasi hasil ekstraksi oleh asesor menjadi bagian wajib dari alur sebelum parameter diproses smart contract.  
+Mekanisme verifikasi keaslian dokumen bukti dibatasi pada pemeriksaan kesesuaian isi dokumen, yaitu pencocokan nama orang yang terbaca pada dokumen terhadap nama pemilik akun dan pemeriksaan kesesuaian peran yang tertulis terhadap peran yang diklaim. Sistem tidak menangani autentikasi keabsahan dokumen, seperti pemeriksaan tanda tangan, stempel, tanda tangan digital, maupun pelacakan dokumen ke basis data penerbitnya, karena aspek tersebut membutuhkan pendekatan teknis yang berada di luar fokus pengembangan. Karena pembacaan dokumen dilakukan model bahasa visual yang keluarannya bersifat probabilistik, hasil pemeriksaan diperlakukan sebagai temuan yang mengarahkan perhatian asesor, bukan sebagai keputusan penolakan otomatis. Sistem tidak menolak unggahan berdasarkan hasil pemeriksaan, dan asesor berwenang menyetujui secara manual apabila hasil pemeriksaan dinilai keliru, dengan hasil pemeriksaan asli tetap tersimpan sebagai jejak.  
 Aturan penilaian BKD yang membutuhkan pertimbangan kualitatif asesor tidak menjadi bagian dari otomatisasi penuh pada smart contract. Aturan yang diimplementasikan dibatasi pada perhitungan berdasarkan parameter yang terukur seperti jumlah SKS, jumlah pertemuan, jumlah mahasiswa yang dibimbing, dan peran dalam pengujian, sedangkan keputusan yang bersifat kualitatif tetap berada pada kewenangan asesor.  
 Pengembangan ini tidak membahas integrasi identitas formal seperti *single sign-on* institusi. Pengembangan ini juga tidak membahas aspek keamanan jaringan blockchain seperti mekanisme konsensus, infrastruktur *node*, dan optimasi performa jaringan.
 
 7. ## **Sistematika Penulisan** {#sistematika-penulisan}
 
- 	Sistematika dalam penulisan Proposal Tugas Akhir ini dibagi menjadi tiga bab dengan penjelasan sebagai berikut:
-
-BAB I	Bab ini berisi gambaran umum mengenai pengembangan sistem/aplikasi yang dilakukan, termasuk latar belakang yang menjelaskan permasalahan utama dan urgensi pengembangan, rumusan masalah yang mendefinisikan ruang lingkup permasalahan, tujuan dan manfaat dari hasil pengembangan, pemangku kepentingan dari produk akhir yang dikembangkan, ruang lingkup pengembangan, serta sistematika penulisan laporan.
+ 	Sistematika dalam penulisan laporan Tugas Akhir ini dibagi menjadi enam bab dengan penjelasan sebagai berikut:
 
 | BAB I | Pendahuluan |
 | :---- | :---- |
@@ -353,16 +489,16 @@ BAB I	Bab ini berisi gambaran umum mengenai pengembangan sistem/aplikasi yang di
 |  | Bab ini membahas kajian literatur yang berkaitan dengan pengembangan yang dilakukan. Termasuk dalam tinjauan pustaka adalah studi terhadap karya ilmiah atau produk sejenis, serta dasar teori yang mendukung perancangan dan implementasi pengembangan yang dilakukan. |
 | **BAB III** | **Metodologi Pengembangan Sistem** |
 |  | Bab ini menjelaskan pendekatan yang digunakan dalam proses pengembangan. Pembahasan dalam bab ini mencakup jenis dan metode pengembangan yang digunakan, tahapan pengembangan, data yang digunakan, objek pengembangan, perangkat pendukung yang digunakan, serta prosedur pengembangan yang diterapkan dalam laporan ini. |
-| **BAB IV** | **Hasil dan Pembahasan** |
-|  |  |
+| **BAB IV** | **Pembahasan dan Implementasi Solusi** |
+|  | Bab ini menyajikan keluaran nyata setiap tahapan model *Waterfall* yang ditetapkan pada Bab III. Pembahasan dimulai dari analisis sistem berjalan dan penetapan persyaratan, dilanjutkan perancangan arsitektur, proses, basis data, modul, dan antarmuka, kemudian implementasi ketiga lapisan sistem, pengujian bertingkat beserta hasilnya, serta pengoperasian dan pemeliharaan sistem. |
 | **BAB V** | **Analisis Dampak Hasil Pengembangan Produk Aplikasi** |
-|  |  |
+|  | Bab ini menganalisis dampak penerapan sistem terhadap proses penilaian BKD yang berjalan, mencakup perbandingan kondisi sebelum dan sesudah penerapan, dampak bagi setiap pemangku kepentingan, serta konsekuensi teknis dan tata kelola dari keputusan perancangan yang diambil, termasuk konsekuensi penggunaan *wallet* kustodian dan penggunaan model bahasa visual pada pemeriksaan dokumen. |
 | **BAB VI** | **Penutup** |
-|  |  |
+|  | Bab ini memuat simpulan atas ketercapaian tujuan pengembangan sebagaimana dirumuskan pada subbab I.3, disertai saran pengembangan lanjutan dan rencana keberlanjutan produk. |
 
 # **BAB II** **TINJAUAN PUSTAKA** {#bab-ii-tinjauan-pustaka}
 
-Bab ini menguraikan dasar teori dan tinjauan aplikasi sejenis yang menjadi landasan pengembangan Sistem Penilaian Beban Kinerja Dosen (BKD) Bidang Pendidikan Berbasis Smart Contract. Pemilihan teori difokuskan pada konsep dan teknologi yang secara langsung digunakan pada bab-bab berikutnya, mencakup Beban Kinerja Dosen sebagai problem domain, blockchain dan smart contract sebagai dasar mekanisme penilaian, Ethereum Virtual Machine dan jaringan Layer-2 sebagai lingkungan eksekusi, standar token ERC-20 sebagai representasi kredit SKS, pustaka pendukung pengembangan, serta perangkat pemodelan yang digunakan untuk analisis dan perancangan sistem. Bagian akhir bab menyajikan aplikasi sejenis berbasis blockchain di bidang akademik beserta perbandingannya dengan sistem yang dikembangkan untuk menempatkan posisi tugas akhir ini terhadap penelitian terdahulu.
+Bab ini menguraikan dasar teori dan tinjauan aplikasi sejenis yang menjadi landasan pengembangan Sistem Penilaian Beban Kinerja Dosen (BKD) Bidang Pendidikan Berbasis Smart Contract. Pemilihan teori difokuskan pada konsep dan teknologi yang secara langsung digunakan pada bab-bab berikutnya, mencakup Beban Kinerja Dosen sebagai problem domain, blockchain dan smart contract sebagai dasar mekanisme penilaian, Ethereum Virtual Machine sebagai lingkungan eksekusi, standar token ERC-20 sebagai representasi kredit SKS, fungsi *hash* kriptografi sebagai penjamin keaslian simpulan penilaian, ekstraksi dokumen dan model bahasa visual sebagai dasar pengadaan parameter dan pemeriksaan bukti, konsep verifikasi keaslian dokumen melalui pencocokan nama, model proses pengembangan yang diterapkan, serta perangkat pemodelan yang digunakan untuk analisis dan perancangan sistem. Bagian akhir bab menyajikan aplikasi sejenis berbasis blockchain di bidang akademik beserta perbandingannya dengan sistem yang dikembangkan untuk menempatkan posisi tugas akhir ini terhadap penelitian terdahulu.
 
 1. ## **Dasar Teori** {#dasar-teori}
 
@@ -420,7 +556,27 @@ Penggunaan dalam pengembangan sistem**.** Smart contract BKDSKSToken merupakan t
  	Jaringan berbasis *Ethereum Virtual Machine* menggunakan fungsi *hash* Keccak-256 yang menghasilkan keluaran sepanjang 256 bit atau 32 *byte* (Wood, 2014). Fungsi ini dipakai pada berbagai lapisan, mulai dari pembentukan alamat kontrak, penurunan pengenal *event* dan *function selector*, hingga pembentukan konstanta peran pada pola kontrol akses berbasis peran. Perlu dibedakan bahwa Keccak-256 yang digunakan Ethereum merupakan varian asli sebelum proses standardisasi, sehingga keluarannya berbeda dengan SHA3-256 yang ditetapkan NIST meskipun keduanya berasal dari rancangan algoritma yang sama.  
  	Dalam pengembangan sistem ini, *hash* kriptografi digunakan pada dua titik. Pertama, konstanta MINTER\_ROLE pada kontrak token dibentuk melalui keccak256 atas literal teks peran, sesuai konvensi pustaka AccessControl OpenZeppelin. Kedua, keseluruhan simpulan penilaian BKD yang telah disahkan kedua asesor diserialisasi menjadi JSON kemudian di-*hash* menggunakan keccak-256, dan nilai *hash* tersebut dikirimkan sebagai parameter referenceId pada transaksi penerbitan token. Dengan demikian, isi simpulan penilaian tidak perlu disimpan *on-chain* secara utuh, tetapi keasliannya tetap dapat dibuktikan kembali oleh pihak mana pun dengan menghitung ulang *hash* atas dokumen simpulan dan membandingkannya terhadap nilai yang tercatat permanen pada *event* transaksi.
 
-8. ### **Model Pengembangan *Waterfall*** {#model-pengembangan-waterfall}
+8. ### **Ekstraksi Dokumen dan Model Bahasa Visual** {#ekstraksi-dokumen-dan-model-bahasa-visual}
+
+ 	Ekstraksi dokumen adalah proses mengubah dokumen yang ditujukan bagi pembaca manusia menjadi data terstruktur yang dapat diproses program. Pada berkas PDF, terdapat dua kondisi yang menuntut penanganan berbeda. Kondisi pertama adalah PDF yang berasal dari sumber digital, yaitu berkas yang dihasilkan langsung dari aplikasi pengolah kata sehingga menyimpan lapisan teks beserta koordinat setiap karakter pada halaman. Pada kondisi ini, struktur tabel dapat direkonstruksi secara deterministik berdasarkan posisi relatif antar-sel maupun garis pembatas yang tergambar, sehingga eksekusi berulang atas berkas yang sama menghasilkan keluaran yang identik. Kondisi kedua adalah PDF hasil pemindaian dokumen fisik, yaitu berkas yang isinya berupa citra halaman. Lapisan teks pada berkas semacam ini, apabila ada, merupakan keluaran pengenalan karakter optis (*Optical Character Recognition*/OCR) yang kualitasnya bergantung pada mutu pemindaian dan kerap memuat galat karakter, sehingga tidak dapat diandalkan sebagai dasar ekstraksi berbasis posisi.
+
+ 	Model bahasa visual (*Vision Language Model*/VLM) merupakan model pembelajaran mesin multimodal yang menerima masukan berupa citra beserta instruksi tekstual dan menghasilkan keluaran tekstual. Berbeda dengan OCR yang bertugas mengubah citra menjadi rangkaian karakter, VLM menafsirkan citra secara semantik, yaitu memahami tata letak halaman, hubungan antara label dan isian, serta makna suatu nama berdasarkan posisi dan keterangan di sekitarnya. Kemampuan tersebut menjadikan VLM sesuai untuk dua keperluan yang tidak dapat ditangani ekstraksi deterministik. Keperluan pertama adalah pembacaan dokumen hasil pemindaian, karena penafsiran dilakukan atas piksel halaman alih-alih atas keluaran OCR yang telah terdegradasi. Keperluan kedua adalah pembacaan dokumen yang tata letaknya tidak seragam, karena aturan berbasis posisi kolom hanya dapat disusun untuk dokumen yang formatnya diketahui dan konsisten.
+
+ 	Agar keluaran model dapat diproses program, instruksi yang dikirimkan bersama citra menetapkan skema keluaran secara eksplisit, yaitu daftar medan beserta tipe nilainya dalam format JSON. Pendekatan ini disebut *structured output*, dan menjadikan keluaran model dapat divalidasi secara terprogram sebelum digunakan. Meskipun demikian, keluaran VLM bersifat probabilistik, artinya pemanggilan berulang atas masukan yang sama tidak dijamin menghasilkan keluaran yang identik. Sifat ini merupakan pembeda mendasar terhadap ekstraksi deterministik dan berkonsekuensi pada perancangan sistem, yaitu jalur berbasis VLM tidak boleh dijadikan sumber kebenaran tunggal, melainkan harus disertai tahap peninjauan manusia sebelum hasilnya menimbulkan akibat pada penilaian.
+
+ 	Dalam pengembangan sistem ini, kedua pendekatan digunakan secara berdampingan sesuai karakteristik dokumennya, yang selanjutnya disebut strategi ekstraksi hibrida. Ekstraksi deterministik menangani Surat Tugas berformat digital yang tata letaknya diketahui, sedangkan VLM menangani Surat Keputusan hasil pemindaian serta dokumen bukti unggahan dosen yang formatnya beragam. Rincian pustaka pelaksana kedua jalur diuraikan pada subbab III.4, sedangkan justifikasi pemilihan strategi ini disajikan pada subbab IV.1.3.2.
+
+9. ### **Verifikasi Keaslian Dokumen melalui Pencocokan Nama** {#verifikasi-keaslian-dokumen-melalui-pencocokan-nama}
+
+ 	Verifikasi dokumen pada sistem informasi dapat dibedakan menjadi dua tingkatan yang berbeda sasarannya. Tingkatan pertama adalah autentikasi keabsahan dokumen, yaitu pembuktian bahwa dokumen benar-benar diterbitkan pihak yang berwenang dan tidak diubah setelah diterbitkan, yang lazim ditempuh melalui tanda tangan digital, sertifikat elektronik, atau pencocokan terhadap basis data penerbit. Tingkatan kedua adalah verifikasi kesesuaian isi, yaitu pemeriksaan apakah isi dokumen mendukung klaim yang diajukan pihak yang melampirkannya. Pada konteks pelaporan kinerja, tingkatan kedua menjawab pertanyaan yang paling sering menjadi celah, yaitu apakah dokumen yang dilampirkan benar-benar memuat nama pelapor dan apakah peran yang tertulis pada dokumen sesuai dengan peran yang diklaim.
+
+ 	Inti mekanisme verifikasi kesesuaian isi adalah pencocokan nama (*name matching*), yaitu penentuan apakah dua penulisan nama merujuk pada orang yang sama. Persoalan ini tidak dapat diselesaikan dengan pembandingan teks secara harfiah karena penulisan nama pada dokumen resmi mengandung sejumlah variasi. Variasi pertama adalah gelar akademik yang menyertai nama, baik gelar depan yang dapat bertumpuk maupun gelar belakang yang dipisahkan koma. Variasi kedua adalah penyingkatan bagian nama, yaitu penulisan sebagian marga sebagai inisial. Variasi ketiga adalah galat penulisan yang muncul pada dokumen hasil pemindaian, khususnya kesalahan pemenggalan spasi. Pencocokan yang andal karena itu dilakukan atas bentuk ternormalisasi, yaitu nama yang telah dilucuti gelar, diseragamkan huruf besar-kecilnya, dan dirapikan spasinya, dengan penurunan tingkat kelonggaran secara berjenjang apabila pencocokan pada tingkat yang lebih ketat tidak menghasilkan padanan.
+
+ 	Hasil pencocokan nama saja belum memadai untuk menyimpulkan kesesuaian bukti, karena satu dokumen dapat memuat beberapa nama dengan peran berbeda. Pada lembar pengesahan Tugas Akhir, misalnya, nama pembimbing utama, pembimbing pendamping, dan penguji dapat muncul pada satu halaman yang sama. Apabila pemeriksaan berhenti pada keberadaan nama, dosen yang berperan sebagai pembimbing pendamping tetap dinyatakan sesuai meskipun mengklaim diri sebagai pembimbing utama, padahal kedua peran tersebut memiliki bobot kredit yang berbeda pada rubrik PO BKD. Oleh karena itu, pemeriksaan disusun dalam dua lapis, yaitu pemeriksaan keberadaan nama dan pemeriksaan kesesuaian peran, dengan peran yang tertulis pada dokumen dibandingkan terhadap peran yang menjadi parameter perhitungan kegiatan.
+
+ 	Karena pembacaan dokumen dilakukan oleh model yang keluarannya probabilistik, hasil pemeriksaan diperlakukan sebagai indikasi, bukan sebagai putusan. Perancangan yang tepat menempatkan hasil tersebut sebagai penanda yang mengarahkan perhatian penilai, disertai kewenangan penilai untuk mengesampingkan penanda tersebut apabila dinilai keliru, dan disertai penyimpanan hasil pemeriksaan asli sebagai jejak yang dapat ditinjau kembali. Penerapan konsep ini pada sistem penilaian BKD diuraikan pada subbab IV.1.3.2 dan subbab IV.3.9.
+
+10. ### **Model Pengembangan *Waterfall*** {#model-pengembangan-waterfall}
 
  	Model *Waterfall* merupakan model proses pengembangan perangkat lunak yang dilaksanakan secara bertahap dan berurutan. Sommerville (2011) menjelaskan bahwa proses perangkat lunak pada dasarnya mencakup aktivitas spesifikasi, desain dan implementasi, validasi, serta evolusi perangkat lunak. Dalam model *Waterfall*, aktivitas tersebut dipisahkan ke dalam fase yang lebih tegas, yaitu *requirements analysis and definition*, *system and software design*, *implementation and unit testing*, *integration and system testing*, serta *operation and maintenance* (Sommerville, 2011). Model ini tergolong pendekatan berbasis rencana (*plan-driven*) karena seluruh tahapan direncanakan sejak awal dan setiap fase menghasilkan keluaran yang menjadi dasar bagi fase berikutnya.  
  	Kelima tahapan tersebut disusun secara berurutan sebagaimana digambarkan pada Gambar II.3.
@@ -436,7 +592,7 @@ Gambar II.3. Model *Waterfall* (Sommerville, 2011)
  	*Operation and maintenance* (operasi dan pemeliharaan) umumnya merupakan fase siklus hidup yang paling panjang. Sistem yang telah selesai dipasang dan digunakan secara nyata oleh pengguna, sementara aktivitas pemeliharaan dilakukan untuk memperbaiki kesalahan yang belum ditemukan pada tahap sebelumnya, menyempurnakan implementasi *unit* sistem, serta menambahkan layanan baru sesuai kebutuhan yang berkembang (Sommerville, 2011).  
  	Model *Waterfall* dipilih pada pengembangan sistem penilaian BKD ini karena aturan yang menjadi inti sistem, yaitu rubrik unsur pendidikan pada Pedoman Operasional BKD 2021, merupakan ketentuan normatif yang telah ditetapkan secara resmi dan tidak berubah selama masa pengembangan. Sommerville (2011) menyatakan bahwa model *Waterfall* paling sesuai diterapkan ketika kebutuhan sistem telah dipahami dengan baik dan kecil kemungkinannya berubah secara radikal selama pengembangan. Karakteristik tersebut diperkuat oleh sifat *immutable* kode *smart contract* setelah *deploy*, yang menuntut agar aturan perhitungan telah ditetapkan dan diverifikasi secara lengkap pada tahap analisis dan perancangan sebelum kontrak dituliskan. Penerapan kelima tahapan tersebut pada pengembangan sistem ini, termasuk aktivitas dan keluaran konkret pada setiap tahap, diuraikan pada subbab III.5.
 
-9. ### ***Structured Analysis and Structured Design*** {#structured-analysis-and-structured-design}
+11. ### ***Structured Analysis and Structured Design*** {#structured-analysis-and-structured-design}
 
  	*Structured analysis* dan *structured design* merupakan pendekatan pemodelan perangkat lunak yang berpusat pada aliran dan transformasi data, bukan pada objek. Pressman (2001) menjelaskan bahwa *structured analysis* merupakan metode pemodelan yang menggambarkan aliran dan isi informasi, membagi sistem menjadi partisi fungsional dan perilaku, serta mendeskripsikan esensi dari apa yang harus dibangun. Pendekatan ini memandang perangkat lunak sebagai transformator informasi, yaitu sistem yang menerima masukan, mengubahnya melalui serangkaian proses, kemudian menghasilkan keluaran. Cara pandang tersebut sejalan dengan karakteristik sistem penilaian BKD, yang pada intinya menerima parameter kegiatan, menjalankan aturan perhitungan, dan menghasilkan nilai kredit beserta pencatatannya.  
  	Pendekatan ini dipilih pada pengembangan sistem ini karena logika inti sistem berupa aturan perhitungan yang bersifat prosedural dan deterministik, bukan interaksi antarobjek yang memiliki keadaan (*state*) dan perilaku kompleks. *Smart contract* kalkulator BKD tersusun dari kumpulan fungsi murni (*pure function*) tanpa penyimpanan status, sehingga pemodelan berbasis proses dan aliran data merepresentasikan sistem secara lebih tepat dibandingkan pemodelan berbasis kelas dan objek. Konsekuensinya, dokumentasi perancangan pada laporan ini tidak menggunakan notasi *Unified Modeling Language* seperti *class diagram* maupun *sequence diagram*, melainkan perangkat pemodelan terstruktur yang diuraikan berikut.
@@ -461,7 +617,7 @@ Gambar II.3. Model *Waterfall* (Sommerville, 2011)
  	*Structure chart* merupakan notasi perancangan yang menggambarkan struktur hierarkis modul penyusun perangkat lunak beserta hubungan pemanggilan dan pertukaran data antarmodul (Pressman, 2001). Setiap modul digambarkan sebagai kotak, panah menunjukkan arah pemanggilan dari modul induk ke modul anak, sedangkan *data couple* berupa lingkaran berpanah menunjukkan parameter yang dipertukarkan.  
  	*Structure chart* diturunkan dari DFD melalui proses yang disebut *transform mapping* atau *transaction mapping*, yaitu pemetaan aliran data pada DFD menjadi hierarki modul program. Kualitas rancangan dinilai melalui dua kriteria klasik, yakni *cohesion* yang menuntut agar setiap modul mengerjakan satu tanggung jawab yang padu, dan *coupling* yang menuntut agar ketergantungan antarmodul dijaga serendah mungkin (Pressman, 2001). Kedua kriteria tersebut menjadi dasar keputusan perancangan pada sistem ini, khususnya keputusan menempatkan satu butir aturan PO BKD sebagai satu fungsi mandiri pada *smart contract*, sehingga setiap fungsi dapat diuji dan ditelusuri secara terpisah.
 
-10. ### ***Entity Relationship Diagram* (ERD)** {#entity-relationship-diagram}
+12. ### ***Entity Relationship Diagram* (ERD)** {#entity-relationship-diagram}
 
  	*Entity Relationship Diagram* merupakan notasi pemodelan data yang memperlihatkan entitas, atribut, dan relasi antarentitas pada suatu basis data. Model *entity-relationship* pertama kali dirumuskan oleh Chen (1976) sebagai kerangka pemodelan konseptual yang menyatukan sudut pandang berbeda terhadap data, dan hingga kini menjadi fondasi perancangan basis data relasional. Pressman (2001) menempatkan ERD sebagai komponen pemodelan data pada analisis terstruktur, yang melengkapi DFD sebagai komponen pemodelan fungsional.  
  	Pada laporan ini, ERD digambarkan menggunakan notasi *Crow's Foot* atau notasi *Information Engineering*, yaitu notasi baku pemodelan basis data relasional yang merepresentasikan kardinalitas relasi melalui simbol kaki gagak pada ujung garis relasi. Notasi ini dipilih karena secara langsung menyatakan kardinalitas minimum dan maksimum pada kedua sisi relasi, sehingga batasan seperti relasi satu-ke-banyak wajib maupun opsional dapat dibaca tanpa keterangan tambahan. ERD sistem penilaian BKD beserta uraian setiap entitasnya disajikan pada subbab IV.2.4.
@@ -485,11 +641,12 @@ Tabel II.1. Literatur sejenis dan penulisnya
 Sebagian besar aplikasi sejenis memanfaatkan smart contract terutama sebagai pencatat atau penerbit kredensial akademik, bukan sebagai mesin pengeksekusi aturan perhitungan. EduCTX (Turkanović et al., 2018), BlockMEDC (Fartitchou et al., 2025), dan TranscriptStorage (Ussatova et al., 2026\) berfungsi sebagai lapisan integritas dokumen, sementara nilai numerik kredit dihitung di luar blockchain. Sistem TA ini menempatkan smart contract pada peran yang berbeda, yaitu sebagai rule engine deterministik yang menjalankan aturan PO BKD 2021 langsung di on-chain, sehingga konsistensi hasil terjamin sejak tahap perhitungan, bukan hanya pada tahap penyimpanan.  
 Kedua, aplikasi yang paling dekat dengan domain TA adalah (Rahman et al., 2023\) yang juga menargetkan evaluasi kinerja dosen, namun pendekatannya berbeda. Rahman et al. fokus pada umpan balik mahasiswa terhadap dosen, dengan smart contract berperan menjamin anonimitas dan integritas data umpan balik. Sistem TA tidak menggantikan peran tersebut, melainkan mengisi celah yang berbeda yaitu otomatisasi perhitungan kredit BKD berdasarkan parameter terukur, yang merupakan dimensi formal evaluasi kinerja yang belum dibahas pada Rahman et al.  
 Ketiga, dalam konteks pendidikan tinggi Indonesia, (Afrianto et al., 2023\) memodelkan blockchain untuk pengakuan pembelajaran Kampus Merdeka, namun hasil yang disajikan masih pada tingkat pemodelan arsitektural belum sampai pada implementasi smart contract dengan aturan terkodekan. Sistem TA melengkapi konteks lokal ini dengan menyajikan implementasi konkret smart contract untuk satu kebutuhan administratif yang spesifik dan kuantitatif, yaitu perhitungan BKD bidang pendidikan.  
-Posisi sistem yang dikembangkan dengan demikian dapat dirumuskan sebagai berikut: sistem ini merupakan perpaduan dua peran smart contract yang dijalankan secara terpadu  (1) rule engine deterministik yang mengeksekusi aturan perhitungan kredit BKD pendidikan, dan (2) penerbit token kredit non-transferable yang berfungsi sebagai kredensial kinerja dosen yang melekat dan dapat diaudit. Kombinasi peran tersebut, dengan fokus spesifik pada unsur pendidikan PO BKD 2021 dan implementasi pada jaringan EVM, belum dijumpai pada aplikasi sejenis yang ditinjau. Detail teknis rancangan dan implementasi dari kedua peran ini disajikan pada Bab IV.
+Keempat, seluruh aplikasi sejenis yang ditinjau memperlakukan dokumen yang masuk ke sistem sebagai masukan yang keabsahannya telah diasumsikan, sehingga fokus jaminan integritasnya berada pada tahap setelah data tercatat, yaitu ketakberubahan catatan pada *ledger*. Tidak satu pun di antaranya memeriksa apakah dokumen yang dilampirkan benar-benar memuat identitas pihak yang mengklaimnya dan apakah peran yang tertulis sesuai dengan peran yang diklaim. Celah ini bersifat mendasar, karena catatan yang tidak dapat diubah tetap tidak bernilai apabila yang dicatat sejak awal merupakan klaim yang tidak didukung dokumennya. Sistem TA menutup celah tersebut dengan menempatkan pemeriksaan kesesuaian isi dokumen bukti sebagai langkah sebelum penilaian ditetapkan, sebagaimana konsep yang diuraikan pada subbab II.1.9.  
+Posisi sistem yang dikembangkan dengan demikian dapat dirumuskan sebagai berikut: sistem ini merupakan perpaduan tiga peran yang dijalankan secara terpadu, yaitu (1) rule engine deterministik berbasis smart contract yang mengeksekusi aturan perhitungan kredit BKD pendidikan, (2) penerbit token kredit non-transferable yang berfungsi sebagai kredensial kinerja dosen yang melekat dan dapat diaudit, serta (3) lapisan pemeriksaan dokumen berbasis model bahasa visual yang menjaga agar data yang masuk ke kedua peran sebelumnya bersumber dari dokumen yang benar-benar mendukung klaimnya. Kombinasi ketiga peran tersebut, dengan fokus spesifik pada unsur pendidikan PO BKD 2021 dan implementasi pada jaringan EVM, belum dijumpai pada aplikasi sejenis yang ditinjau. Detail teknis rancangan dan implementasi ketiga peran ini disajikan pada Bab IV.
 
 # **BAB III** **METODOLOGI PENGEMBANGAN SISTEM** {#bab-iii-metodologi-pengembangan-sistem}
 
- 	Bab ini menjelaskan metodologi yang digunakan dalam proses pengembangan sistem penilaian Beban Kinerja Dosen (BKD) bidang pendidikan berbasis *smart contract*. Uraian dalam bab ini meliputi penjelasan pengembangan sistem yang mencakup waktu, tempat, dan jenis pengembangan, data yang digunakan dalam pengembangan, objek pengembangan, perangkat pendukung, serta tahapan pelaksanaan pengembangan sistem. Tahapan pengembangan disusun mengikuti model *Waterfall* sebagaimana dirumuskan Sommerville (2011) dan telah diuraikan pada subbab II.1.8, yaitu analisis dan penetapan spesifikasi persyaratan perangkat lunak, perancangan, implementasi, pengujian, hingga *operation* dan *maintenance*, masing-masing disertai aktivitas dan luaran yang menjadi indikator ketercapaian tahap. Dengan demikian, bab ini menjadi dasar untuk memastikan bahwa pengembangan sistem dilakukan secara sistematis, terstruktur, dan sesuai dengan tujuan pengembangan produk inovatif.
+ 	Bab ini menjelaskan metodologi yang digunakan dalam proses pengembangan sistem penilaian Beban Kinerja Dosen (BKD) bidang pendidikan berbasis *smart contract*. Uraian dalam bab ini meliputi penjelasan pengembangan sistem yang mencakup waktu, tempat, dan jenis pengembangan, data yang digunakan dalam pengembangan, objek pengembangan, perangkat pendukung, serta tahapan pelaksanaan pengembangan sistem. Tahapan pengembangan disusun mengikuti model *Waterfall* sebagaimana dirumuskan Sommerville (2011) dan telah diuraikan pada subbab II.1.10, yaitu analisis dan penetapan spesifikasi persyaratan perangkat lunak, perancangan, implementasi, pengujian, hingga *operation* dan *maintenance*, masing-masing disertai aktivitas dan luaran yang menjadi indikator ketercapaian tahap. Dengan demikian, bab ini menjadi dasar untuk memastikan bahwa pengembangan sistem dilakukan secara sistematis, terstruktur, dan sesuai dengan tujuan pengembangan produk inovatif.
 
 1. ## **Penjelasan Pengembangan Sistem** {#penjelasan-pengembangan-sistem}
 
@@ -513,20 +670,21 @@ Posisi sistem yang dikembangkan dengan demikian dapat dirumuskan sebagai berikut
 3. ### **Jenis Pengembangan**
 
  	Tugas akhir ini tergolong Pengembangan Produk Inovatif, dengan luaran berupa sistem penilaian BKD bidang pendidikan berbasis *smart contract*. Pengembangan dilaksanakan menggunakan metodologi *Waterfall*, dimulai dari identifikasi permasalahan nyata pada proses penilaian BKD, analisis kebutuhan pengguna, perancangan solusi menggunakan pendekatan analisis dan perancangan terstruktur, implementasi ketiga lapisan sistem, pengujian fungsional dan nonfungsional, hingga *deployment* dan pemeliharaan pada tahap *operation* dan *maintenance*.  
- 	Secara teknis, sistem dibangun di atas tiga lapisan teknologi yang terpisah namun terintegrasi. Lapisan *on-chain* memuat dua *smart contract* yang ditulis dalam bahasa Solidity dan dikembangkan menggunakan *framework* Hardhat, yaitu kontrak KalkulatorBKDPendidikan sebagai *rule engine* perhitungan kredit dan kontrak BKDSKSToken sebagai representasi kredit SKS dalam bentuk token ERC-20 yang bersifat *non-transferable*. Lapisan aplikasi web dibangun menggunakan *framework* Next.js yang sekaligus menyediakan antarmuka pengguna dan lapisan orkestrasi di sisi peladen, dengan data operasional disimpan pada basis data PostgreSQL melalui Prisma ORM. Lapisan ekstraksi dokumen dibangun sebagai layanan mandiri berbasis Python dan FastAPI yang mengubah Surat Keputusan dan Surat Tugas menjadi parameter kegiatan terstruktur. Komunikasi antara lapisan aplikasi web dan lapisan *on-chain* dijembatani pustaka Ethers.js melalui titik akhir RPC, sedangkan komunikasi antara lapisan aplikasi web dan lapisan ekstraksi dokumen dilakukan melalui HTTP.
+ 	Secara teknis, sistem dibangun di atas tiga lapisan teknologi yang terpisah namun terintegrasi. Lapisan *on-chain* memuat dua *smart contract* yang ditulis dalam bahasa Solidity dan dikembangkan menggunakan *framework* Hardhat, yaitu kontrak KalkulatorBKDPendidikan sebagai *rule engine* perhitungan kredit dan kontrak BKDSKSToken sebagai representasi kredit SKS dalam bentuk token ERC-20 yang bersifat *non-transferable*. Lapisan aplikasi web dibangun menggunakan *framework* Next.js yang sekaligus menyediakan antarmuka pengguna dan lapisan orkestrasi di sisi peladen, dengan data operasional disimpan pada basis data PostgreSQL melalui Prisma ORM. Lapisan ekstraksi dokumen dibangun sebagai layanan mandiri berbasis Python dan FastAPI dengan dua tanggung jawab, yaitu mengubah Surat Keputusan dan Surat Tugas menjadi parameter kegiatan terstruktur, serta membaca dokumen bukti unggahan dosen menjadi daftar nama beserta perannya sebagai bahan pemeriksaan keaslian bukti. Komunikasi antara lapisan aplikasi web dan lapisan *on-chain* dijembatani pustaka Ethers.js melalui titik akhir RPC, sedangkan komunikasi antara lapisan aplikasi web dan lapisan ekstraksi dokumen dilakukan melalui HTTP dengan autentikasi kunci API yang hanya dikenal sisi peladen.
 
 ![A computer screen shot of a blockchain  AI-generated content may be incorrect.][image4]
 
 Gambar III.1. Alur Proses Sistem Secara Umum
 
- 	Gambar III.1 memperlihatkan keterkaitan ketiga lapisan tersebut. Dokumen Surat Keputusan dan Surat Tugas yang diunggah administrator diteruskan ke layanan ekstraksi untuk menghasilkan parameter kegiatan terstruktur. Parameter tersebut ditinjau administrator, kemudian dikirimkan ke kontrak KalkulatorBKDPendidikan untuk dihitung nilai kreditnya. Hasil perhitungan beserta seluruh data operasional disimpan pada PostgreSQL dan ditinjau oleh dua asesor. Setelah kedua asesor mengesahkan penilaian, sistem membentuk simpulan BKD, menghitung *hash* keccak-256 atas simpulan tersebut, kemudian menerbitkan token SKS ke alamat *wallet* dosen melalui kontrak BKDSKSToken dengan *hash* tersebut sebagai referenceId. Dengan pola ini, isi penilaian tetap tersimpan *off-chain* pada basis data institusi, sementara bukti keasliannya tercatat permanen pada *blockchain* dan dapat diverifikasi ulang oleh pihak mana pun tanpa memerlukan akses ke basis data internal.
+ 	Gambar III.1 memperlihatkan keterkaitan ketiga lapisan tersebut. Dokumen Surat Keputusan dan Surat Tugas yang diunggah administrator diteruskan ke layanan ekstraksi untuk menghasilkan parameter kegiatan terstruktur. Parameter tersebut ditinjau administrator, kemudian dikirimkan ke kontrak KalkulatorBKDPendidikan untuk dihitung nilai kreditnya. Pada rumpun kegiatan pembimbingan, dosen melengkapi kegiatannya dengan dokumen bukti, dan setiap dokumen bukti berformat PDF yang diunggah diteruskan kembali ke layanan ekstraksi melalui jalur parser artefak universal untuk dibaca nama dan peran orang di dalamnya, lalu dicocokkan dengan identitas pemilik akun. Hasil pencocokan tersebut disimpan menyertai dokumen dan disajikan kepada asesor sebagai temuan. Hasil perhitungan beserta seluruh data operasional disimpan pada PostgreSQL dan ditinjau oleh dua asesor. Setelah kedua asesor mengesahkan penilaian, sistem membentuk simpulan BKD, menghitung *hash* keccak-256 atas simpulan tersebut, kemudian menerbitkan token SKS ke alamat *wallet* dosen melalui kontrak BKDSKSToken dengan *hash* tersebut sebagai referenceId. Dengan pola ini, isi penilaian tetap tersimpan *off-chain* pada basis data institusi, sementara bukti keasliannya tercatat permanen pada *blockchain* dan dapat diverifikasi ulang oleh pihak mana pun tanpa memerlukan akses ke basis data internal.
 
 2. ## **Data Pengembangan Sistem** {#data-pengembangan-sistem}
 
- 	Data yang telah disebutkan pada subbab I.5 selanjutnya digunakan secara teknis dalam proses pengembangan dan pengujian sistem. Data pengembangan terbagi ke dalam tiga kelompok yang saling melengkapi, yaitu dokumen penugasan resmi sebagai sumber parameter kegiatan, rubrik aturan penilaian sebagai dasar logika perhitungan, serta data induk dosen sebagai sasaran penerbitan kredit.  
+ 	Data yang telah disebutkan pada subbab I.5 selanjutnya digunakan secara teknis dalam proses pengembangan dan pengujian sistem. Data pengembangan terbagi ke dalam empat kelompok yang saling melengkapi, yaitu dokumen penugasan resmi sebagai sumber parameter kegiatan, rubrik aturan penilaian sebagai dasar logika perhitungan, data induk dosen sebagai sasaran penerbitan kredit, serta dokumen bukti kegiatan sebagai bahan uji mekanisme verifikasi keaslian bukti.  
  	Kelompok pertama adalah dokumen penugasan resmi berupa Surat Tugas (ST) dan Surat Keputusan (SK) yang diterbitkan Ketua Jurusan Teknik Komputer dan Informatika serta Direktur Politeknik Negeri Bandung. Berbeda dengan pendekatan yang menggunakan data simulasi, sistem ini menggunakan dokumen asli sebagai masukan agar parameter yang diproses benar-benar berasal dari penugasan yang tercantum pada dokumen sumber, sesuai dengan permasalahan yang dirumuskan pada subbab I.2. Rincian dokumen yang dihimpun disajikan pada Tabel III.1.  
  	Kelompok kedua adalah rubrik unsur pendidikan pada Pedoman Operasional Beban Kerja Dosen tahun 2021. Rubrik tersebut diterjemahkan menjadi 16 butir referensi kegiatan yang masing-masing dipetakan ke satu fungsi perhitungan pada *smart contract*, dan dimuat ke basis data melalui berkas *seed* sebagai data acuan sistem. Butir yang nilainya merupakan batas maksimum dan masih memerlukan pertimbangan kualitatif asesor sengaja tidak dipetakan ke fungsi kontrak, melainkan ditandai sebagai kegiatan yang penilaiannya tidak diotomatisasi.  
- 	Kelompok ketiga adalah data induk dosen Jurusan Teknik Komputer dan Informatika sejumlah 38 akun, yang seluruhnya diturunkan dari ketiga Surat Tugas pada Tabel III.1, bukan data karangan. Sebanyak 33 di antaranya membawa kode dosen sebagaimana tercantum pada kolom "Kd Dosen" di lampiran Surat Tugas, sehingga hasil ekstraksi dokumen dapat dicocokkan langsung ke akun yang bersangkutan. Nomor Induk Dosen Nasional, Nomor Induk Pegawai, dan jabatan fungsional dibiarkan kosong karena tidak tersedia pada dokumen sumber.
+ 	Kelompok ketiga adalah data induk dosen Jurusan Teknik Komputer dan Informatika sejumlah 38 akun, yang seluruhnya diturunkan dari ketiga Surat Tugas pada Tabel III.1, bukan data karangan. Sebanyak 33 di antaranya membawa kode dosen sebagaimana tercantum pada kolom "Kd Dosen" di lampiran Surat Tugas, sehingga hasil ekstraksi dokumen dapat dicocokkan langsung ke akun yang bersangkutan. Nomor Induk Dosen Nasional, Nomor Induk Pegawai, dan jabatan fungsional dibiarkan kosong karena tidak tersedia pada dokumen sumber.  
+ 	Kelompok keempat adalah dokumen bukti kegiatan berformat PDF yang diunggah dosen pada rumpun kegiatan pembimbingan, seperti lembar pengesahan Tugas Akhir, berita acara bimbingan, dan lembar persetujuan. Berbeda dengan tiga kelompok sebelumnya yang bersifat kolektif dan diunggah administrator, dokumen pada kelompok ini bersifat perseorangan, tidak memiliki format baku, serta dapat memuat isian tulisan tangan. Karakteristik tersebut menjadikannya tidak dapat ditangani parser berbasis posisi kolom, sekaligus menjadikannya data uji yang tepat bagi mekanisme verifikasi keaslian bukti. Dokumen kelompok ini tidak digunakan untuk membentuk kegiatan maupun menetapkan parameter perhitungan, melainkan semata sebagai masukan pemeriksaan kesesuaian antara nama dan peran pada dokumen terhadap klaim dosen pada sistem.
 
 Tabel III.1. Dokumen Penugasan sebagai Sumber Data Pengembangan
 
@@ -663,17 +821,21 @@ Tabel III.3. Referensi Kegiatan BKD Unsur Pendidikan yang Dimuat ke Sistem
 16. ### **Pdfplumber**
 
 	pdfplumber merupakan pustaka Python untuk ekstraksi teks, tabel, dan objek geometris dari berkas PDF yang dibangun di atas pdfminer.six, dengan penekanan pada pelestarian informasi posisi setiap karakter pada halaman (Singer-Vine, 2026). Berbeda dengan pendekatan ekstraksi teks yang hanya mengembalikan aliran karakter, pdfplumber menyediakan koordinat, dimensi, dan atribut tipografis dari setiap objek, sehingga struktur tabel dapat direkonstruksi berdasarkan posisi relatif antar-sel maupun berdasarkan garis pembatas yang tergambar pada halaman. Kapabilitas ini menjadikan pustaka tersebut sesuai untuk dokumen yang secara asal berbentuk digital dan memiliki lapisan teks yang utuh.  
-	Dalam sistem BKD ini, pdfplumber dimanfaatkan sebagai mesin ekstraksi deterministik bagi tiga jenis artefak yang berbentuk digital asli, yaitu Surat Tugas pengajaran, Surat Tugas pembimbingan, dan Surat Tugas pengujian. Ketiga dokumen tersebut memuat lampiran bertabel dengan struktur kolom yang konsisten, sehingga informasi seperti kode mata kuliah, beban Satuan Kredit Semester, kelas, serta nama dosen pengampu dapat dipetakan secara akurat melalui penyusunan aturan ekstraksi berbasis posisi kolom. Pendekatan deterministik ini dipilih untuk ketiga artefak tersebut karena menghasilkan keluaran yang dapat direproduksi secara identik pada setiap eksekusi, yang merupakan prasyarat bagi sistem penilaian kinerja yang hasilnya harus dapat diaudit.
+	Dalam sistem BKD ini, pdfplumber dimanfaatkan sebagai mesin ekstraksi deterministik bagi dokumen penugasan yang berbentuk digital asli, yang ditangani melalui tiga jalur ekstraksi, yaitu jalur pengajaran, jalur pembimbingan, dan jalur pengujian. Jalur pembimbingan melayani dua jenis surat sekaligus, yakni Surat Tugas Pembimbing Praktik Kerja Lapangan dan Surat Keputusan Pembimbing Tugas Akhir, dengan jenis surat dikenali sendiri oleh parser dari isi halaman pertama sehingga administrator tidak perlu memilah keduanya secara manual. Seluruh dokumen tersebut memuat lampiran bertabel dengan struktur kolom yang konsisten, sehingga informasi seperti kode mata kuliah, beban Satuan Kredit Semester, kelas, nama dosen pengampu, peran pembimbing, serta kelompok bimbingan dapat dipetakan secara akurat melalui penyusunan aturan ekstraksi berbasis posisi kolom. Khusus pada lampiran Surat Keputusan Pembimbing Tugas Akhir, pembacaan dilakukan berdasarkan garis bingkai tabel alih-alih koordinat tetap, karena lebar kolom berbeda antara dokumen dua program studi. Pendekatan deterministik ini dipilih untuk dokumen-dokumen tersebut karena menghasilkan keluaran yang dapat direproduksi secara identik pada setiap eksekusi, yang merupakan prasyarat bagi sistem penilaian kinerja yang hasilnya harus dapat diaudit.
 
 17. ### **pypdfium2 dan Pillow**
 
 	pypdfium2 merupakan pengikat (*binding*) Python terhadap PDFium, yakni mesin perenderan PDF yang dikembangkan dan digunakan pada peramban berbasis Chromium, yang menyediakan kapabilitas rasterisasi halaman PDF menjadi citra bitmap dengan kendali atas resolusi keluaran (pypdfium2, 2026). Pillow merupakan pustaka pengolahan citra untuk Python yang menyediakan operasi pembacaan, penulisan, konversi format, dan manipulasi citra pada beragam format berkas (Clark dan kontributor, 2026). Kedua pustaka ini secara praktik dipasangkan, di mana pypdfium2 menghasilkan representasi bitmap dari halaman dokumen dan Pillow menangani konversi serta penyimpanannya ke format berkas standar seperti PNG atau JPEG.  
-	Pada sistem BKD ini, kedua pustaka tersebut menangani prapemrosesan bagi artefak yang tidak dapat diekstraksi secara deterministik, yakni Surat Keputusan pembinaan organisasi kemahasiswaan. Dokumen tersebut merupakan hasil pemindaian dokumen fisik, sehingga lapisan teksnya berasal dari proses pengenalan karakter optis yang menghasilkan galat karakter dalam jumlah signifikan dan tidak dapat diandalkan sebagai masukan bagi ekstraksi berbasis posisi. Terhadap dokumen jenis ini, pypdfium2 melakukan rasterisasi setiap halaman menjadi citra beresolusi memadai, kemudian Pillow menormalisasi dan menyandikan citra tersebut sebagai masukan bagi lapisan interpretasi berbasis model bahasa visual yang dijelaskan pada subbab berikutnya.
+	Pada sistem BKD ini, kedua pustaka tersebut menangani prapemrosesan bagi dokumen yang tidak dapat diekstraksi secara deterministik. Terdapat dua kelompok dokumen dengan sebab yang berbeda. Kelompok pertama adalah Surat Keputusan pembinaan organisasi kemahasiswaan, yang merupakan hasil pemindaian dokumen fisik sehingga lapisan teksnya berasal dari proses pengenalan karakter optis yang menghasilkan galat karakter dalam jumlah signifikan dan tidak dapat diandalkan sebagai masukan bagi ekstraksi berbasis posisi. Kelompok kedua adalah dokumen bukti yang diunggah dosen, seperti lembar pengesahan, berita acara, dan lembar persetujuan, yang tata letaknya tidak seragam antar-program studi maupun antar-periode sehingga aturan ekstraksi berbasis posisi kolom tidak dapat disusun untuknya. Terhadap kedua kelompok dokumen tersebut, pypdfium2 melakukan rasterisasi setiap halaman menjadi citra beresolusi memadai, dengan resolusi baku 200 titik per inci bagi Surat Keputusan pindaian dan 150 titik per inci bagi dokumen bukti, kemudian Pillow menormalisasi dan menyandikan citra tersebut sebagai masukan bagi lapisan interpretasi berbasis model bahasa visual yang dijelaskan pada subbab berikutnya.
 
 18. ### **Layanan Model Bahasa Visual melalui API**
 
 	Model bahasa visual (*Vision Language Model*) merupakan model pembelajaran mesin multimodal yang menerima masukan berupa citra beserta instruksi tekstual dan menghasilkan keluaran tekstual, sehingga mampu menafsirkan tata letak dan isi sebuah dokumen secara langsung dari representasi visualnya tanpa bergantung pada lapisan teks hasil pengenalan karakter optis. Kapabilitas ini menjadikan model tersebut sesuai untuk dokumen hasil pemindaian yang lapisan teksnya rusak, karena penafsiran dilakukan atas piksel halaman alih-alih atas keluaran pengenalan karakter yang telah terdegradasi. Akses terhadap model semacam ini pada praktik umum dilakukan melalui antarmuka pemrograman berbasis HTTPS dengan autentikasi menggunakan kunci API, di mana citra dikirimkan dalam bentuk sandi *base64* bersama instruksi yang menetapkan struktur keluaran yang diharapkan.  
-	Dalam sistem BKD ini, layanan model bahasa visual diakses melalui antarmuka pemrograman berbasis kunci API menggunakan pustaka requests, dan difungsikan secara terbatas hanya pada ekstraksi Surat Keputusan pembinaan organisasi kemahasiswaan. Instruksi yang dikirimkan bersama citra halaman menetapkan skema keluaran JSON secara eksplisit, mencakup nama organisasi kemahasiswaan, nama pembina, dan unit kerja, sehingga keluaran model dapat divalidasi secara terprogram sebelum dipetakan ke basis data. Kunci API disimpan sebagai variabel lingkungan dan dimuat pada saat inisialisasi layanan, sehingga tidak pernah tertulis pada kode sumber maupun terpapar ke sisi klien. Setiap hasil ekstraksi dari jalur ini tetap melalui tahap validasi oleh pengelola sebelum kredit kegiatan diterbitkan ke lapisan *on-chain*, mengingat keluaran model bersifat probabilistik dan tidak menjamin determinisme sebagaimana jalur ekstraksi berbasis pdfplumber.
+	Dalam sistem BKD ini, layanan model bahasa visual diakses melalui antarmuka pemrograman berbasis kunci API menggunakan pustaka requests, dan difungsikan pada dua jalur pemrosesan yang berbeda tujuannya. Jalur pertama adalah ekstraksi Surat Keputusan pembinaan organisasi kemahasiswaan, yaitu parser khusus yang instruksinya disusun mengikuti struktur lampiran dokumen tersebut. Skema keluaran yang ditetapkan mencakup nama organisasi kemahasiswaan, nama pembina, nomor induk pegawai, dan unit kerja, kemudian hasil kedua lampiran direkonsiliasi dan disaring untuk memperoleh pembina yang berasal dari jurusan yang bersangkutan.
+
+	Jalur kedua adalah parser artefak universal, yaitu parser berskema umum yang dirancang untuk membaca dokumen dosen yang formatnya tidak diketahui sebelumnya, seperti formulir, berita acara, lembar persetujuan, dan lembar pengesahan. Berbeda dengan jalur pertama yang instruksinya terikat pada satu tata letak tertentu, instruksi pada jalur ini menetapkan skema yang berlaku lintas jenis dokumen, mencakup jenis dokumen, kode formulir, institusi penerbit, nomor dan tanggal dokumen, tahun akademik, daftar orang beserta perannya, daftar mahasiswa, serta medan lain yang terbaca. Setiap orang yang terekstrak wajib disertai peran dalam bentuk enumerasi baku, misalnya pembimbing pertama, pembimbing kedua, penguji, atau koordinator, sekaligus disertai istilah peran persis seperti tertulis pada dokumen. Penyimpanan istilah asli tersebut penting karena penamaan peran berbeda antar-program studi, sehingga pemetaan ke enumerasi baku tidak boleh menghilangkan bunyi aslinya. Skema ini juga menandai apakah suatu isian ditulis tangan atau tercetak, yang menjadi keterangan tambahan bagi asesor ketika meninjau dokumen.
+
+	Keluaran jalur kedua tidak digunakan untuk membentuk kegiatan, melainkan menjadi masukan bagi mekanisme verifikasi keaslian dokumen bukti yang diuraikan pada subbab IV.3.9, yaitu pencocokan nama orang yang terbaca pada dokumen terhadap nama pemilik akun pengunggah beserta pemeriksaan kesesuaian perannya. Kunci API disimpan sebagai variabel lingkungan dan dimuat pada saat inisialisasi layanan, sehingga tidak pernah tertulis pada kode sumber maupun terpapar ke sisi klien. Seluruh hasil dari kedua jalur berbasis model bahasa visual tetap melalui tahap peninjauan manusia sebelum menimbulkan akibat pada penilaian, yaitu koreksi manual oleh administrator pada jalur pertama dan peninjauan oleh asesor pada jalur kedua, mengingat keluaran model bersifat probabilistik dan tidak menjamin determinisme sebagaimana jalur ekstraksi berbasis pdfplumber.
 
 19. ### **Pustaka Pendukung Aplikasi Web**
 
@@ -693,7 +855,7 @@ Tabel III.3. Referensi Kegiatan BKD Unsur Pendidikan yang Dimuat ke Sistem
 
 5. ## **Tahapan Pelaksanaan Pengembangan Sistem** {#tahapan-pelaksanaan-pengembangan-sistem}
 
- 	Sistem penilaian BKD bidang pendidikan ini dikembangkan menggunakan model proses perangkat lunak *Waterfall* sebagaimana dirumuskan Sommerville (2011) dan telah diuraikan landasannya pada subbab II.1.8. Model ini dipilih karena termasuk kategori proses berbasis rencana (*plan-driven process*), yaitu seluruh aktivitas pengembangan direncanakan dan dijadwalkan terlebih dahulu, kemudian dikerjakan secara berurutan dari satu fase ke fase berikutnya, dengan setiap fase menghasilkan dokumen yang disetujui sebelum fase berikutnya dimulai.  
+ 	Sistem penilaian BKD bidang pendidikan ini dikembangkan menggunakan model proses perangkat lunak *Waterfall* sebagaimana dirumuskan Sommerville (2011) dan telah diuraikan landasannya pada subbab II.1.10. Model ini dipilih karena termasuk kategori proses berbasis rencana (*plan-driven process*), yaitu seluruh aktivitas pengembangan direncanakan dan dijadwalkan terlebih dahulu, kemudian dikerjakan secara berurutan dari satu fase ke fase berikutnya, dengan setiap fase menghasilkan dokumen yang disetujui sebelum fase berikutnya dimulai.  
  	Sommerville (2011) menyatakan bahwa model *Waterfall* paling sesuai diterapkan ketika kebutuhan sistem telah dipahami dengan baik dan kecil kemungkinannya berubah secara radikal selama pengembangan. Kondisi tersebut terpenuhi pada pengembangan sistem ini karena tiga alasan berikut.
 
 1. Aturan yang menjadi inti sistem, yaitu rubrik unsur pendidikan pada PO BKD 2021, merupakan ketentuan normatif yang telah ditetapkan secara resmi. Formula, parameter, dan bobot setiap butir kegiatan dapat dibaca lengkap sejak awal pengembangan, sehingga spesifikasi kebutuhan tidak bergantung pada eksplorasi bertahap maupun umpan balik pengguna yang berulang.  
@@ -728,7 +890,7 @@ Tabel III.4. Tahapan, Aktivitas, dan Luaran Pengembangan Sistem
 2. ### **Perancangan** {#perancangan}
 
  	Tahap perancangan merupakan realisasi fase *system and software design*, yaitu proses pengalokasian kebutuhan ke dalam arsitektur sistem serta pengidentifikasian abstraksi perangkat lunak beserta relasinya (Sommerville, 2011). Tujuan tahap ini adalah menghasilkan cetak biru teknis yang dikonstruksi langsung dari dokumen SRS sebelum siklus pengodean dimulai.  
- 	Perancangan dikerjakan menggunakan pendekatan analisis dan perancangan terstruktur sebagaimana diuraikan pada subbab II.1.9, sehingga artefak yang dihasilkan berpusat pada aliran data dan dekomposisi proses, bukan pada pemodelan objek. Kelima aspek perancangan yang dikerjakan adalah sebagai berikut.
+ 	Perancangan dikerjakan menggunakan pendekatan analisis dan perancangan terstruktur sebagaimana diuraikan pada subbab II.1.11, sehingga artefak yang dihasilkan berpusat pada aliran data dan dekomposisi proses, bukan pada pemodelan objek. Kelima aspek perancangan yang dikerjakan adalah sebagai berikut.
 
 1. Perancangan arsitektur sistem
 
@@ -769,11 +931,11 @@ Tabel III.4. Tahapan, Aktivitas, dan Luaran Pengembangan Sistem
 
 2. *Integration Testing*
 
-> Memvalidasi interaksi lintas lapisan, mencakup integrasi aplikasi web dengan *smart contract* melalui titik akhir RPC, integrasi aplikasi web dengan layanan ekstraksi dokumen melalui HTTP, serta integrasi aplikasi web dengan basis data melalui Prisma ORM.
+> Memvalidasi interaksi lintas lapisan, mencakup integrasi aplikasi web dengan *smart contract* melalui titik akhir RPC, integrasi aplikasi web dengan layanan ekstraksi dokumen melalui HTTP pada jalur ekstraksi penugasan maupun jalur pemeriksaan dokumen bukti, serta integrasi aplikasi web dengan basis data melalui Prisma ORM. Pengujian pada jalur pemeriksaan bukti mencakup pula perilaku sistem ketika layanan ekstraksi tidak dapat dihubungi, yaitu memastikan kegagalan pemeriksaan tidak menggagalkan proses unggah dokumen.
 
 3. *System Testing*
 
-> Memvalidasi alur pemakaian lengkap yang melintasi beberapa modul dan beberapa peran pengguna secara berurutan, mulai dari unggah dokumen penugasan oleh administrator, klaim kegiatan oleh dosen, penilaian oleh dua asesor, hingga penerbitan token kredit.
+> Memvalidasi alur pemakaian lengkap yang melintasi beberapa modul dan beberapa peran pengguna secara berurutan, mulai dari unggah dokumen penugasan oleh administrator, klaim kegiatan dan unggah dokumen bukti oleh dosen, peninjauan hasil pemeriksaan bukti dan penilaian oleh dua asesor, hingga penerbitan token kredit.
 
 4. Uji Akurasi Perhitungan Kredit
 
@@ -917,12 +1079,14 @@ Tabel IV.5. Fitur sistem penilaian BKD pendidikan berbasis Smart Contract
 | 7\. | Unggah dan Ekstraksi Dokumen SK/ST | Administrator mengunggah berkas Surat Keputusan dan Surat Tugas, sistem mengekstraksi parameter penugasan, menampilkan pratinjau pemetaan, dan menerapkannya menjadi kegiatan dosen. | Dibutuhkan agar parameter yang diproses sistem berasal langsung dari dokumen sumber, bukan dari pengetikan ulang. |
 | 8\. | Koreksi Manual Hasil Ekstraksi | Administrator dapat memperbaiki atau melewati baris hasil ekstraksi sebelum diterapkan, dengan hasil ekstraksi asli tetap tersimpan utuh. | Dibutuhkan karena hasil ekstraksi tidak dijamin akurat pada setiap dokumen, sekaligus menjaga bukti audit tetap tidak berubah. |
 | 9\. | Pengelolaan Kegiatan dan Dokumen BKD | Dosen menambah, mengubah, dan menghapus kegiatan, menarik kegiatan dari portofolio ke dokumen BKD, mengunggah dokumen bukti, serta menetapkan status capaian. | Dibutuhkan agar dosen tetap memegang kendali atas kegiatan yang dilaporkan pada periode berjalan. |
-| 10\. | Perhitungan Kredit Otomatis | Sistem mengirimkan parameter kegiatan ke *smart contract* kalkulator untuk menghitung nilai kredit secara deterministik. | Dibutuhkan untuk menghilangkan variasi hasil yang timbul dari perhitungan manual antar-asesor. |
-| 11\. | Penyimpanan Data Operasional | Data pengguna, periode, kegiatan, parameter, dokumen bukti, hasil penilaian, dan riwayat transaksi disimpan pada PostgreSQL. | Dibutuhkan untuk kebutuhan administrasi aplikasi dan rekapitulasi data tanpa membebani penyimpanan *on-chain*. |
-| 12\. | Penilaian dan Pengesahan oleh Asesor | Setiap asesor menilai kegiatan secara terpisah, memberi catatan, kemudian mengesahkan penilaiannya. | Dibutuhkan untuk menjaga peran asesor sebagai pemverifikasi kesesuaian parameter terhadap dokumen sumber. |
-| 13\. | Simpulan BKD dan Penerbitan Token SKS | Setelah kedua asesor mengesahkan, sistem membentuk simpulan beserta status memenuhi atau tidak memenuhi, menghitung *hash* simpulan, lalu menerbitkan token SKS ke *wallet* dosen. | Dibutuhkan sebagai representasi kredit BKD yang melekat pada dosen dan dapat ditelusuri melalui *transaction hash*. |
-| 14\. | Koreksi Token SKS | Administrator dapat menghapus sebagian atau seluruh token pada *wallet* dosen disertai alasan koreksi. | Dibutuhkan sebagai mekanisme perbaikan apabila terjadi kesalahan parameter atau peninjauan ulang hasil penilaian. |
-| 15\. | Log Blockchain dan Rekapitulasi BKD | Sistem menampilkan riwayat penerbitan dan penghapusan token yang dibaca langsung dari *blockchain*, serta rekapitulasi kredit per dosen dan per periode. | Dibutuhkan agar capaian BKD dapat dipantau dan hasilnya dapat diverifikasi terhadap catatan *on-chain*. |
+| 10\. | Verifikasi Keaslian Dokumen Bukti | Setiap dokumen bukti berformat PDF pada rumpun kegiatan pembimbingan dibaca parser artefak universal untuk mengenali nama orang beserta perannya, kemudian dicocokkan terhadap nama pemilik akun dan peran yang diklaim, dengan hasilnya disimpan menyertai dokumen dan ditandai kepada asesor. | Dibutuhkan agar bukti yang bukan milik dosen bersangkutan atau yang perannya berbeda dengan klaim dapat terdeteksi sebelum penilaian ditetapkan, sebagaimana dirumuskan pada subbab I.2 butir kedua. |
+| 11\. | Pemeriksaan Ulang dan Persetujuan Manual Asesor | Asesor dapat menjalankan ulang pemeriksaan atas satu dokumen bukti dan dapat menyetujui hasil pemeriksaan secara manual apabila dinilai keliru, dengan hasil pemeriksaan asli tetap tersimpan. | Dibutuhkan karena keluaran model bahasa visual bersifat probabilistik, sehingga kewenangan akhir harus tetap berada pada asesor tanpa menghapus jejak pemeriksaan. |
+| 12\. | Perhitungan Kredit Otomatis | Sistem mengirimkan parameter kegiatan ke *smart contract* kalkulator untuk menghitung nilai kredit secara deterministik. | Dibutuhkan untuk menghilangkan variasi hasil yang timbul dari perhitungan manual antar-asesor. |
+| 13\. | Penyimpanan Data Operasional | Data pengguna, periode, kegiatan, parameter, dokumen bukti beserta hasil pemeriksaannya, hasil penilaian, dan riwayat transaksi disimpan pada PostgreSQL. | Dibutuhkan untuk kebutuhan administrasi aplikasi dan rekapitulasi data tanpa membebani penyimpanan *on-chain*. |
+| 14\. | Penilaian dan Pengesahan oleh Asesor | Setiap asesor menilai kegiatan secara terpisah, memberi catatan, kemudian mengesahkan penilaiannya. | Dibutuhkan untuk menjaga peran asesor sebagai pemverifikasi kesesuaian parameter terhadap dokumen sumber. |
+| 15\. | Simpulan BKD dan Penerbitan Token SKS | Setelah kedua asesor mengesahkan, sistem membentuk simpulan beserta status memenuhi atau tidak memenuhi, menghitung *hash* simpulan, lalu menerbitkan token SKS ke *wallet* dosen. | Dibutuhkan sebagai representasi kredit BKD yang melekat pada dosen dan dapat ditelusuri melalui *transaction hash*. |
+| 16\. | Koreksi Token SKS | Administrator dapat menghapus sebagian atau seluruh token pada *wallet* dosen disertai alasan koreksi. | Dibutuhkan sebagai mekanisme perbaikan apabila terjadi kesalahan parameter atau peninjauan ulang hasil penilaian. |
+| 17\. | Log Blockchain dan Rekapitulasi BKD | Sistem menampilkan riwayat penerbitan dan penghapusan token yang dibaca langsung dari *blockchain*, serta rekapitulasi kredit per dosen dan per periode. | Dibutuhkan agar capaian BKD dapat dipantau dan hasilnya dapat diverifikasi terhadap catatan *on-chain*. |
 
 1. #### **Identifikasi Kebutuhan Sistem** {#identifikasi-kebutuhan-sistem}
 
@@ -938,11 +1102,11 @@ Tabel IV.6. Identifikasi *Environment* Sistem Penilaian BKD
 | No. | Entitas Eksternal | Peran | Masukan ke Sistem | Keluaran dari Sistem |
 | :---: | ----- | :---: | ----- | ----- |
 | 1\. | Dosen | Sumber dan tujuan | Kredensial masuk, data kegiatan beserta parameternya, dokumen bukti, penarikan kegiatan ke dokumen BKD, status capaian, permintaan simpan permanen | Daftar kegiatan beserta nilai kredit, status penilaian, catatan asesor, simpulan BKD, rekapitulasi kredit |
-| 2\. | Asesor | Sumber dan tujuan | Kredensial masuk, nilai kredit yang disetujui, jumlah pertemuan keputusan, persentase capaian, catatan penilaian, pengesahan | Daftar dokumen BKD yang ditugaskan, rincian kegiatan beserta dokumen bukti, hasil perhitungan sistem |
+| 2\. | Asesor | Sumber dan tujuan | Kredensial masuk, nilai kredit yang disetujui, jumlah pertemuan keputusan, persentase capaian, catatan penilaian, permintaan pemeriksaan ulang dokumen bukti, persetujuan manual atas hasil pemeriksaan, pengesahan | Daftar dokumen BKD yang ditugaskan, rincian kegiatan beserta dokumen bukti, hasil pemeriksaan keaslian bukti beserta daftar nama dan peran yang terbaca, hasil perhitungan sistem |
 | 3\. | Administrator | Sumber dan tujuan | Kredensial masuk, data pengguna, penetapan *wallet*, data periode dan fase, penugasan asesor, data referensi kegiatan, berkas SK dan ST, koreksi hasil ekstraksi, instruksi koreksi token | Daftar pengguna, status penerapan dokumen, riwayat transaksi token, log *blockchain*, rekapitulasi seluruh dosen |
 | 4\. | *Smart Contract* Kalkulator BKD | Sumber dan tujuan | Nilai kredit hasil perhitungan dalam skala kali seratus, atau penolakan disertai alasan | Nama fungsi perhitungan dan parameter kegiatan |
 | 5\. | *Smart Contract* Token SKS | Sumber dan tujuan | *Transaction hash*, saldo token per alamat, riwayat *event* penerbitan dan penghapusan | Alamat *wallet* tujuan, jumlah token, *hash* simpulan sebagai referenceId, instruksi penghapusan beserta alasan |
-| 6\. | Layanan Model Bahasa Visual | Sumber dan tujuan | Hasil penafsiran citra halaman dalam format JSON terstruktur | Citra halaman dokumen hasil pemindaian beserta instruksi skema keluaran |
+| 6\. | Layanan Model Bahasa Visual | Sumber dan tujuan | Hasil penafsiran citra halaman dalam format JSON terstruktur, berupa baris penugasan pada jalur Surat Keputusan pindaian, dan berupa daftar orang beserta peran, jenis dokumen, serta penanda isian tulisan tangan pada jalur dokumen bukti | Citra halaman dokumen hasil pemindaian maupun dokumen bukti unggahan dosen, beserta instruksi skema keluaran yang berlaku bagi jalur yang bersangkutan |
 
  	Pemisahan antara entitas nomor 4 dan nomor 5 pada Tabel IV.6 bukan pemisahan administratif, melainkan konsekuensi perbedaan sifat kedua kontrak. Kontrak kalkulator hanya memuat fungsi murni tanpa penyimpanan status, sehingga pemanggilannya bersifat baca dan tidak menghasilkan transaksi maupun biaya *gas*. Sebaliknya, kontrak token menyimpan saldo dan menerbitkan *event*, sehingga setiap pemanggilannya merupakan transaksi yang tercatat permanen dan memerlukan penandatanganan oleh alamat berperan.
 
@@ -961,17 +1125,18 @@ Tabel IV.7. Identifikasi *Items Produced* (Data *Input*–*Proses*–*Output*)
 | 5\. | Berkas PDF Surat Keputusan dan Surat Tugas | Ekstraksi struktur tabel atau penafsiran citra halaman, pemetaan baris ke kode aturan, pencocokan nama dosen | Baris penugasan terstruktur beserta temuan validasi dan status pencocokan dosen |
 | 6\. | Koreksi baris oleh administrator | Penyimpanan selisih koreksi terpisah dari hasil ekstraksi asli, penggabungan saat penerapan | Baris penugasan final yang siap diterapkan |
 | 7\. | Parameter kegiatan | Validasi kelengkapan parameter terhadap skema, pemanggilan fungsi perhitungan pada kontrak kalkulator | Nilai kredit dalam skala kali seratus beserta status perhitungan |
-| 8\. | Berkas dokumen bukti | Penyimpanan berkas pada direktori unggahan dan pencatatan metadata | Daftar dokumen bukti yang tertaut pada kegiatan |
-| 9\. | Penarikan kegiatan dari portofolio | Penandaan kegiatan sebagai diklaim pada dokumen BKD periode aktif | Dokumen BKD berisi kegiatan yang dilaporkan |
-| 10\. | Nilai disetujui dan catatan asesor | Penyimpanan hasil penilaian per kegiatan per asesor | Hasil penilaian beserta status disetujui, ditolak, atau revisi |
-| 11\. | Pengesahan kedua asesor | Perataan nilai kedua asesor, penjumlahan kredit, penetapan status memenuhi, pembentukan *hash* simpulan | Simpulan BKD beserta *hash* penilaian |
-| 12\. | Simpulan yang telah disahkan | Penerbitan token ke alamat *wallet* dosen melalui kontrak token | *Transaction hash* dan catatan riwayat transaksi |
-| 13\. | Instruksi koreksi token beserta alasan | Penghapusan token dari alamat *wallet* dosen melalui kontrak token | *Transaction hash* penghapusan dan catatan riwayat transaksi |
-| 14\. | Permintaan rekapitulasi | Agregasi kredit per dosen dan per periode, pembacaan saldo dan *event* dari *blockchain* | Rekapitulasi kredit dan log transaksi *on-chain* |
+| 8\. | Berkas dokumen bukti | Penyimpanan berkas pada direktori unggahan dan pencatatan metadata; pada rumpun kegiatan pembimbingan dilanjutkan pembacaan dokumen oleh parser artefak universal, penormalan nama, pencocokan terhadap nama pemilik akun, dan pemeriksaan kesesuaian peran terhadap parameter kegiatan | Daftar dokumen bukti yang tertaut pada kegiatan beserta hasil pemeriksaan keaslian berupa status kesesuaian, daftar nama dan peran yang terbaca, jenis dokumen, dan waktu pemeriksaan |
+| 9\. | Permintaan pemeriksaan ulang dan persetujuan manual asesor | Pemanggilan ulang parser atas dokumen yang sama dan penimpaan hasil pemeriksaan, atau penambahan penanda persetujuan asesor tanpa menghapus hasil pemeriksaan asli | Hasil pemeriksaan terbaru, atau hasil pemeriksaan yang penandanya dikesampingkan beserta identitas dan waktu persetujuan |
+| 10\. | Penarikan kegiatan dari portofolio | Penandaan kegiatan sebagai diklaim pada dokumen BKD periode aktif | Dokumen BKD berisi kegiatan yang dilaporkan |
+| 11\. | Nilai disetujui dan catatan asesor | Penyimpanan hasil penilaian per kegiatan per asesor | Hasil penilaian beserta status disetujui, ditolak, atau revisi |
+| 12\. | Pengesahan kedua asesor | Perataan nilai kedua asesor, penjumlahan kredit, penetapan status memenuhi, pembentukan *hash* simpulan | Simpulan BKD beserta *hash* penilaian |
+| 13\. | Simpulan yang telah disahkan | Penerbitan token ke alamat *wallet* dosen melalui kontrak token | *Transaction hash* dan catatan riwayat transaksi |
+| 14\. | Instruksi koreksi token beserta alasan | Penghapusan token dari alamat *wallet* dosen melalui kontrak token | *Transaction hash* penghapusan dan catatan riwayat transaksi |
+| 15\. | Permintaan rekapitulasi | Agregasi kredit per dosen dan per periode, pembacaan saldo dan *event* dari *blockchain* | Rekapitulasi kredit dan log transaksi *on-chain* |
 
 3. ##### ***Functions***
 
- 	Untuk menyikapi data masukan dari entitas eksternal dan menghasilkan keluaran sebagaimana dirangkum pada Tabel IV.7, sistem harus menyediakan sepuluh proses utama berikut.
+ 	Untuk menyikapi data masukan dari entitas eksternal dan menghasilkan keluaran sebagaimana dirangkum pada Tabel IV.7, sistem harus menyediakan sebelas proses utama berikut.
 
 1. Autentikasi pengguna dan otorisasi akses berbasis peran  
 2. Pengelolaan pengguna beserta penetapan *wallet* kustodian  
@@ -980,13 +1145,14 @@ Tabel IV.7. Identifikasi *Items Produced* (Data *Input*–*Proses*–*Output*)
 5. Pengelolaan data referensi kegiatan beserta pemetaannya ke fungsi kontrak  
 6. Ekstraksi dokumen Surat Keputusan dan Surat Tugas beserta pemetaan dan koreksinya menjadi kegiatan  
 7. Pengelolaan kegiatan, dokumen bukti, dan dokumen BKD oleh dosen  
-8. Perhitungan kredit kegiatan melalui pemanggilan *smart contract* kalkulator  
-9. Penilaian dan pengesahan oleh asesor, pembentukan simpulan, serta penerbitan token kredit  
-10. Koreksi token, penelusuran log *blockchain*, dan penyajian rekapitulasi BKD
+8. Verifikasi keaslian dokumen bukti melalui pembacaan dokumen oleh parser artefak universal, pencocokan nama terhadap pemilik akun, dan pemeriksaan kesesuaian peran, beserta pemeriksaan ulang dan persetujuan manual oleh asesor  
+9. Perhitungan kredit kegiatan melalui pemanggilan *smart contract* kalkulator  
+10. Penilaian dan pengesahan oleh asesor, pembentukan simpulan, serta penerbitan token kredit  
+11. Koreksi token, penelusuran log *blockchain*, dan penyajian rekapitulasi BKD
 
 4. ##### ***Modes of Operation***
 
- 	Metode, teknik, dan teknologi yang dibutuhkan untuk menjalankan kesepuluh proses tersebut beserta waktu pengoperasiannya dirangkum pada Tabel IV.8.
+ 	Metode, teknik, dan teknologi yang dibutuhkan untuk menjalankan kesebelas proses tersebut beserta waktu pengoperasiannya dirangkum pada Tabel IV.8.
 
 Tabel IV.8. Identifikasi *Modes of Operation* Sistem Penilaian BKD
 
@@ -997,11 +1163,12 @@ Tabel IV.8. Identifikasi *Modes of Operation* Sistem Penilaian BKD
 | 3\. | Pengelolaan periode dan fase | Aksi peladen Next.js, penentuan fase berdasarkan perbandingan tanggal berjalan terhadap rentang fase atau nilai penggantian manual | Saat administrator mengubah periode, dan pada setiap pemuatan halaman yang bergantung fase |
 | 4\. | Penugasan asesor | Aksi peladen Next.js dengan batasan keunikan pasangan dokumen BKD dan urutan asesor pada basis data | Saat administrator menugaskan asesor, baik satu per satu maupun massal |
 | 5\. | Pengelolaan referensi kegiatan | Prisma ORM di atas PostgreSQL dengan skema parameter tersimpan sebagai JSONB | Saat pemuatan data acuan melalui berkas *seed* dan saat administrator meninjau referensi |
-| 6\. | Ekstraksi dokumen | Layanan FastAPI; pdfplumber untuk dokumen digital, pypdfium2 dan Pillow untuk rasterisasi dokumen pindaian, model bahasa visual melalui API untuk penafsiran citra | Saat administrator mengunggah berkas, dijalankan secara asinkron dengan batas waktu yang dapat dikonfigurasi |
+| 6\. | Ekstraksi dokumen penugasan | Layanan FastAPI; pdfplumber untuk dokumen digital, pypdfium2 dan Pillow untuk rasterisasi dokumen pindaian, model bahasa visual melalui API untuk penafsiran citra | Saat administrator mengunggah berkas, dijalankan secara asinkron dengan batas waktu yang dapat dikonfigurasi |
 | 7\. | Pengelolaan kegiatan dan dokumen bukti | Aksi peladen Next.js, penyimpanan berkas pada direktori unggahan peladen, perenderan pratinjau PDF dengan pdf.js di sisi peramban | Saat dosen mengelola kegiatan pada fase pengisian dan perbaikan |
-| 8\. | Perhitungan kredit | Pemanggilan fungsi *view* pada kontrak KalkulatorBKDPendidikan melalui Ethers.js dan titik akhir RPC Base Sepolia | Saat kegiatan disimpan atau diubah, dan saat hasil ekstraksi diterapkan |
-| 9\. | Penilaian, simpulan, dan penerbitan token | Aksi peladen Next.js, penandatanganan transaksi oleh *wallet* peladen, *hash* keccak-256 atas simpulan, pemanggilan fungsi mint pada kontrak BKDSKSToken | Saat asesor kedua mengesahkan penilaian |
-| 10\. | Koreksi token, log, dan rekapitulasi | Pemanggilan fungsi burn pada kontrak token, pembacaan *event* secara berjenjang dengan batas rentang blok, agregasi data melalui Prisma ORM | Saat administrator melakukan koreksi, dan saat halaman log atau rekapitulasi dibuka |
+| 8\. | Verifikasi keaslian dokumen bukti | Titik akhir parser artefak universal pada layanan FastAPI berbasis model bahasa visual, modul penormalan dan pencocokan nama berjenjang, serta modul penguji kesesuaian peran terhadap parameter kegiatan; hasil disimpan sebagai JSONB menyertai dokumen | Secara otomatis saat dosen mengunggah dokumen bukti pada rumpun kegiatan pembimbingan, dan atas permintaan asesor saat meninjau dokumen bukti |
+| 9\. | Perhitungan kredit | Pemanggilan fungsi *view* pada kontrak KalkulatorBKDPendidikan melalui Ethers.js dan titik akhir RPC Base Sepolia | Saat kegiatan disimpan atau diubah, dan saat hasil ekstraksi diterapkan |
+| 10\. | Penilaian, simpulan, dan penerbitan token | Aksi peladen Next.js, penandatanganan transaksi oleh *wallet* peladen, *hash* keccak-256 atas simpulan, pemanggilan fungsi mint pada kontrak BKDSKSToken | Saat asesor kedua mengesahkan penilaian |
+| 11\. | Koreksi token, log, dan rekapitulasi | Pemanggilan fungsi burn pada kontrak token, pembacaan *event* secara berjenjang dengan batas rentang blok, agregasi data melalui Prisma ORM | Saat administrator melakukan koreksi, dan saat halaman log atau rekapitulasi dibuka |
 
 2. #### **Analisis Pemilihan Metode/Teknologi** {#analisis-pemilihan-metodeteknologi}
 
@@ -1025,7 +1192,12 @@ Tabel IV.8. Identifikasi *Modes of Operation* Sistem Penilaian BKD
 
 5. Strategi ekstraksi dokumen hibrida
 
- 	Dokumen sumber yang dianalisis pada subbab III.2 terbagi menjadi dua bentuk dengan karakteristik berbeda, sehingga tidak dapat ditangani satu mekanisme tunggal. Terhadap dokumen yang berasal dari sumber digital dan memiliki lapisan teks utuh, dipilih ekstraksi deterministik berbasis posisi kolom menggunakan pdfplumber karena menghasilkan keluaran yang identik pada setiap eksekusi, yang merupakan prasyarat bagi sistem penilaian kinerja yang hasilnya harus dapat diaudit. Terhadap dokumen hasil pemindaian yang lapisan teksnya rusak, dipilih penafsiran citra halaman oleh model bahasa visual karena penafsiran dilakukan atas piksel halaman alih-alih atas keluaran pengenalan karakter yang telah terdegradasi. Karena keluaran model bersifat probabilistik, jalur ini tidak dijadikan sumber tunggal kebenaran, melainkan wajib melalui tahap koreksi manual oleh administrator sebelum diterapkan menjadi kegiatan.
+ 	Dokumen sumber yang dianalisis pada subbab III.2 terbagi menjadi tiga bentuk dengan karakteristik berbeda, sehingga tidak dapat ditangani satu mekanisme tunggal. Terhadap dokumen yang berasal dari sumber digital dan memiliki lapisan teks utuh, dipilih ekstraksi deterministik berbasis posisi kolom menggunakan pdfplumber karena menghasilkan keluaran yang identik pada setiap eksekusi, yang merupakan prasyarat bagi sistem penilaian kinerja yang hasilnya harus dapat diaudit. Terhadap dokumen hasil pemindaian yang lapisan teksnya rusak, dipilih penafsiran citra halaman oleh model bahasa visual dengan instruksi khusus yang terikat pada tata letak dokumen tersebut, karena penafsiran dilakukan atas piksel halaman alih-alih atas keluaran pengenalan karakter yang telah terdegradasi. Terhadap dokumen bukti unggahan dosen yang formatnya tidak diketahui sebelumnya, dipilih penafsiran oleh model bahasa visual dengan instruksi berskema umum, karena aturan berbasis posisi kolom hanya dapat disusun bagi dokumen yang tata letaknya diketahui dan konsisten, sedangkan dokumen bukti bersifat perseorangan dan beragam. Karena keluaran model bersifat probabilistik, kedua jalur berbasis model bahasa visual tidak dijadikan sumber tunggal kebenaran, melainkan wajib melalui tahap peninjauan manusia, yaitu koreksi manual oleh administrator sebelum hasil ekstraksi diterapkan menjadi kegiatan, dan peninjauan oleh asesor sebelum hasil pemeriksaan bukti memengaruhi penilaian.
+
+6. Perancangan mekanisme verifikasi keaslian dokumen bukti
+
+ 	Terdapat tiga alternatif untuk menjawab persoalan bukti yang tidak sesuai sebagaimana dirumuskan pada subbab I.2 butir kedua. Alternatif pertama adalah menyerahkan sepenuhnya kepada pembacaan manual asesor, yang ditolak karena justru merupakan kondisi sistem berjalan yang menjadi sumber masalah. Alternatif kedua adalah menolak secara otomatis setiap dokumen yang namanya tidak cocok, yang ditolak karena keluaran model bahasa visual bersifat probabilistik sehingga kekeliruan pembacaan akan berakibat penolakan bukti yang sebenarnya sah, dan karena penolakan otomatis memindahkan kewenangan penilaian dari asesor kepada sistem. Alternatif ketiga, yang dipilih, adalah menempatkan hasil pemeriksaan sebagai temuan yang mengarahkan perhatian asesor, dengan kewenangan akhir tetap berada pada asesor.  
+ 	Pilihan tersebut membawa empat konsekuensi perancangan. Pertama, pemeriksaan dijalankan secara *best-effort*, artinya kegagalan pemanggilan parser dicatat sebagai status tersendiri dan tidak menggagalkan proses unggah dokumen, sehingga gangguan pada layanan ekstraksi tidak menghalangi dosen menyelesaikan pelaporannya. Kedua, pemeriksaan tidak berhenti pada keberadaan nama melainkan dilanjutkan pada kesesuaian peran, karena satu dokumen dapat memuat beberapa nama dengan peran berbeda dan peran merupakan parameter yang memengaruhi nilai kredit. Ketiga, disediakan mekanisme persetujuan manual oleh asesor yang mengesampingkan penanda ketidaksesuaian tanpa menghapus hasil pemeriksaan asli, sehingga keputusan asesor terdokumentasi beserta dasar yang dikesampingkannya. Keempat, pemeriksaan dibatasi pada rumpun kegiatan pembimbingan, yaitu butir aturan EDU201, EDU202, dan EDU203, karena pada rumpun inilah pembuktian bersandar pada dokumen unggahan perseorangan sekaligus nilai kreditnya dipengaruhi peran; kegiatan yang bersumber dari Surat Tugas kolektif telah terverifikasi melalui jalur ekstraksi dokumen penugasan sehingga tidak memerlukan pemeriksaan yang sama.
 
 6. Pemisahan hasil ekstraksi dan koreksi manual
 
@@ -1033,7 +1205,7 @@ Tabel IV.8. Identifikasi *Modes of Operation* Sistem Penilaian BKD
 
 7. Pendekatan analisis dan perancangan terstruktur
 
- 	Pemodelan sistem menggunakan pendekatan terstruktur sebagaimana diuraikan pada subbab II.1.9, bukan pendekatan berorientasi objek. Pemilihan ini didasarkan pada karakteristik logika inti sistem yang berupa transformasi parameter menjadi nilai kredit melalui aturan prosedural dan deterministik. Kontrak kalkulator, yang merupakan komponen paling kritis pada sistem, tersusun dari kumpulan fungsi murni tanpa keadaan internal maupun relasi antarobjek, sehingga pemodelan berbasis aliran data dan dekomposisi proses merepresentasikannya secara lebih tepat dan menghasilkan dokumentasi yang lebih ringkas dibandingkan pemodelan berbasis kelas.
+ 	Pemodelan sistem menggunakan pendekatan terstruktur sebagaimana diuraikan pada subbab II.1.11, bukan pendekatan berorientasi objek. Pemilihan ini didasarkan pada karakteristik logika inti sistem yang berupa transformasi parameter menjadi nilai kredit melalui aturan prosedural dan deterministik. Kontrak kalkulator, yang merupakan komponen paling kritis pada sistem, tersusun dari kumpulan fungsi murni tanpa keadaan internal maupun relasi antarobjek, sehingga pemodelan berbasis aliran data dan dekomposisi proses merepresentasikannya secara lebih tepat dan menghasilkan dokumentasi yang lebih ringkas dibandingkan pemodelan berbasis kelas.
 
 8. Spesifikasi minimum lingkungan operasional
 
@@ -1141,6 +1313,9 @@ Tabel IV.10. Ringkasan Persyaratan Fungsional per Modul
 |  | FR-25 | Administrator dapat menghapus token pada *wallet* dosen disertai alasan koreksi. |
 | Pelaporan | FR-26 | Sistem menampilkan riwayat penerbitan dan penghapusan token yang dibaca langsung dari *blockchain*. |
 |  | FR-27 | Sistem menampilkan rekapitulasi kredit BKD per dosen dan per periode. |
+| Verifikasi Keaslian Dokumen Bukti | FR-28 | Sistem memeriksa dokumen bukti berformat PDF pada kegiatan rumpun pembimbingan dengan membaca nama orang beserta perannya melalui parser artefak universal, lalu mencocokkannya terhadap nama pemilik akun dan peran yang diklaim, dan menyimpan hasilnya menyertai dokumen. |
+|  | FR-29 | Sistem menandai kegiatan yang dokumen buktinya berstatus tidak cocok atau perannya tidak sesuai sebagai temuan pada halaman penilaian asesor. |
+|  | FR-30 | Asesor dapat menjalankan ulang pemeriksaan atas satu dokumen bukti serta menyetujui atau mencabut persetujuan atas hasil pemeriksaan, tanpa menghapus hasil pemeriksaan asli. |
 
 Tabel IV.11. Ringkasan Persyaratan Nonfungsional
 
@@ -1158,7 +1333,10 @@ Tabel IV.11. Ringkasan Persyaratan Nonfungsional
 | NFR-10 | *Usability* — *operability* | Pengguna harus dapat menyelesaikan alur kerjanya tanpa memahami mekanisme *blockchain*. | Dosen dan asesor tidak diwajibkan memiliki dompet kripto maupun menandatangani transaksi. |
 | NFR-11 | *Portability* — *installability* | Sistem harus dapat dipasang pada lingkungan peladen baku dengan langkah yang terdokumentasi. | Sistem berhasil dijalankan mengikuti prosedur pemasangan pada dokumen penyiapan. |
 | NFR-12 | *Performance efficiency* — *time behaviour* | Pembacaan riwayat *event* dari *blockchain* tidak boleh melampaui batas rentang blok yang diizinkan penyedia RPC. | Pembacaan *event* dijalankan berjenjang dengan batas rentang blok sehingga tidak menghasilkan galat penyedia RPC. |
+| NFR-13 | *Reliability* — *fault tolerance* | Kegagalan atau ketidaktersediaan layanan pemeriksaan dokumen bukti tidak boleh menggagalkan proses unggah dokumen oleh dosen. | Dokumen tetap tersimpan ketika layanan ekstraksi tidak dapat dihubungi, dengan hasil pemeriksaan tercatat berstatus gagal beserta pesan penyebabnya. |
+| NFR-14 | *Functional suitability* — *functional appropriateness* | Hasil pemeriksaan dokumen bukti tidak boleh menjadi penentu tunggal diterima atau ditolaknya suatu bukti. | Sistem tidak menolak unggahan berdasarkan hasil pemeriksaan, dan asesor dapat menyetujui hasil pemeriksaan secara manual dengan hasil asli tetap tersimpan. |
 
+ 	Perlu dicatat bahwa kode FR dan NFR pada kedua tabel di atas berfungsi sebagai pengenal tetap, bukan sebagai penanda urutan pelaksanaan. Modul verifikasi keaslian dokumen bukti memperoleh kode FR-28 sampai FR-30 karena ditetapkan setelah dua puluh tujuh persyaratan sebelumnya dirumuskan, meskipun pada alur kerja sistem modul tersebut berjalan di antara pengelolaan kegiatan dan penilaian asesor. Penomoran yang tetap ini dipilih agar seluruh rujukan silang pada dokumen perancangan, implementasi, dan pengujian tidak berubah ketika persyaratan baru ditambahkan.  
  	Dengan ditetapkannya persyaratan fungsional dan nonfungsional di atas, hasil tahap analisis ini menjadi dasar bagi tahap perancangan yang diuraikan pada subbab IV.2, sekaligus menjadi acuan verifikasi pada tahap pengujian di subbab IV.4.
 
 2. ## **Perancangan** {#perancangan-1}
@@ -1175,7 +1353,7 @@ Tabel IV.11. Ringkasan Persyaratan Nonfungsional
 
 Gambar IV.5. Arsitektur Sistem Penilaian BKD Berbasis *Smart Contract*
 
- 	Sistem tersusun atas lima lapisan sebagaimana dirinci pada Tabel IV.12. Lapisan penyajian dan lapisan orkestrasi keduanya berjalan di dalam satu *framework* Next.js, namun dipisahkan secara konseptual karena keduanya dieksekusi pada lingkungan yang berbeda, yaitu peramban pengguna dan peladen aplikasi.
+ 	Sistem tersusun atas enam lapisan sebagaimana dirinci pada Tabel IV.12. Lapisan penyajian dan lapisan orkestrasi keduanya berjalan di dalam satu *framework* Next.js, namun dipisahkan secara konseptual karena keduanya dieksekusi pada lingkungan yang berbeda, yaitu peramban pengguna dan peladen aplikasi.
 
 Tabel IV.12. Deskripsi Lapisan Arsitektur Sistem
 
@@ -1185,7 +1363,8 @@ Tabel IV.12. Deskripsi Lapisan Arsitektur Sistem
 | 2\. | Orkestrasi | Peladen aplikasi | Aksi peladen per alur kerja, *middleware* penjaga rute berbasis peran, konfigurasi autentikasi, penyaji berkas unggahan | Memvalidasi masukan, menegakkan otorisasi dan pembatasan fase, mengoordinasikan pemanggilan lapisan di bawahnya, dan menyusun kembali hasilnya menjadi data siap tampil |
 | 3\. | Akses data | Peladen aplikasi | Prisma ORM beserta skema tunggal dan berkas migrasi | Menjadi satu-satunya perantara menuju basis data, menjamin keamanan tipe pada kueri, dan mengelola evolusi struktur basis data secara terversi |
 | 4\. | Integrasi *blockchain* | Peladen aplikasi | Modul integrasi berbasis Ethers.js, penyedia RPC, penandatangan transaksi peladen, penurunan alamat *wallet* kustodian | Menjadi satu-satunya gerbang menuju jaringan *blockchain*, menandatangani transaksi, membaca saldo dan riwayat *event*, serta menghitung *hash* simpulan penilaian |
-| 5\. | Ekstraksi dokumen | Layanan mandiri | Layanan FastAPI beserta modul parser per jenis dokumen | Mengubah berkas Surat Keputusan dan Surat Tugas menjadi struktur JSON terstandar, baik melalui ekstraksi deterministik maupun penafsiran citra |
+| 5\. | Ekstraksi dokumen | Layanan mandiri | Layanan FastAPI beserta modul parser per jenis dokumen dan satu parser artefak berskema umum | Mengubah berkas Surat Keputusan dan Surat Tugas menjadi struktur JSON terstandar, baik melalui ekstraksi deterministik maupun penafsiran citra, serta membaca dokumen bukti unggahan dosen menjadi daftar orang beserta perannya |
+| 6\. | Verifikasi bukti | Peladen aplikasi | Modul verifikasi bukti, modul penormalan dan pencocokan nama, modul penguji kesesuaian peran | Membandingkan hasil pembacaan dokumen bukti terhadap identitas pemilik akun dan peran yang diklaim, menetapkan status kesesuaian, serta menyimpannya menyertai dokumen sebagai temuan bagi asesor |
 
  	Tiga keputusan arsitektural berikut menjadi penentu perilaku sistem secara keseluruhan.  
  	Keputusan pertama adalah menempatkan seluruh operasi *blockchain* di sisi peladen. Baik pemanggilan fungsi perhitungan, penerbitan token, maupun pembacaan *event* dijalankan dari lapisan orkestrasi, tidak dari peramban. Konsekuensinya, kunci privat penandatangan hanya dibaca dari variabel lingkungan peladen dan tidak pernah terkirim ke peramban, sehingga memenuhi NFR-04. Konsekuensi lainnya, dosen dan asesor tidak diwajibkan memasang dompet kripto maupun memahami mekanisme *gas*, sehingga memenuhi NFR-10.  
@@ -1210,12 +1389,13 @@ Tabel IV.13. Pustaka yang Digunakan pada Setiap Lapisan Arsitektur
 | 11\. | Hardhat beserta *toolbox* | 3.11 | Perkakas *on-chain* | Kompilasi, pengujian, *deployment*, dan verifikasi kontrak |
 | 12\. | FastAPI dan Uvicorn | 0.121 dan 0.38 | Ekstraksi dokumen | Kerangka layanan HTTP beserta peladen ASGI dan validasi berbasis anotasi tipe |
 | 13\. | pdfplumber | 0.11 | Ekstraksi dokumen | Ekstraksi teks dan tabel deterministik berbasis posisi dari PDF digital |
-| 14\. | pypdfium2 dan Pillow | 4.30 dan 11.0 | Ekstraksi dokumen | Rasterisasi halaman PDF pindaian menjadi citra dan normalisasi citra |
+| 14\. | pypdfium2 dan Pillow | 4.30 dan 11.0 | Ekstraksi dokumen | Rasterisasi halaman PDF pindaian maupun dokumen bukti menjadi citra beserta normalisasi dan penyandiannya |
 | 15\. | requests | 2.32 | Ekstraksi dokumen | Klien HTTP menuju layanan model bahasa visual |
+| 16\. | python-dotenv | 1.0 | Ekstraksi dokumen | Pemuatan kunci API dan konfigurasi layanan dari berkas lingkungan agar tidak tertulis pada kode sumber |
 
 2. ### **Perancangan Proses** {#perancangan-proses}
 
- 	Perancangan proses memodelkan sistem sebagai transformator informasi sesuai pendekatan analisis terstruktur yang diuraikan pada subbab II.1.9. Pemodelan disusun berjenjang, dimulai dari diagram konteks yang memperlihatkan sistem sebagai satu proses tunggal, diuraikan menjadi diagram aliran data level 1 yang memperlihatkan proses-proses utama, kemudian diuraikan lebih lanjut menjadi diagram aliran data level 2 pada proses yang kompleksitasnya menuntut penguraian tambahan. Setiap aliran data dan penyimpanan data yang muncul pada diagram didefinisikan pada kamus data, sedangkan logika pemrosesan setiap proses terendah dituliskan sebagai spesifikasi proses.
+ 	Perancangan proses memodelkan sistem sebagai transformator informasi sesuai pendekatan analisis terstruktur yang diuraikan pada subbab II.1.11. Pemodelan disusun berjenjang, dimulai dari diagram konteks yang memperlihatkan sistem sebagai satu proses tunggal, diuraikan menjadi diagram aliran data level 1 yang memperlihatkan proses-proses utama, kemudian diuraikan lebih lanjut menjadi diagram aliran data level 2 pada proses yang kompleksitasnya menuntut penguraian tambahan. Setiap aliran data dan penyimpanan data yang muncul pada diagram didefinisikan pada kamus data, sedangkan logika pemrosesan setiap proses terendah dituliskan sebagai spesifikasi proses.
 
 1. #### **Diagram Konteks** {#diagram-konteks}
 
@@ -1229,9 +1409,9 @@ Gambar IV.6. Diagram Konteks Sistem Penilaian BKD
 
 2. #### **Diagram Aliran Data Level 1** {#diagram-aliran-data-level-1}
 
- 	Proses tunggal pada diagram konteks diuraikan menjadi sepuluh proses utama sesuai daftar *functions* yang telah ditetapkan pada subbab IV.1.3.1. Penguraian ini menjaga keseimbangan aliran data, yaitu seluruh aliran masuk dan keluar pada diagram konteks muncul kembali pada diagram level 1 tanpa penambahan maupun pengurangan. Diagram aliran data level 1 disajikan pada Gambar IV.7, sedangkan rincian setiap prosesnya disajikan pada Tabel IV.14.
+ 	Proses tunggal pada diagram konteks diuraikan menjadi sebelas proses utama sesuai daftar *functions* yang telah ditetapkan pada subbab IV.1.3.1. Penguraian ini menjaga keseimbangan aliran data, yaitu seluruh aliran masuk dan keluar pada diagram konteks muncul kembali pada diagram level 1 tanpa penambahan maupun pengurangan. Diagram aliran data level 1 disajikan pada Gambar IV.7, sedangkan rincian setiap prosesnya disajikan pada Tabel IV.14.
 
-**\[LENGKAPI GAMBAR: DFD level 1 dengan sepuluh proses (P1–P10 sesuai Tabel IV.14), enam entitas eksternal, dan sembilan data store sesuai Tabel IV.15\]**
+**\[LENGKAPI GAMBAR: DFD level 1 dengan sebelas proses (P1–P11 sesuai Tabel IV.14), enam entitas eksternal, dan sebelas data store sesuai Tabel IV.15\]**
 
 Gambar IV.7. Diagram Aliran Data Level 1
 
@@ -1249,6 +1429,7 @@ Tabel IV.14. Deskripsi Proses pada Diagram Aliran Data Level 1
 | P8 | Perhitungan Kredit Kegiatan | Memvalidasi parameter terhadap skema dan memanggil fungsi perhitungan pada kontrak kalkulator | FR-18, FR-19 |
 | P9 | Penilaian, Simpulan, dan Penerbitan Token | Menyimpan penilaian per asesor, memproses pengesahan, membentuk simpulan beserta *hash*-nya, dan menerbitkan token kredit | FR-20, FR-21, FR-22, FR-23, FR-24 |
 | P10 | Koreksi Token dan Pelaporan | Menghapus token untuk koreksi, membaca riwayat *event* dari *blockchain*, dan menyusun rekapitulasi kredit | FR-25, FR-26, FR-27 |
+| P11 | Verifikasi Keaslian Dokumen Bukti | Membaca dokumen bukti melalui parser artefak universal, mencocokkan nama yang terbaca terhadap nama pemilik akun, memeriksa kesesuaian peran terhadap parameter kegiatan, menyimpan hasilnya menyertai dokumen, serta melayani pemeriksaan ulang dan persetujuan manual asesor | FR-28, FR-29, FR-30 |
 
  	Penyimpanan data yang muncul pada diagram aliran data level 1 beserta proses yang mengaksesnya disajikan pada Tabel IV.15. Setiap penyimpanan data berkorespondensi dengan satu entitas pada rancangan basis data yang diuraikan pada subbab IV.2.4.
 
@@ -1260,17 +1441,17 @@ Tabel IV.15. Penyimpanan Data pada Diagram Aliran Data Level 1
 | D2 | Periode BKD | P3 | P6, P7, P9, P10 |
 | D3 | Dokumen BKD | P7 | P4, P8, P9, P10 |
 | D4 | Penugasan Asesor | P4 | P9 |
-| D5 | Referensi Kegiatan | P5 | P6, P7, P8 |
+| D5 | Referensi Kegiatan | P5 | P6, P7, P8, P11 |
 | D6 | Unggahan Dokumen | P6 | P6, P7 |
-| D7 | Kegiatan | P6, P7, P8 | P8, P9, P10 |
-| D8 | Dokumen Kegiatan | P6, P7 | P7, P9 |
+| D7 | Kegiatan | P6, P7, P8 | P8, P9, P10, P11 |
+| D8 | Dokumen Kegiatan | P6, P7, P11 | P7, P9, P11 |
 | D9 | Hasil Penilaian | P9 | P9, P10 |
 | D10 | Simpulan BKD | P9 | P9, P10 |
 | D11 | Riwayat Transaksi | P9, P10 | P10 |
 
 3. #### **Diagram Aliran Data Level 2** {#diagram-aliran-data-level-2}
 
- 	Tiga proses pada diagram level 1 memiliki kompleksitas internal yang menuntut penguraian lebih lanjut, yaitu proses ekstraksi dan penerapan dokumen, proses perhitungan kredit kegiatan, serta proses penilaian, simpulan, dan penerbitan token. Ketiga proses tersebut dipilih karena masing-masing memuat percabangan keputusan yang menentukan hasil akhir sistem, sedangkan tujuh proses lainnya bersifat pengelolaan data lurus yang tidak memerlukan penguraian tambahan.  
+ 	Empat proses pada diagram level 1 memiliki kompleksitas internal yang menuntut penguraian lebih lanjut, yaitu proses ekstraksi dan penerapan dokumen, proses perhitungan kredit kegiatan, proses penilaian, simpulan, dan penerbitan token, serta proses verifikasi keaslian dokumen bukti. Keempat proses tersebut dipilih karena masing-masing memuat percabangan keputusan yang menentukan hasil akhir sistem, sedangkan tujuh proses lainnya bersifat pengelolaan data lurus yang tidak memerlukan penguraian tambahan.  
  	Penguraian proses P6 disajikan pada Gambar IV.8. Proses ini terbagi menjadi lima subproses, yaitu penerimaan dan penyimpanan berkas beserta nilai *hash*-nya, pemilihan jalur ekstraksi berdasarkan jenis dokumen, pemetaan baris hasil ekstraksi menjadi calon kegiatan beserta pencocokan dosen, penampungan koreksi administrator sebagai selisih terhadap hasil ekstraksi asli, serta penerapan baris final menjadi kegiatan yang bersifat idempoten terhadap penerapan berulang.
 
 **\[LENGKAPI GAMBAR: DFD level 2 proses P6 dengan lima subproses P6.1–P6.5\]**
@@ -1289,9 +1470,16 @@ Gambar IV.9. Diagram Aliran Data Level 2 Proses Perhitungan Kredit Kegiatan
 
 Gambar IV.10. Diagram Aliran Data Level 2 Proses Penilaian, Simpulan, dan Penerbitan Token
 
+ 	Penguraian proses P11 disajikan pada Gambar IV.11. Proses ini terbagi menjadi lima subproses. Subproses pertama menyeleksi kelayakan pemeriksaan, yaitu memastikan bahwa dokumen merupakan berkas PDF hasil unggahan lokal, bukan tautan luar, bahwa kegiatan yang menaunginya termasuk rumpun pembimbingan, dan bahwa layanan parser telah terkonfigurasi. Subproses kedua mengirimkan berkas ke parser artefak universal dan menerima daftar orang beserta peran, jenis dokumen, dan penanda isian tulisan tangan. Subproses ketiga menormalkan setiap nama yang terbaca dengan melucuti gelar, menyeragamkan huruf, dan merapikan spasi, kemudian mencocokkannya secara berjenjang terhadap nama pemilik akun. Subproses keempat memeriksa kesesuaian peran, yaitu membandingkan peran yang tertulis pada dokumen terhadap peran yang menjadi parameter kegiatan, dengan tiga kemungkinan keluaran berupa sesuai, bertentangan, atau tidak dapat dipastikan. Subproses kelima menetapkan status akhir pemeriksaan dan menyimpannya menyertai dokumen.  
+ 	Status akhir yang dihasilkan subproses kelima terdiri atas lima nilai, yaitu *cocok* apabila nama pemilik akun ditemukan dan perannya tidak bertentangan, *peran tidak sesuai* apabila nama ditemukan tetapi peran pada dokumen bertentangan dengan peran yang diklaim, *tidak cocok* apabila tidak satu pun nama pada dokumen bersesuaian dengan pemilik akun, *tanpa nama* apabila parser tidak menemukan nama orang sama sekali, dan *gagal* apabila pemanggilan parser tidak berhasil diselesaikan. Pembedaan antara *tanpa nama* dan *gagal* dari *tidak cocok* bersifat penting, karena hanya nilai *tidak cocok* dan *peran tidak sesuai* yang merupakan indikasi ketidaksesuaian bukti, sedangkan dua nilai lainnya menandakan bahwa pemeriksaan tidak dapat menyimpulkan apa pun sehingga tidak boleh dibaca sebagai tuduhan terhadap dosen.
+
+**\[LENGKAPI GAMBAR: DFD level 2 proses P11 dengan lima subproses P11.1–P11.5\]**
+
+Gambar IV.11. Diagram Aliran Data Level 2 Proses Verifikasi Keaslian Dokumen Bukti
+
 4. #### **Kamus Data** {#kamus-data}
 
- 	Kamus data mendefinisikan setiap elemen data yang muncul sebagai aliran data maupun penyimpanan data pada diagram konteks dan diagram aliran data, sehingga tidak terdapat elemen yang penafsirannya bergantung pada asumsi pembaca. Sesuai pembagian yang diuraikan pada subbab II.1.9.2, elemen data dibedakan menjadi data komposit yang merupakan gabungan beberapa elemen membentuk satu kesatuan logis, dan data elementer yang merupakan elemen tunggal dan langsung dipetakan ke tipe data pada tahap implementasi.  
+ 	Kamus data mendefinisikan setiap elemen data yang muncul sebagai aliran data maupun penyimpanan data pada diagram konteks dan diagram aliran data, sehingga tidak terdapat elemen yang penafsirannya bergantung pada asumsi pembaca. Sesuai pembagian yang diuraikan pada subbab II.1.11.2, elemen data dibedakan menjadi data komposit yang merupakan gabungan beberapa elemen membentuk satu kesatuan logis, dan data elementer yang merupakan elemen tunggal dan langsung dipetakan ke tipe data pada tahap implementasi.  
  	Kamus data disajikan terpisah untuk dua lapisan yang berbeda karena keduanya menggunakan sistem tipe yang berbeda. Kamus data lapisan *on-chain* menggunakan tipe data Solidity dan mencakup parameter serta keluaran kedua *smart contract*, sedangkan kamus data lapisan aplikasi menggunakan tipe data PostgreSQL dan tercermin pada rancangan basis data yang diuraikan pada subbab IV.2.4. Bagian ini memerinci kamus data lapisan *on-chain*, mengingat lapisan tersebut memuat logika inti sistem dan tipe datanya tidak dapat diubah setelah kontrak di-*deploy*.
 
 1. ##### **Kamus Data Kontrak Kalkulator BKD Pendidikan** {#kamus-data-kontrak-kalkulator}
@@ -1384,7 +1572,7 @@ Tabel IV.19. Struktur Data Elementer Kontrak Token SKS
 
 5. #### **Spesifikasi Proses** {#spesifikasi-proses}
 
- 	Spesifikasi proses atau PSPEC menguraikan logika pemrosesan yang berlangsung di dalam setiap proses pada tingkat diagram aliran data terendah, dituliskan menggunakan *pseudocode* sebagaimana dijelaskan pada subbab II.1.9.3. Penulisan PSPEC menjadi penting pada sistem ini karena setiap butir aturan pada rubrik PO BKD memiliki syarat validasi dan formula yang berbeda, sehingga kesesuaian antara aturan normatif dan implementasi teknis perlu ditetapkan secara eksplisit sebelum pengodean dimulai.  
+ 	Spesifikasi proses atau PSPEC menguraikan logika pemrosesan yang berlangsung di dalam setiap proses pada tingkat diagram aliran data terendah, dituliskan menggunakan *pseudocode* sebagaimana dijelaskan pada subbab II.1.11.3. Penulisan PSPEC menjadi penting pada sistem ini karena setiap butir aturan pada rubrik PO BKD memiliki syarat validasi dan formula yang berbeda, sehingga kesesuaian antara aturan normatif dan implementasi teknis perlu ditetapkan secara eksplisit sebelum pengodean dimulai.  
  	Daftar spesifikasi proses beserta keterkaitannya terhadap proses pada diagram aliran data disajikan pada Tabel IV.20. Karena isi *pseudocode* setiap proses cukup panjang, uraian rincinya disatukan dengan spesifikasi modul pada subbab IV.2.3.2 agar logika pemrosesan dan modul pelaksananya dapat dibaca berdampingan.
 
 Tabel IV.20. Daftar Spesifikasi Proses
@@ -1406,19 +1594,23 @@ Tabel IV.20. Daftar Spesifikasi Proses
 | PSPEC-13 | P9.4, P10 | Menerbitkan token ke alamat *wallet* dosen, menghapus token untuk koreksi, mencatat hasil transaksi beserta statusnya baik berhasil maupun gagal | Modul Integrasi Token |
 | PSPEC-14 | P9.4, P10 | Mengendalikan siklus hidup token, membatasi penerbitan hanya kepada pemegang peran, dan menolak seluruh pemindahan antar-alamat | *Smart Contract* Token SKS |
 | PSPEC-15 | P10 | Membaca *event* penerbitan dan penghapusan secara berjenjang dengan batas rentang blok, menafsirkan skala jumlah token, mengagregasi kredit per dosen dan per periode | Modul Log dan Rekapitulasi |
+| PSPEC-16 | P11.1–P11.2 | Menyeleksi kelayakan pemeriksaan berdasarkan jenis berkas, asal unggahan, kode aturan kegiatan, dan ketersediaan konfigurasi parser; mengirimkan berkas ke parser artefak universal; menangkap kegagalan pemanggilan sebagai status gagal tanpa melempar galat ke pemanggil | Modul Verifikasi Bukti |
+| PSPEC-17 | P11.3 | Menormalkan setiap nama yang terbaca dengan melucuti gelar depan bertumpuk dan gelar belakang, memotong pada koma pertama, merapikan spasi, dan menyeragamkan huruf; mencocokkan secara berjenjang melalui kunci penuh, kunci rapat tanpa spasi, lalu kunci tanpa inisial sebagai awalan | Modul Pencocokan Nama |
+| PSPEC-18 | P11.4–P11.5 | Memilih penguji peran sesuai kode aturan dan parameter kegiatan, membandingkan peran pada dokumen terhadap peran yang diklaim dengan keluaran sesuai, bertentangan, atau tidak dapat dipastikan; menetapkan status akhir di antara lima nilai dan menyimpannya sebagai JSONB menyertai dokumen | Modul Verifikasi Bukti |
+| PSPEC-19 | P11 | Menjalankan ulang pemeriksaan atas satu dokumen dan menimpa hasil sebelumnya, atau menambahkan penanda persetujuan asesor beserta identitas dan waktunya tanpa menghapus hasil pemeriksaan asli, serta mencabut penanda tersebut apabila diminta | Modul Peninjauan Bukti Asesor |
 
 3. ### **Perancangan Modul** {#perancangan-modul}
 
- 	Perancangan modul menurunkan hasil pemodelan proses pada subbab IV.2.2 menjadi hierarki modul program menggunakan *structure chart* sebagaimana dijelaskan pada subbab II.1.9.4. Setiap modul digambarkan sebagai sebuah kotak, panah menunjukkan arah pemanggilan dari modul induk ke modul anak, sedangkan *data couple* berupa lingkaran berlabel menunjukkan parameter yang dipertukarkan antarmodul.  
+ 	Perancangan modul menurunkan hasil pemodelan proses pada subbab IV.2.2 menjadi hierarki modul program menggunakan *structure chart* sebagaimana dijelaskan pada subbab II.1.11.4. Setiap modul digambarkan sebagai sebuah kotak, panah menunjukkan arah pemanggilan dari modul induk ke modul anak, sedangkan *data couple* berupa lingkaran berlabel menunjukkan parameter yang dipertukarkan antarmodul.  
  	Karena logika inti sistem penilaian BKD dijalankan di atas *smart contract*, perancangan modul difokuskan pada dua kontrak yang menjadi tulang punggung sistem, yaitu KalkulatorBKDPendidikan sebagai *rule engine* perhitungan dan BKDSKSToken sebagai representasi hasil penilaian dalam bentuk token. Keputusan dekomposisi pada kedua kontrak tersebut mengikuti dua kriteria kualitas rancangan terstruktur, yaitu *cohesion* dan *coupling*. Kriteria *cohesion* dipenuhi dengan menempatkan satu butir aturan atau satu kelompok aturan berpola sama sebagai satu modul mandiri, sehingga setiap modul mengerjakan satu tanggung jawab yang padu. Kriteria *coupling* dipenuhi dengan merancang seluruh modul perhitungan sebagai fungsi murni yang hanya bertukar data melalui parameter dan nilai kembalian, tanpa berbagi keadaan internal, sehingga ketergantungan antarmodul dijaga pada tingkat terendah, yaitu *data coupling*.
 
 1. #### **Structure Chart Kontrak Kalkulator BKD Pendidikan** {#structure-chart-kontrak-kalkulator}
 
 ![A black background with white rectangles  AI-generated content may be incorrect.][image10]
 
-Gambar IV.11. *Structure Chart* Kontrak Kalkulator BKD Pendidikan
+Gambar IV.12. *Structure Chart* Kontrak Kalkulator BKD Pendidikan
 
- 	*Structure chart* pada Gambar IV.11 memperlihatkan dekomposisi kontrak KalkulatorBKDPendidikan yang berperan sebagai mesin aturan (*rule engine*) untuk menghitung beban kerja dosen bidang pendidikan. Modul induk membawahi modul-modul kategori yang masing-masing mewakili satu kelompok butir aturan pada Tabel IV.9, ditambah satu modul rekapitulasi yang menjumlahkan beberapa nilai kredit menjadi satu total.  
+ 	*Structure chart* pada Gambar IV.12 memperlihatkan dekomposisi kontrak KalkulatorBKDPendidikan yang berperan sebagai mesin aturan (*rule engine*) untuk menghitung beban kerja dosen bidang pendidikan. Modul induk membawahi modul-modul kategori yang masing-masing mewakili satu kelompok butir aturan pada Tabel IV.9, ditambah satu modul rekapitulasi yang menjumlahkan beberapa nilai kredit menjadi satu total.  
  	Setiap modul kategori menerima sejumlah *data couple* sebagai masukan sesuai karakteristik kegiatannya. Modul Pengajaran menerima sksMataKuliah, jumlahPertemuanRencana, jumlahPertemuanRealisasi, semesterPenuh, teamTeaching, dan persenPorsiDosen. Modul Pembimbingan Tugas Akhir menerima peranPembimbing, jenisTugasAkhir, dan jumlahMahasiswa. Modul Penguji menerima peranPenguji dan jumlahMahasiswa. Hasil akhir setiap modul dikembalikan ke modul induk dalam bentuk *data couple* sksX100. Penggunaan skala pengali seratus dipilih karena *smart contract* tidak mendukung bilangan desimal, sehingga nilai 1,00 SKS direpresentasikan sebagai bilangan bulat 100 untuk menjaga presisi perhitungan.  
  	Pemetaan antara butir aturan pada Tabel IV.9 dan modul perhitungan pada *structure chart* disajikan pada Tabel IV.21. Pemetaan ini menjadi bukti pemenuhan NFR-07, yaitu setiap butir aturan dapat ditelusuri ke tepat satu modul pelaksana.
 
@@ -1452,13 +1644,13 @@ Tabel IV.21. Pemetaan Butir Aturan PO BKD terhadap Modul Perhitungan
 
 2. #### **Structure Chart Kontrak Token SKS** {#structure-chart-kontrak-token-sks}
 
- 	*Structure chart* pada Gambar IV.12 menggambarkan dekomposisi kontrak BKDSKSToken, yaitu token berbasis standar ERC-20 yang bersifat *non-transferable* dan digunakan untuk merepresentasikan nilai SKS hasil penilaian yang telah disahkan. Modul utama BKDSKSToken membawahi empat modul fungsi inti, yaitu Constructor, Mint, Burn, dan Update.  
+ 	*Structure chart* pada Gambar IV.13 menggambarkan dekomposisi kontrak BKDSKSToken, yaitu token berbasis standar ERC-20 yang bersifat *non-transferable* dan digunakan untuk merepresentasikan nilai SKS hasil penilaian yang telah disahkan. Modul utama BKDSKSToken membawahi empat modul fungsi inti, yaitu Constructor, Mint, Burn, dan Update.  
  	Modul *Constructor* dipanggil satu kali pada saat *deployment* dengan parameter admin dan initialMinter untuk menetapkan pemegang hak akses awal. Modul *Mint* menerima parameter to, amount, dan referenceId, dan dijalankan oleh lapisan orkestrasi untuk menerbitkan token kepada dosen setelah kedua asesor mengesahkan penilaian. Modul *Burn* menerima parameter account, amount, dan reason, yang digunakan administrator untuk menghapus token sebagai mekanisme koreksi apabila terjadi kesalahan penilaian. Adapun modul *Update* merupakan fungsi internal yang menjadi titik kendali seluruh perubahan saldo, dan pada kontrak ini fungsi tersebut ditulis ulang untuk menolak setiap pemindahan antar-alamat sehingga sifat *non-transferable* token tetap terjaga.  
  	Penempatan pembatasan pemindahan pada modul *Update* merupakan keputusan rancangan yang disengaja. Seluruh operasi perubahan saldo pada standar ERC-20, baik penerbitan, penghapusan, maupun pemindahan biasa, pada akhirnya bermuara pada fungsi internal yang sama. Dengan menempatkan pemeriksaan pada titik tersebut, tidak ada jalur pemindahan yang dapat melewati pembatasan, termasuk jalur pemindahan atas persetujuan pihak ketiga yang disediakan standar ERC-20. Pendekatan ini lebih aman dibandingkan menonaktifkan fungsi pemindahan satu per satu, karena tidak bergantung pada kelengkapan daftar fungsi yang ditulis ulang.
 
 ![A black background with white rectangles  AI-generated content may be incorrect.][image11]
 
-Gambar IV.12. *Structure Chart* Kontrak Token SKS
+Gambar IV.13. *Structure Chart* Kontrak Token SKS
 
 3. #### **Spesifikasi Modul** {#spesifikasi-modul}
 
@@ -1491,11 +1683,11 @@ Tabel IV.23. CD-002: Modul *Smart Contract* Token SKS
 4. ### **Perancangan Basis Data** {#perancangan-basis-data}
 
  	Perancangan basis data menggunakan pendekatan *schema-first* melalui Prisma ORM. Seluruh struktur data didefinisikan secara terpusat dalam satu berkas skema yang berfungsi sebagai sumber kebenaran tunggal bagi seluruh entitas, tipe enumerasi, dan relasi antartabel. Skema tersebut kemudian dimigrasikan ke PostgreSQL sehingga setiap perubahan struktur data terlacak dan dikelola secara terversi melalui lima berkas migrasi yang tercatat pada repositori.  
- 	Basis data sistem terdiri atas 11 entitas dan 14 tipe enumerasi. Pemodelan mengacu pada model *entity-relationship* yang diperkenalkan Chen (1976) dan digambarkan menggunakan notasi *Crow's Foot* sebagaimana dijelaskan pada subbab II.1.10. Rancangan basis data disajikan pada Gambar IV.13. Setiap penyimpanan data yang diidentifikasi pada Tabel IV.15 berkorespondensi dengan satu entitas pada diagram ini.
+ 	Basis data sistem terdiri atas 11 entitas dan 14 tipe enumerasi. Pemodelan mengacu pada model *entity-relationship* yang diperkenalkan Chen (1976) dan digambarkan menggunakan notasi *Crow's Foot* sebagaimana dijelaskan pada subbab II.1.12. Rancangan basis data disajikan pada Gambar IV.14. Setiap penyimpanan data yang diidentifikasi pada Tabel IV.15 berkorespondensi dengan satu entitas pada diagram ini.
 
 ![A screenshot of a computer  AI-generated content may be incorrect.][image13]
 
-Gambar IV.13. *Entity Relationship Diagram* Sistem Penilaian BKD
+Gambar IV.14. *Entity Relationship Diagram* Sistem Penilaian BKD
 
  	Seluruh entitas menggunakan kunci primer bertipe UUID yang dibangkitkan basis data, bukan bilangan berurut. Pemilihan ini diambil agar pengenal baris tidak mengungkapkan jumlah maupun urutan data kepada pihak yang mengaksesnya melalui alamat halaman, sekaligus menghindari benturan pengenal apabila di kemudian hari data dari beberapa sumber digabungkan. Rekapitulasi seluruh entitas beserta perannya disajikan pada Tabel IV.24.
 
@@ -1510,7 +1702,7 @@ Tabel IV.24. Rekapitulasi Entitas Basis Data
 | 5\. | referensi\_kegiatan | id\_referensi | Menyimpan butir aturan PO BKD beserta kode aturan, kategori seksi, nama fungsi kontrak, skema parameter, dan batas SKS maksimal | Satu ke banyak terhadap kegiatan |
 | 6\. | kegiatan | id\_kegiatan | Menyimpan kegiatan yang dilaporkan dosen beserta parameter, hasil perhitungan, status alur kerja, status capaian, penanda klaim, dan sumber data | Milik satu lkd, satu referensi\_kegiatan, dan opsional satu unggahan\_dokumen; satu ke banyak terhadap dokumen\_kegiatan dan hasil\_penilaian |
 | 7\. | unggahan\_dokumen | id\_unggahan | Menyimpan berkas SK dan ST yang diunggah administrator beserta nilai *hash* berkas, keluaran utuh parser, ringkasan, koreksi administrator, dan statistik penerapan | Milik opsional satu periode dan satu administrator; satu ke banyak terhadap kegiatan |
-| 8\. | dokumen\_kegiatan | id\_dokumen | Menyimpan metadata dokumen bukti yang melekat pada suatu kegiatan beserta lokasi berkasnya | Milik satu kegiatan |
+| 8\. | dokumen\_kegiatan | id\_dokumen | Menyimpan metadata dokumen bukti yang melekat pada suatu kegiatan beserta lokasi berkasnya dan hasil pemeriksaan keaslian dokumen tersebut | Milik satu kegiatan |
 | 9\. | hasil\_penilaian | id\_hasil | Menyimpan penilaian satu kegiatan oleh satu asesor beserta nilai disetujui, pertemuan keputusan, persentase capaian, status, dan catatan | Milik satu kegiatan dan satu penugasan\_asesor; satu ke banyak terhadap riwayat\_transaksi |
 | 10\. | simpulan\_bkd | id\_simpulan | Menyimpan simpulan satu dokumen BKD berupa total kredit per unsur, status kewajiban khusus, status final, *hash* penilaian, dan *transaction hash* | Satu ke satu terhadap lkd |
 | 11\. | riwayat\_transaksi | id\_transaksi | Menyimpan riwayat transaksi *on-chain* berupa jenis transaksi, alamat kontrak, *transaction hash*, jumlah token, alamat tujuan, referensi, alasan, dan status | Milik opsional satu hasil\_penilaian dan satu administrator |
@@ -1534,7 +1726,8 @@ Tabel IV.24. Rekapitulasi Entitas Basis Data
  	Kelompok ini memuat entitas referensi\_kegiatan, kegiatan, unggahan\_dokumen, dan dokumen\_kegiatan. Entitas referensi\_kegiatan menyimpan skema parameter setiap butir aturan dalam bentuk JSONB, bukan sebagai kolom tetap. Pemilihan tipe ini diambil karena setiap butir aturan memiliki jumlah dan nama parameter yang berbeda, sehingga pemodelan sebagai kolom tetap akan menghasilkan tabel yang sebagian besar kolomnya kosong. Atribut fungsi\_contract dibiarkan bernilai kosong bagi butir aturan yang penilaiannya tidak diotomatisasi, sehingga lapisan aplikasi dapat membedakan kedua jenis butir tanpa daftar pengecualian yang ditulis di dalam kode.  
  	Entitas unggahan\_dokumen dirancang dengan tiga kolom JSONB yang tanggung jawabnya sengaja dipisahkan. Kolom hasil\_parse menyimpan keluaran parser secara utuh dan tidak pernah diubah, sehingga berfungsi sebagai bukti audit. Kolom ringkasan menyimpan blok ringkas untuk kebutuhan tampilan cepat. Kolom koreksi menyimpan selisih koreksi administrator per baris. Pemisahan ketiganya memungkinkan sistem menampilkan nilai asli berdampingan dengan nilai koreksi, sekaligus memungkinkan pembatalan koreksi satu baris tanpa memengaruhi baris lain.  
  	Entitas kegiatan menyimpan penanda diklaim dan sumber\_data yang bersama-sama menentukan perlakuan kegiatan. Kegiatan yang berasal dari penerapan dokumen penugasan dibuat dengan penanda belum diklaim, sehingga dosen tetap memegang keputusan apakah kegiatan tersebut dilaporkan pada periode berjalan. Relasi opsional menuju unggahan\_dokumen menjaga jejak asal data, dan relasi tersebut dirancang menjadi kosong ketika unggahan dihapus agar kegiatan yang telah dinilai tidak ikut terhapus.  
- 	Entitas dokumen\_kegiatan dinormalisasi menjadi entitas tersendiri, bukan menjadi atribut pada kegiatan, agar satu kegiatan dapat memiliki lebih dari satu dokumen bukti. Basis data hanya menyimpan metadata dan lokasi berkas, sedangkan berkas fisik disimpan pada direktori unggahan peladen sehingga ukuran tabel tetap ringan.
+ 	Entitas dokumen\_kegiatan dinormalisasi menjadi entitas tersendiri, bukan menjadi atribut pada kegiatan, agar satu kegiatan dapat memiliki lebih dari satu dokumen bukti. Basis data hanya menyimpan metadata dan lokasi berkas, sedangkan berkas fisik disimpan pada direktori unggahan peladen sehingga ukuran tabel tetap ringan.  
+ 	Entitas dokumen\_kegiatan memuat pula atribut verifikasi bertipe JSONB yang menampung hasil pemeriksaan keaslian dokumen. Pemilihan tipe JSONB, bukan sekumpulan kolom tetap, didasarkan pada dua pertimbangan. Pertama, hasil pemeriksaan memuat elemen berulang yang jumlahnya tidak diketahui sebelumnya, yaitu daftar nama beserta peran yang terbaca pada dokumen, sehingga pemodelan sebagai kolom tetap tidak memungkinkan. Kedua, struktur hasil pemeriksaan bergantung pada status yang dicapai, misalnya medan peran yang diharapkan dan peran yang terdeteksi hanya bermakna pada status peran tidak sesuai, sehingga sebagian besar kolom akan kosong apabila dimodelkan secara tetap. Muatan atribut ini mencakup status akhir pemeriksaan, nama pemilik akun sebagai pembanding, nama yang berhasil dicocokkan, daftar seluruh nama yang terdeteksi beserta perannya, jenis dokumen menurut parser, pesan penyebab apabila pemeriksaan gagal, waktu pemeriksaan, serta blok persetujuan asesor apabila hasil pemeriksaan disetujui secara manual. Atribut ini bernilai kosong bagi dokumen yang tidak memenuhi syarat pemeriksaan, yaitu dokumen berupa tautan luar, berkas bukan PDF, atau dokumen pada kegiatan di luar rumpun pembimbingan.
 
 4. #### **Kelompok Penilaian dan Jejak *On-Chain*** {#kelompok-penilaian-dan-jejak-on-chain}
 
@@ -1559,7 +1752,7 @@ Tabel IV.25. Daftar Tipe Enumerasi pada Basis Data
 | 10\. | status\_simpulan | M, TM | simpulan\_bkd |
 | 11\. | jenis\_transaksi | mint, burn | riwayat\_transaksi |
 | 12\. | status\_transaksi | pending, success, failed | riwayat\_transaksi |
-| 13\. | jenis\_unggahan | st\_pengajaran, st\_bimbingan, st\_pengujian, sk\_pembinaan | unggahan\_dokumen |
+| 13\. | jenis\_unggahan | st\_pengajaran, st\_bimbingan, st\_pengujian, sk\_pembinaan, artefak | unggahan\_dokumen |
 | 14\. | status\_unggahan | terparse, gagal, diterapkan | unggahan\_dokumen |
 
 5. ### **Perancangan Antarmuka Pengguna** {#perancangan-antarmuka-pengguna}
@@ -1578,31 +1771,35 @@ Tabel IV.26. Daftar Halaman Sistem per Peran
 | :---: | :---: | ----- | ----- |
 | 1\. | Umum | Masuk | Autentikasi pengguna dan pengarahan ke ruang kerja sesuai peran |
 | 2\. | Dosen | Pengajaran | Menampilkan kegiatan pengajaran pada periode berjalan |
-| 3\. | Dosen | Bukti Ajar | Menampilkan rincian kegiatan pengajaran dan mengelola dokumen bukti |
-| 4\. | Dosen | Daftar Kegiatan per Kategori | Menampilkan kegiatan pada sembilan kategori BKD selain pengajaran |
+| 3\. | Dosen | Detail Kegiatan Pengajaran | Menampilkan rincian kegiatan pengajaran beserta dokumen buktinya |
+| 4\. | Dosen | Daftar Kegiatan per Kategori | Menampilkan kegiatan pada lima kategori BKD selain pengajaran, yaitu bimbingan mahasiswa, pengujian mahasiswa, bahan ajar, pembinaan mahasiswa, dan tugas tambahan |
 | 5\. | Dosen | Tambah Kegiatan | Mengisi kegiatan baru beserta parameter perhitungannya |
 | 6\. | Dosen | Detail Kegiatan | Menampilkan rincian satu kegiatan beserta hasil perhitungannya |
 | 7\. | Dosen | Ubah Kegiatan | Menyunting kegiatan beserta perhitungan ulang nilainya |
-| 8\. | Dosen | Rekap Kegiatan | Menampilkan status dokumen BKD per periode |
-| 9\. | Dosen | Detail Dokumen BKD | Mengelola seksi A sampai N, menarik kegiatan, mengubah capaian, menyimpan sementara dan permanen, serta melihat simpulan |
-| 10\. | Dosen | Bukti Kegiatan | Mengunggah dan meninjau dokumen bukti dari konteks dokumen BKD |
-| 11\. | Dosen | Profil | Menampilkan identitas dosen beserta alamat *wallet* |
-| 12\. | Asesor | Penilaian Asesor BKD | Menampilkan daftar dokumen BKD yang ditugaskan kepada asesor |
-| 13\. | Asesor | Form Penilaian | Menilai setiap kegiatan pada satu dokumen BKD dan mengesahkan penilaian |
-| 14\. | Asesor | Bukti Kegiatan | Meninjau dokumen bukti satu kegiatan |
-| 15\. | Asesor | Profil | Menampilkan identitas asesor |
-| 16\. | Administrator | Manajemen Pengguna | Mengelola akun dan mengisi kode dosen |
-| 17\. | Administrator | Konfigurasi Wallet Dosen | Menetapkan alamat *wallet* kustodian bagi dosen |
-| 18\. | Administrator | Manajemen Periode BKD | Mengelola periode beserta rentang fase |
-| 19\. | Administrator | Penugasan Asesor | Menugaskan asesor pertama dan kedua pada dokumen BKD |
-| 20\. | Administrator | Referensi Kegiatan BKD | Meninjau butir aturan beserta pemetaannya ke fungsi kontrak |
-| 21\. | Administrator | Unggah Dokumen SK dan ST | Mengunggah berkas penugasan dan meninjau riwayat unggahan |
-| 22\. | Administrator | Pratinjau Unggahan | Meninjau pemetaan baris, menyaring dan mengoreksi baris, serta menerapkannya menjadi kegiatan |
-| 23\. | Administrator | Sinkronisasi Feeder | Menjalankan simulasi penarikan data kegiatan dari sumber eksternal |
-| 24\. | Administrator | Operasi Token SKS | Meninjau riwayat transaksi dan melakukan koreksi token |
-| 25\. | Administrator | Log Blockchain | Menampilkan *event* penerbitan dan penghapusan token yang dibaca dari *blockchain* |
-| 26\. | Administrator | Rekapitulasi BKD | Menampilkan kredit seluruh dosen per periode |
-| 27\. | Administrator | Profil | Menampilkan identitas administrator |
+| 8\. | Dosen | Bukti Kegiatan per Kategori | Mengunggah dokumen bukti pada satu kegiatan dan melihat hasil pemeriksaan keasliannya |
+| 9\. | Dosen | Rekap Kegiatan | Menampilkan status dokumen BKD per periode |
+| 10\. | Dosen | Detail Dokumen BKD | Mengelola seksi A sampai N, menarik kegiatan, mengubah capaian, menyimpan sementara dan permanen, serta melihat simpulan |
+| 11\. | Dosen | Bukti Kegiatan dari Dokumen BKD | Mengunggah dan meninjau dokumen bukti dari konteks dokumen BKD beserta hasil pemeriksaan keasliannya |
+| 12\. | Dosen | Profil | Menampilkan identitas dosen beserta alamat *wallet* |
+| 13\. | Asesor | Asesor BKD | Menampilkan daftar dokumen BKD yang ditugaskan kepada asesor |
+| 14\. | Asesor | Form Penilaian | Menilai setiap kegiatan pada satu dokumen BKD, meninjau temuan ketidaksesuaian bukti, dan mengesahkan penilaian |
+| 15\. | Asesor | Bukti Kegiatan | Meninjau dokumen bukti satu kegiatan, menjalankan pemeriksaan ulang keaslian, serta menyetujui atau mencabut persetujuan atas hasil pemeriksaan |
+| 16\. | Asesor | Profil | Menampilkan identitas asesor |
+| 17\. | Administrator | Manajemen Pengguna | Mengelola akun dan mengisi kode dosen |
+| 18\. | Administrator | Konfigurasi Wallet Dosen | Menetapkan alamat *wallet* kustodian bagi dosen |
+| 19\. | Administrator | Manajemen Periode BKD | Mengelola periode beserta rentang fase |
+| 20\. | Administrator | Penugasan Asesor | Menugaskan asesor pertama dan kedua pada dokumen BKD |
+| 21\. | Administrator | Referensi Kegiatan BKD | Meninjau butir aturan beserta pemetaannya ke fungsi kontrak |
+| 22\. | Administrator | Unggah Dokumen SK dan ST | Mengunggah berkas penugasan dan meninjau riwayat unggahan |
+| 23\. | Administrator | Pratinjau Unggahan | Meninjau pemetaan baris, menyaring dan mengoreksi baris, serta menerapkannya menjadi kegiatan |
+| 24\. | Administrator | Input Kegiatan Dosen | Menginput kegiatan yang dasarnya penugasan institusi secara langsung bagi dosen, untuk penugasan yang dokumennya belum tersedia atau tidak terbaca parser |
+| 25\. | Administrator | Operasi Token SKS | Meninjau riwayat transaksi dan melakukan koreksi token |
+| 26\. | Administrator | Log Blockchain | Menampilkan *event* penerbitan dan penghapusan token yang dibaca dari *blockchain* |
+| 27\. | Administrator | Rekapitulasi BKD | Menampilkan kredit seluruh dosen per periode |
+| 28\. | Administrator | Profil | Menampilkan identitas administrator |
+
+ 	Menu pada bilah sisi disusun berkelompok agar susunannya mencerminkan tahapan kerja pengguna, bukan sekadar daftar halaman. Pada ruang kerja dosen terdapat tiga kelompok, yaitu profil, kelompok Pelaksanaan Pendidikan yang memuat enam butir sesuai kategori kegiatan, dan kelompok Layanan BKD yang memuat rekap kegiatan. Pengelompokan ini memisahkan aktivitas pengisian kegiatan dari aktivitas pelaporan periodik, sehingga dosen tidak mencari menu pelaporan di antara menu kategori kegiatan. Pada ruang kerja administrator terdapat empat kelompok, yaitu profil, Administrasi, Blockchain, dan Laporan, dengan kelompok Blockchain sengaja dipisahkan karena aksi di dalamnya menimbulkan transaksi berbiaya dan tidak dapat dibatalkan.  
+ 	Enam butir pada kelompok Pelaksanaan Pendidikan terdiri atas satu halaman khusus untuk pengajaran dan lima kategori yang dilayani satu halaman generik. Pemetaan setiap kategori terhadap kumpulan kode aturan yang menjadi isinya dituliskan sebagai berkas konfigurasi terpisah dari kode halaman, sehingga penambahan kategori tidak menuntut penulisan halaman baru. Pengajaran memperoleh halaman tersendiri karena jumlah dan bentuk kolom detailnya berbeda dari kategori lain, yaitu memuat mata kuliah, kelas, dan beban SKS yang tidak berlaku pada kategori selainnya. Kategori yang kegiatannya bersumber dari penugasan institusi, yaitu bimbingan mahasiswa, pengujian mahasiswa, dan pembinaan mahasiswa, ditandai secara khusus pada berkas konfigurasi tersebut sehingga halaman generik menyembunyikan tombol penambahan kegiatan bagi dosen. Penandaan ini menegakkan ketentuan bahwa beban perkuliahan, pembimbingan, pengujian, dan pembinaan hanya boleh lahir dari dokumen penugasan atau input administrator, bukan dari pengisian mandiri dosen.
 
 2. #### **Rancangan Tampilan Antarmuka** {#rancangan-tampilan-antarmuka}
 
@@ -1610,11 +1807,11 @@ Tabel IV.26. Daftar Halaman Sistem per Peran
 
 1. ##### **Halaman Masuk** {#halaman-masuk}
 
- 	Halaman masuk merupakan halaman pertama yang ditampilkan saat pengguna membuka sistem. Halaman ini digunakan oleh dosen, asesor, dan administrator untuk masuk ke dalam sistem. Pengguna memasukkan surel dan kata sandi yang telah ditetapkan administrator. Setelah tombol masuk ditekan, sistem melakukan proses autentikasi dan mengarahkan pengguna ke halaman sesuai perannya. Rancangan halaman masuk disajikan pada Gambar IV.14.
+ 	Halaman masuk merupakan halaman pertama yang ditampilkan saat pengguna membuka sistem. Halaman ini digunakan oleh dosen, asesor, dan administrator untuk masuk ke dalam sistem. Pengguna memasukkan surel dan kata sandi yang telah ditetapkan administrator. Setelah tombol masuk ditekan, sistem melakukan proses autentikasi dan mengarahkan pengguna ke halaman sesuai perannya. Rancangan halaman masuk disajikan pada Gambar IV.15.
 
 ![][image14]
 
-Gambar IV.14. Rancangan Antarmuka Halaman Masuk
+Gambar IV.15. Rancangan Antarmuka Halaman Masuk
 
  	Rincian rancangan antarmuka halaman masuk disajikan pada Tabel IV.27.
 
@@ -1634,11 +1831,11 @@ Tabel IV.27. Rancangan Antarmuka Halaman Masuk
 
 2. ##### **Halaman Daftar Kegiatan Pengajaran** {#halaman-daftar-kegiatan-pengajaran}
 
- 	Halaman daftar kegiatan pengajaran digunakan untuk menampilkan kegiatan pengajaran yang dimiliki dosen pada periode berjalan. Tampilan ini memperlihatkan data kegiatan yang berkaitan dengan mata kuliah, kelas, SKS mata kuliah, butir aturan BKD, nilai kredit hasil perhitungan, status kegiatan, serta aksi untuk melihat rincian kegiatan. Rancangan halaman disajikan pada Gambar IV.15.
+ 	Halaman daftar kegiatan pengajaran digunakan untuk menampilkan kegiatan pengajaran yang dimiliki dosen pada periode berjalan. Tampilan ini memperlihatkan data kegiatan yang berkaitan dengan mata kuliah, kelas, SKS mata kuliah, butir aturan BKD, nilai kredit hasil perhitungan, status kegiatan, serta aksi untuk melihat rincian kegiatan. Rancangan halaman disajikan pada Gambar IV.16.
 
 ![A screenshot of a computer  AI-generated content may be incorrect.][image15]
 
-Gambar IV.15. Rancangan Antarmuka Daftar Kegiatan Pengajaran
+Gambar IV.16. Rancangan Antarmuka Daftar Kegiatan Pengajaran
 
  	Halaman ini menjadi tampilan utama bagi dosen dalam memantau kegiatan pengajaran pada periode berjalan, sekaligus menjadi titik awal untuk menambahkan kegiatan baru maupun melihat rincian kegiatan yang sudah ada. Rincian rancangan antarmukanya disajikan pada Tabel IV.28.
 
@@ -1691,6 +1888,7 @@ Tabel IV.30. Matriks Implementasi
 | IM-07 | FR-20, FR-21, FR-22 | Sistem menyediakan penilaian per asesor, pengesahan berjenjang, dan pembentukan simpulan BKD. | PSPEC-11, PSPEC-12 | Selesai |
 | IM-08 | FR-03, FR-05, FR-06, FR-07, FR-08 | Sistem menyediakan pengelolaan pengguna, periode dan fase, penugasan asesor, serta data referensi kegiatan. | PSPEC-02, PSPEC-03, PSPEC-04 | Selesai |
 | IM-09 | FR-26, FR-27 | Sistem menampilkan log transaksi *on-chain* dan rekapitulasi kredit BKD. | PSPEC-15 | Selesai |
+| IM-10 | FR-28, FR-29, FR-30 | Sistem memeriksa keaslian dokumen bukti rumpun pembimbingan melalui pembacaan nama dan peran oleh parser artefak universal, menandai ketidaksesuaian sebagai temuan bagi asesor, serta menyediakan pemeriksaan ulang dan persetujuan manual oleh asesor. | PSPEC-16, PSPEC-17, PSPEC-18, PSPEC-19 | Selesai |
 
 3. ### **Implementasi Modul *Smart Contract* Kalkulator BKD Pendidikan** {#implementasi-modul-kalkulator}
 
@@ -1803,10 +2001,12 @@ Tabel IV.34. IM-05: Titik Akhir Layanan Ekstraksi Dokumen
 | 1\. | /parse/pengajaran | Surat Tugas Penugasan Pengajaran | pdfplumber, deterministik | Identitas surat, ringkasan, daftar penugasan, daftar mata kuliah, beban per dosen, temuan validasi, baris ditolak |
 | 2\. | /parse/bimbingan | ST Pembimbing PKL dan SK Pembimbing Tugas Akhir | pdfplumber, deterministik | Identitas surat beserta jenis bimbingan hasil deteksi otomatis, ringkasan, beban per dosen, daftar mahasiswa |
 | 3\. | /parse/pengujian | ST Penguji Tugas Akhir | pdfplumber, deterministik | Identitas surat, ringkasan, beban per dosen, daftar kelompok sidang |
-| 4\. | /parse/sk-pembinaan | SK Pembina Organisasi Kemahasiswaan | pypdfium2, Pillow, dan model bahasa visual | Hasil gabungan lampiran, temuan validasi, daftar pembina, ringkasan |
-| 5\. | /health | — | — | Status layanan, ketersediaan konfigurasi autentikasi, dan ketersediaan layanan model bahasa visual |
+| 4\. | /parse/sk-pembinaan | SK Pembina Organisasi Kemahasiswaan | pypdfium2, Pillow, dan model bahasa visual dengan instruksi khusus tata letak lampiran | Hasil gabungan lampiran, temuan validasi, daftar pembina, ringkasan |
+| 5\. | /parse/artefak | Artefak dokumen dosen berformat bebas, yaitu formulir, berita acara, lembar persetujuan, dan lembar pengesahan | pypdfium2, Pillow, dan model bahasa visual dengan instruksi berskema umum | Identitas dokumen berupa jenis, kode formulir, institusi, nomor, dan tanggal; daftar orang beserta peran baku, peran asli, dan penanda tulisan tangan; daftar mahasiswa; temuan validasi; ringkasan |
+| 6\. | /health | — | — | Status layanan, ketersediaan konfigurasi autentikasi, dan ketersediaan layanan model bahasa visual |
 
- 	Satu pilihan jenis dokumen pada antarmuka administrator melayani dua surat sekaligus, karena titik akhir bimbingan membaca halaman pertama dokumen dan mengenali sendiri apakah dokumen tersebut merupakan surat tugas pembimbing praktik kerja lapangan atau surat keputusan pembimbing tugas akhir, kemudian memetakannya ke butir aturan yang sesuai. Lampiran tugas akhir dibaca berdasarkan garis bingkai tabel, bukan koordinat tetap, karena lebar kolom pada dua program studi berbeda.  
+ 	Satu pilihan jenis dokumen pada antarmuka administrator melayani dua surat sekaligus, karena titik akhir bimbingan membaca halaman pertama dokumen dan mengenali sendiri apakah dokumen tersebut merupakan surat tugas pembimbing praktik kerja lapangan atau surat keputusan pembimbing tugas akhir, kemudian memetakannya ke butir aturan yang sesuai, yaitu EDU202 bagi yang pertama dan EDU203 bagi yang kedua. Lampiran tugas akhir dibaca berdasarkan garis bingkai tabel, bukan koordinat tetap, karena lebar kolom pada dua program studi berbeda.  
+ 	Titik akhir kelima memiliki kedudukan yang berbeda dari empat titik akhir sebelumnya. Keempat titik akhir pertama menghasilkan baris penugasan yang diterapkan menjadi kegiatan, sedangkan titik akhir artefak menghasilkan pembacaan isi dokumen yang tidak pernah menjadi kegiatan, melainkan menjadi masukan bagi modul verifikasi bukti pada subbab IV.3.9. Perbedaan kedudukan tersebut tercermin pula pada cara pemanggilannya. Empat titik akhir pertama dipanggil administrator melalui halaman unggah, sedangkan titik akhir artefak dipanggil sistem secara otomatis ketika dosen mengunggah dokumen bukti, dan dipanggil asesor ketika meminta pemeriksaan ulang. Pada berkas konfigurasi jenis unggahan, jenis artefak ditempatkan paling akhir dalam urutan deteksi otomatis berdasarkan nama berkas, sehingga apabila nama berkas juga cocok dengan salah satu jenis khusus, jenis khusus tersebut yang dipilih. Penempatan ini menjadikan parser universal berfungsi sebagai jaring pengaman, bukan sebagai pengganti parser khusus yang keluarannya deterministik.  
  	Pada lapisan orkestrasi, hasil ekstraksi tidak langsung menjadi kegiatan. Modul pemetaan mengubah setiap baris hasil ekstraksi menjadi calon kegiatan lengkap dengan kode aturan dan parameter yang sesuai skema *smart contract*, kemudian modul pencocokan dosen mencari akun yang bersesuaian secara berjenjang, yaitu melalui kode dosen, nomor induk pegawai, lalu nama tanpa gelar. Hasil pencocokan dibedakan menjadi tiga keadaan, yaitu cocok, ambigu apabila lebih dari satu akun memenuhi, dan tidak cocok. Pembedaan keadaan ambigu dari keadaan tidak cocok penting agar administrator tidak keliru menetapkan kegiatan kepada dosen yang salah ketika terdapat dua nama serupa.  
  	Koreksi administrator disimpan sebagai selisih pada kolom terpisah dan ditumpangkan di atas hasil ekstraksi hanya pada saat pratinjau maupun penerapan, sehingga keluaran parser tetap utuh sebagai bukti audit sebagaimana dirancang pada subbab IV.1.3.2. Penerapan bersifat idempoten per baris melalui penanda baris yang stabil, sehingga penerapan ulang memperbarui baris yang koreksinya berubah di tempat, melewati baris yang telah sesuai, dan tidak mengubah kegiatan yang telah diklaim dosen agar penilaian asesor tidak tertimpa.
 
@@ -1820,7 +2020,25 @@ Pembatasan aksi berdasarkan fase ditegakkan melalui satu modul penentu fase yang
 
 Aksi yang disediakan modul ini mencakup penambahan, penyuntingan, dan penghapusan kegiatan beserta perhitungan ulang nilainya, pengunggahan dan penghapusan dokumen bukti, pembuatan dokumen BKD, penarikan kegiatan dari portofolio ke dokumen BKD beserta pembatalannya, penetapan status capaian, serta penyimpanan sementara dan permanen. Implementasi ini merealisasikan FR-13 sampai FR-17.
 
-9. ### **Implementasi Modul Penilaian, Simpulan, dan Penerbitan Token** {#implementasi-modul-penilaian-simpulan-token}
+Aksi pengunggahan dokumen bukti menerima dua bentuk masukan, yaitu berkas fisik yang disimpan pada direktori unggahan peladen dengan nama yang dibersihkan dari karakter tidak aman dan diberi awalan pengenal acak, atau tautan menuju dokumen yang berada di luar sistem. Ukuran berkas dibatasi sepuluh megabyte, dan seluruh pembatasan tersebut ditegakkan pada aksi peladen, bukan hanya pada antarmuka, karena antarmuka yang menyembunyikan tombol bukan merupakan pengaman terhadap kiriman formulir yang dibuat secara manual. Pembatasan yang sama berlaku pada masa berlaku aksi, yaitu dokumen bukti hanya dapat berubah selama fase pengisian atau perbaikan dan selama dokumen BKD belum disimpan permanen.
+
+9. ### **Implementasi Modul Verifikasi Keaslian Dokumen Bukti** {#implementasi-modul-verifikasi-bukti}
+
+Modul ini merupakan realisasi PSPEC-16 sampai PSPEC-19 dan merealisasikan FR-28 sampai FR-30. Modul dijalankan pada dua titik pemicu yang berbeda. Titik pertama bersifat otomatis, yaitu segera setelah dosen berhasil mengunggah dokumen bukti pada kegiatan yang kode aturannya termasuk rumpun pembimbingan, yakni EDU201, EDU202, dan EDU203. Titik kedua bersifat atas permintaan, yaitu ketika asesor menekan aksi pemeriksaan pada halaman bukti. Titik kedua diperlukan untuk dua keadaan, yaitu dokumen yang diunggah sebelum mekanisme pemeriksaan otomatis tersedia, dan dokumen yang pemeriksaan otomatisnya gagal karena layanan ekstraksi sedang tidak dapat dihubungi.
+
+Sebelum pemanggilan parser dilakukan, modul menyeleksi kelayakan dokumen melalui tiga syarat, yaitu dokumen merupakan berkas hasil unggahan lokal dan bukan tautan menuju layanan luar, berkas berformat PDF baik menurut ekstensi maupun menurut tipe MIME-nya, serta kunci API layanan ekstraksi telah terkonfigurasi pada variabel lingkungan. Penyeleksian ini mencegah pemanggilan yang pasti gagal sekaligus menjaga agar sistem tidak mengunduh berkas dari alamat luar yang tidak dikendalikan institusi.
+
+Pemanggilan parser dirancang tidak pernah melempar galat kepada pemanggilnya. Seluruh kegagalan, baik berupa layanan tidak dapat dihubungi, batas waktu terlampaui, maupun penolakan oleh parser, ditangkap dan diterjemahkan menjadi status gagal beserta pesan penyebabnya. Perancangan ini merupakan realisasi NFR-13, yaitu memastikan gangguan pada layanan pemeriksaan tidak menggagalkan proses unggah dokumen yang sedang dikerjakan dosen. Dokumen tetap tersimpan, dan pemeriksaan dapat dijalankan ulang kemudian tanpa mengunggah ulang berkasnya.
+
+Pencocokan nama menggunakan modul yang sama dengan pencocokan dosen pada penerapan dokumen penugasan, sehingga aturan penormalan berlaku seragam di kedua jalur. Penormalan dilakukan dengan membuang keterangan dalam tanda kurung, memotong nama pada koma pertama, melucuti gelar depan yang dapat bertumpuk secara berulang hingga tidak ada lagi yang tersisa, membuang sisa gelar belakang yang tidak dipisahkan koma, kemudian menyeragamkan huruf dan merapikan spasi. Pencocokan dijalankan berjenjang dari yang paling ketat ke yang paling longgar, yaitu pembandingan kunci ternormalisasi secara utuh, pembandingan kunci tanpa spasi dan tanda hubung untuk menoleransi galat pemenggalan pada dokumen pindaian, lalu pembandingan sebagai awalan setelah membuang token satu huruf untuk menoleransi penyingkatan marga panjang. Pembandingan sebagai awalan diberi syarat jumlah token minimum agar tidak terlalu longgar sehingga nama pendek tidak cocok dengan sembarang nama yang berawalan sama.
+
+Pemeriksaan kesesuaian peran diimplementasikan sebagai kumpulan penguji yang dipilih berdasarkan kode aturan dan parameter kegiatan. Pada butir EDU203, penguji membedakan pembimbing utama dari pembimbing pendamping, dengan ketentuan bahwa nama yang pada dokumen tertulis sebagai penguji dinyatakan bertentangan karena kegiatan yang diklaim adalah membimbing, bukan menguji. Pada butir EDU301, penguji membedakan ketua dari anggota penguji, dengan ketentuan sebaliknya bahwa nama yang tertulis sebagai pembimbing dinyatakan bertentangan. Pada butir EDU201 dan EDU202, penguji hanya memastikan bahwa peran yang tertulis termasuk rumpun pembimbingan. Setiap penguji mengembalikan tiga kemungkinan nilai, yaitu sesuai, bertentangan, atau tidak dapat dipastikan, dengan nilai ketiga dipakai ketika penamaan peran pada dokumen tidak cukup jelas untuk memutuskan. Pembedaan nilai ketiga dari nilai bertentangan bersifat penting agar penamaan peran yang tidak baku pada suatu program studi tidak dibaca sistem sebagai indikasi ketidaksesuaian.
+
+Hasil pemeriksaan disimpan sebagai JSONB pada dokumen yang bersangkutan, kemudian dimanfaatkan pada tiga tempat. Pertama, pesan singkat ditampilkan kepada dosen segera setelah unggahan selesai, yang menyatakan apakah namanya terverifikasi pada dokumen atau memuat peringatan apabila tidak. Kedua, halaman penilaian asesor menghitung kegiatan yang dokumen buktinya berstatus tidak cocok atau perannya tidak sesuai sebagai temuan, dengan pengecualian bagi dokumen yang telah disetujui manual oleh asesor. Ketiga, halaman bukti asesor menyajikan panel rincian berisi seluruh nama yang terbaca beserta perannya menurut dokumen, sehingga asesor dapat menilai sendiri apakah pembacaan parser masuk akal sebelum mengambil keputusan.
+
+Aksi persetujuan manual asesor tidak menghapus hasil pemeriksaan, melainkan menambahkan blok persetujuan berisi identitas asesor dan waktu persetujuan ke dalam muatan JSONB yang sama. Penanda ketidaksesuaian kemudian tidak lagi dihitung sebagai temuan pada halaman penilaian, sedangkan hasil pembacaan parser tetap dapat ditinjau. Aksi pencabutan persetujuan menghapus blok tersebut sehingga penanda berlaku kembali. Perancangan ini merupakan realisasi NFR-14, yaitu menjaga agar hasil pemeriksaan tidak menjadi penentu tunggal diterima atau ditolaknya suatu bukti, sekaligus menjaga agar keputusan asesor yang mengesampingkan hasil pemeriksaan tetap terdokumentasi beserta dasar yang dikesampingkannya.
+
+10. ### **Implementasi Modul Penilaian, Simpulan, dan Penerbitan Token** {#implementasi-modul-penilaian-simpulan-token}
 
 Modul ini merupakan realisasi PSPEC-11, PSPEC-12, dan PSPEC-13, serta merupakan modul yang menyatukan seluruh lapisan sistem dalam satu alur. Modul menyediakan dua aksi utama, yaitu penyimpanan penilaian dan pengesahan penilaian.
 
@@ -1846,7 +2064,7 @@ Tabel IV.35. IM-07: Langkah Pengesahan Penilaian dan Penerbitan Token
  	Langkah kesepuluh pada Tabel IV.35 merupakan realisasi NFR-03. Kegagalan pemanggilan jaringan tidak membatalkan langkah-langkah sebelumnya, melainkan dicatat sebagai transaksi berstatus gagal, sehingga simpulan penilaian yang telah dibentuk tetap tersimpan dan penerbitan token dapat diulang tanpa menilai ulang seluruh kegiatan. Perancangan ini menghindari kondisi ketika gangguan jaringan sesaat memaksa asesor mengulang seluruh proses penilaian.  
  	Penggunaan *hash* simpulan sebagai referensi transaksi merupakan realisasi NFR-06 sekaligus keputusan yang membedakan sistem ini dari pendekatan yang menyimpan seluruh isi penilaian *on-chain*. Isi simpulan tetap berada pada basis data institusi, sedangkan yang tercatat permanen pada *blockchain* hanyalah sidik jarinya. Pihak mana pun yang memperoleh dokumen simpulan dapat menghitung ulang *hash*-nya dan membandingkannya terhadap nilai pada *event* transaksi untuk membuktikan bahwa dokumen tersebut tidak berubah sejak disahkan.
 
-10. ### **Implementasi Modul Administrasi, Log, dan Rekapitulasi** {#implementasi-modul-administrasi-log-rekapitulasi}
+11. ### **Implementasi Modul Administrasi, Log, dan Rekapitulasi** {#implementasi-modul-administrasi-log-rekapitulasi}
 
 Modul ini merupakan realisasi PSPEC-02, PSPEC-03, PSPEC-04, dan PSPEC-15, serta menyediakan seluruh aksi yang dijalankan administrator. Aksi pengelolaan pengguna mencakup penambahan akun, pengisian kode dosen, serta pengaktifan dan penonaktifan akun. Aksi penetapan *wallet* menurunkan alamat pada indeks berikutnya setelah indeks terbesar yang telah terpakai, sehingga tidak ada dua dosen yang memperoleh indeks sama.
 
@@ -1882,9 +2100,9 @@ Tabel IV.36. Jenis Pengujian Sistem Penilaian BKD
 
 | No. | Jenis Pengujian | Tujuan | Objek yang Diuji | Perkakas |
 | :---: | ----- | ----- | ----- | ----- |
-| 1\. | *Unit testing* | Memverifikasi kebenaran setiap fungsi dan modul secara terisolasi | Fungsi perhitungan pada kontrak kalkulator, fungsi siklus hidup token, modul pemetaan dan pencocokan dosen | Kerangka pengujian bawaan Node.js dan jaringan simulasi Hardhat |
-| 2\. | *Integration testing* | Memverifikasi keterpaduan antarlapisan | Aplikasi web terhadap kontrak melalui RPC, aplikasi web terhadap layanan ekstraksi melalui HTTP, aplikasi web terhadap basis data melalui Prisma ORM | Eksekusi manual pada lingkungan terintegrasi |
-| 3\. | *System testing* | Memverifikasi alur pemakaian lengkap lintas peran | Alur unggah dokumen, klaim kegiatan, penilaian dua asesor, hingga penerbitan token | Eksekusi manual pada peramban terhadap sistem yang telah terhubung Base Sepolia |
+| 1\. | *Unit testing* | Memverifikasi kebenaran setiap fungsi dan modul secara terisolasi | Fungsi perhitungan pada kontrak kalkulator, fungsi siklus hidup token, modul pemetaan dan pencocokan dosen, modul penormalan dan pencocokan nama serta penguji kesesuaian peran pada verifikasi bukti | Kerangka pengujian bawaan Node.js dan jaringan simulasi Hardhat |
+| 2\. | *Integration testing* | Memverifikasi keterpaduan antarlapisan | Aplikasi web terhadap kontrak melalui RPC, aplikasi web terhadap layanan ekstraksi melalui HTTP pada jalur ekstraksi penugasan maupun jalur pemeriksaan bukti, aplikasi web terhadap basis data melalui Prisma ORM | Eksekusi manual pada lingkungan terintegrasi |
+| 3\. | *System testing* | Memverifikasi alur pemakaian lengkap lintas peran | Alur unggah dokumen, klaim kegiatan, unggah dan pemeriksaan dokumen bukti, penilaian dua asesor, hingga penerbitan token | Eksekusi manual pada peramban terhadap sistem yang telah terhubung Base Sepolia |
 | 4\. | Uji akurasi perhitungan | Mengukur kesesuaian hasil sistem terhadap perhitungan manual PO BKD 2021 | Seluruh butir aturan yang diotomatisasi | Pembandingan terhadap perhitungan manual |
 | 5\. | Pengujian nonfungsional | Memverifikasi pemenuhan persyaratan nonfungsional | Aspek yang telah diterapkan pada sistem sesuai Tabel IV.11 | Inspeksi implementasi dan pengamatan perilaku sistem |
 
@@ -1915,6 +2133,7 @@ Tabel IV.38. Objek Pengujian dan Keterkaitan dengan Persyaratan Fungsional
 | FR-18, FR-19 | Pemanggilan seluruh fungsi perhitungan dengan parameter valid, tidak valid, dan kondisi batas | *Unit testing*, uji akurasi perhitungan |
 | FR-20 – FR-24 | Penilaian oleh dua asesor, pengesahan berjenjang, pembentukan simpulan, dan penerbitan token | *Unit testing*, *system testing* |
 | FR-25 – FR-27 | Koreksi token, pembacaan log *on-chain*, dan penyajian rekapitulasi | *Integration testing*, *system testing* |
+| FR-28 – FR-30 | Unggah dokumen bukti milik dosen sendiri dan milik dosen lain, unggah dokumen dengan peran berbeda dari yang diklaim, pengamatan penanda temuan pada halaman penilaian, pemeriksaan ulang, serta persetujuan manual dan pencabutannya | *Unit testing*, *integration testing*, *system testing* |
 
 5. #### **Lingkungan Pengujian** {#lingkungan-pengujian}
 
@@ -1943,7 +2162,8 @@ Tabel IV.39. Spesifikasi Lingkungan Pengujian
 2. Pengujian beban terhadap sistem dengan pengguna simultan berskala besar tidak dilakukan, sehingga perilaku sistem pada kondisi lalu lintas tinggi belum terverifikasi.  
 3. Pengukuran biaya *gas* setiap operasi *on-chain* tidak dilakukan secara sistematis, sehingga kelayakan biaya penerapan pada skala institusi belum terukur.  
 4. Pengujian menggunakan pendekatan *black box*, sehingga cakupan kode tidak diukur.  
-5. Akurasi layanan ekstraksi berbasis model bahasa visual tidak diuji pada variasi dokumen di luar keempat dokumen pada Tabel III.1, sehingga kesesuaiannya terhadap format dokumen dari unit lain belum dapat dipastikan.
+5. Akurasi layanan ekstraksi berbasis model bahasa visual tidak diuji pada variasi dokumen di luar keempat dokumen pada Tabel III.1, sehingga kesesuaiannya terhadap format dokumen dari unit lain belum dapat dipastikan.  
+6. Akurasi mekanisme verifikasi keaslian dokumen bukti tidak diukur sebagai tingkat keberhasilan statistik atas sekumpulan dokumen berjumlah besar. Pengujian dibatasi pada verifikasi perilaku mekanisme untuk setiap status yang dirancang, yaitu apakah status yang tepat dihasilkan pada kondisi masukan yang telah diketahui. Pembatasan ini ditetapkan karena keluaran model bahasa visual bersifat probabilistik sehingga angka akurasi hanya bermakna apabila diukur atas korpus dokumen yang memadai, sedangkan jumlah dokumen bukti yang tersedia pada masa pengembangan belum mencukupi untuk itu. Konsekuensinya, laporan ini tidak mengklaim tingkat akurasi tertentu bagi mekanisme tersebut, melainkan hanya mengklaim bahwa mekanisme bekerja sesuai rancangannya dan hasilnya selalu tunduk pada peninjauan asesor.
 
 8. #### **Kriteria Kelulusan Item Uji** {#kriteria-kelulusan-item-uji}
 
@@ -2034,6 +2254,10 @@ Tabel IV.43. Skenario Pengujian Integrasi
 | IT-08 | Aplikasi web ↔ kontrak token | Penerbitan token ketika titik akhir RPC tidak dapat dijangkau | Riwayat transaksi tercatat berstatus gagal dan simpulan penilaian tetap tersimpan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | IT-09 | Aplikasi web ↔ kontrak token | Koreksi token oleh administrator | Saldo berkurang, *event* penghapusan tercatat, riwayat transaksi tersimpan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | IT-10 | Aplikasi web ↔ *blockchain* | Pembacaan log *event* pada rentang blok melebihi batas penyedia RPC | Pembacaan berjenjang berhasil dan seluruh *event* tampil tanpa galat penyedia | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| IT-11 | Aplikasi web ↔ layanan ekstraksi | Unggah dokumen bukti berformat PDF pada kegiatan rumpun pembimbingan memicu pemanggilan parser artefak universal | Hasil pemeriksaan tersimpan pada kolom verifikasi dokumen beserta status, daftar nama, dan waktu pemeriksaan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| IT-12 | Aplikasi web ↔ layanan ekstraksi | Unggah dokumen bukti ketika layanan ekstraksi tidak dapat dihubungi | Dokumen tetap tersimpan, hasil pemeriksaan tercatat berstatus gagal beserta pesan penyebabnya, proses unggah tidak dibatalkan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| IT-13 | Aplikasi web ↔ layanan ekstraksi | Unggah dokumen bukti berupa tautan luar atau berkas bukan PDF | Pemeriksaan tidak dijalankan, kolom verifikasi dibiarkan kosong, dokumen tetap tersimpan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| IT-14 | Aplikasi web ↔ layanan ekstraksi | Asesor menjalankan pemeriksaan ulang atas dokumen yang sebelumnya berstatus gagal | Hasil pemeriksaan terbaru menimpa hasil sebelumnya dan pesan hasil tersampaikan ke asesor | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 
 4. ### ***System Testing*** {#system-testing}
 
@@ -2049,6 +2273,9 @@ Tabel IV.44. Skenario Pengujian Sistem Berbasis Alur Pengguna
 | ST-04 | Penilaian dua asesor hingga penerbitan token | Asesor pertama menilai seluruh kegiatan dan mengesahkan, asesor kedua menilai dan mengesahkan | Simpulan terbentuk dengan status memenuhi atau tidak memenuhi, token terbit ke *wallet* dosen, *transaction hash* tercatat, dokumen BKD berstatus final | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | ST-05 | Koreksi dan penelusuran hasil | Administrator menghapus sebagian token disertai alasan, kemudian meninjau log *blockchain* dan rekapitulasi | Saldo dosen berkurang, *event* penghapusan tampil pada log, rekapitulasi menampilkan nilai yang konsisten | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | ST-06 | Pembatasan akses lintas peran | Dosen mencoba mengakses ruang kerja asesor dan administrator, dan sebaliknya | Setiap percobaan diarahkan kembali ke beranda peran pengguna yang bersangkutan | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| ST-07 | Deteksi bukti yang bukan milik dosen bersangkutan | Dosen mengunggah lembar pengesahan yang memuat nama dosen lain sebagai bukti kegiatan pembimbingan, kemudian asesor membuka halaman penilaian dan halaman bukti | Dosen menerima peringatan bahwa namanya tidak ditemukan pada dokumen, kegiatan tersebut tampil sebagai temuan pada halaman penilaian asesor, dan panel rincian menampilkan seluruh nama yang terbaca beserta perannya | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| ST-08 | Deteksi klaim peran yang tidak sesuai dokumen | Dosen mengklaim kegiatan sebagai Pembimbing Utama, lalu mengunggah lembar pengesahan yang menuliskan namanya sebagai Pembimbing Pendamping | Sistem menandai status peran tidak sesuai disertai peran yang diklaim dan peran yang tertulis pada dokumen, dan kegiatan tampil sebagai temuan bagi asesor | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| ST-09 | Persetujuan manual asesor atas hasil pemeriksaan | Asesor meninjau dokumen yang ditandai tidak sesuai, menilai pembacaan parser keliru, lalu menyetujuinya secara manual dan kemudian mencabut persetujuan tersebut | Setelah disetujui, penanda temuan hilang dari halaman penilaian sedangkan hasil pembacaan parser tetap tersaji; setelah dicabut, penanda temuan berlaku kembali | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 
 5. ### **Uji Akurasi Perhitungan Kredit** {#uji-akurasi-perhitungan-kredit}
 
@@ -2098,6 +2325,8 @@ Tabel IV.47. Hasil Verifikasi Persyaratan Nonfungsional
 | NFR-10 | *Operability* | Pengamatan bahwa alur dosen dan asesor dapat diselesaikan tanpa dompet kripto | **\[LENGKAPI\]** |
 | NFR-11 | *Installability* | Pemasangan sistem mengikuti prosedur pada dokumen penyiapan | **\[LENGKAPI\]** |
 | NFR-12 | *Time behaviour* | Skenario IT-10, yaitu pembacaan *event* pada rentang blok melebihi batas penyedia | **\[LENGKAPI\]** |
+| NFR-13 | *Fault tolerance* | Skenario IT-12, yaitu unggah dokumen bukti ketika layanan ekstraksi tidak dapat dihubungi | **\[LENGKAPI\]** |
+| NFR-14 | *Functional appropriateness* | Skenario ST-09, yaitu persetujuan manual asesor atas hasil pemeriksaan beserta pencabutannya, disertai pemeriksaan bahwa hasil pemeriksaan asli tetap tersimpan | **\[LENGKAPI\]** |
 
  	Aspek berikut belum diuji pada tugas akhir ini, yaitu *performance efficiency* pada sub-karakteristik *resource utilization* dan *capacity* karena pengujian beban tidak dilakukan, *security* pada sub-karakteristik *non-repudiation* dan *accountability* karena pengujian penetrasi dan audit kontrak berada di luar lingkup, *compatibility* pada *co-existence* dan *interoperability*, serta *reliability* pada *recoverability*. Aspek tersebut menjadi rekomendasi pengujian lanjutan sebagaimana disampaikan pada Bab VI.
 
@@ -2135,7 +2364,7 @@ Tabel IV.48. Identitas Penempatan *Smart Contract*
 
 **\[LENGKAPI GAMBAR: tangkapan layar halaman kontrak terverifikasi pada penjelajah blok Base Sepolia\]**
 
-Gambar IV.16. Kontrak Terverifikasi pada Penjelajah Blok
+Gambar IV.17. Kontrak Terverifikasi pada Penjelajah Blok
 
 2. #### **Pengoperasian Aplikasi Web dan Layanan Pendukung** {#pengoperasian-aplikasi-web}
 
@@ -2150,9 +2379,11 @@ Tabel IV.49. Konfigurasi Operasional Sistem
 | :---: | ----- | ----- |
 | 1\. | Aplikasi web | **\[LENGKAPI: alamat, port, dan mekanisme menjaga proses tetap berjalan\]** |
 | 2\. | Basis data PostgreSQL | Berjalan pada peladen internal, diakses aplikasi melalui koneksi lokal dan diakses administrator melalui terowongan SSH dengan akun hanya baca |
-| 3\. | Layanan ekstraksi dokumen | Peladen ASGI pada porta 8000, dilindungi kunci API, tersedia berkas konfigurasi kontainer |
-| 4\. | Akses *blockchain* | Titik akhir RPC publik Base Sepolia, transaksi ditandatangani kunci privat pada variabel lingkungan peladen |
-| 5\. | Data acuan | Dimuat melalui berkas *seed* berisi 16 butir referensi kegiatan, akun contoh, periode, dan penugasan asesor; ditambah berkas *seed* berisi 38 akun dosen nyata yang bersifat idempoten |
+| 3\. | Layanan ekstraksi dokumen | Peladen ASGI pada porta 8000 dengan lima titik akhir ekstraksi dan satu titik akhir pemeriksaan kesehatan, dilindungi kunci API klien yang dibandingkan secara berwaktu tetap, tersedia berkas konfigurasi kontainer |
+| 4\. | Akses model bahasa visual | Titik akhir yang dikonfigurasikan melalui variabel lingkungan, dengan kunci model disimpan di sisi peladen layanan ekstraksi dan tidak pernah diteruskan ke aplikasi web maupun peramban; batas waktu pemanggilan dari aplikasi web dapat dikonfigurasi dan berdefault sepuluh menit karena pemanggilan model berjalan sinkron |
+| 5\. | Akses *blockchain* | Titik akhir RPC publik Base Sepolia, transaksi ditandatangani kunci privat pada variabel lingkungan peladen |
+| 6\. | Berkas unggahan bukti | Disimpan pada direktori unggahan peladen dengan nama berkas yang dibersihkan dan diberi awalan pengenal acak, dibatasi sepuluh megabyte per berkas, dan dikecualikan dari kendali versi |
+| 7\. | Data acuan | Dimuat melalui berkas *seed* berisi 16 butir referensi kegiatan, akun contoh, periode, dan penugasan asesor; ditambah berkas *seed* berisi 38 akun dosen nyata yang bersifat idempoten |
 
 2. ### **Pemeliharaan Sistem** {#pemeliharaan-sistem}
 
@@ -2169,6 +2400,10 @@ Tabel IV.50. Rekapitulasi Kegiatan Pemeliharaan Sistem
 | 5\. | Perfektif | Penambahan mekanisme koreksi manual atas hasil ekstraksi beserta penyimpanan koreksi sebagai selisih | Kebutuhan menjaga bukti audit sekaligus memungkinkan perbaikan hasil parser |
 | 6\. | Perfektif | Penambahan penyaring, pencarian, dan paginasi pada halaman pratinjau unggahan | Dokumen berisi 110 baris penugasan yang tidak terbaca pada satu halaman |
 | 7\. | Perfektif | Penerapan penerapan ulang yang bersifat idempoten per baris melalui penanda baris | Kebutuhan menerapkan koreksi tanpa menggandakan kegiatan maupun menimpa penilaian asesor |
+| 8\. | Adaptif | Perluasan jalur ekstraksi pembimbingan agar satu titik akhir melayani Surat Tugas Pembimbing PKL sekaligus Surat Keputusan Pembimbing Tugas Akhir, dengan jenis surat dikenali sendiri dari isi halaman pertama | Ditemukannya dua jenis surat pembimbing dengan tata letak berbeda yang keduanya harus dipetakan ke butir aturan berlainan |
+| 9\. | Perfektif | Penambahan parser artefak universal berskema umum sebagai titik akhir kelima pada layanan ekstraksi | Kebutuhan membaca dokumen bukti dosen yang formatnya tidak diketahui sebelumnya, yang tidak dapat ditangani parser khusus per tata letak |
+| 10\. | Perfektif | Penambahan mekanisme verifikasi keaslian dokumen bukti beserta kolom penyimpan hasil pemeriksaan, penanda temuan pada halaman penilaian asesor, serta aksi pemeriksaan ulang dan persetujuan manual | Celah bahwa dokumen bukti yang diunggah dosen tidak diperiksa kesesuaiannya terhadap identitas pengunggah maupun peran yang diklaim, sebagaimana dirumuskan pada subbab I.2 |
+| 11\. | Perfektif | Penyelarasan struktur menu ketiga peran terhadap kategori kegiatan yang benar-benar tersedia, termasuk pengelompokan menu menurut tahapan kerja dan penyediaan halaman input kegiatan oleh administrator | Ketidaksesuaian antara butir menu dan halaman yang tersedia, serta kebutuhan menginput penugasan yang dokumennya belum tersedia atau tidak terbaca parser |
 
  	Kegiatan pada Tabel IV.50 memperlihatkan bahwa sebagian besar pemeliharaan bersifat adaptif dan perfektif, dan sebagian besar dipicu oleh kondisi nyata dokumen sumber maupun keterbatasan penyedia layanan eksternal, bukan oleh kesalahan logika perhitungan. Pola ini konsisten dengan karakteristik sistem yang aturan intinya bersifat normatif dan telah ditetapkan sejak awal, sehingga lapisan yang paling sering menuntut penyesuaian adalah lapisan yang bersentuhan dengan dunia luar, yaitu ekstraksi dokumen dan akses jaringan *blockchain*.  
  	Pemeliharaan pada lapisan *on-chain* memiliki keterbatasan yang perlu dinyatakan. Karena kode kontrak bersifat *immutable* setelah ditempatkan, perbaikan pada logika perhitungan tidak dapat dilakukan melalui pemutakhiran di tempat, melainkan menuntut penempatan ulang kontrak beserta pemutakhiran alamat pada konfigurasi aplikasi. Kredit yang telah diterbitkan melalui kontrak lama tetap berada pada alamat kontrak lama. Konsekuensi ini merupakan harga yang dibayar atas jaminan ketakberubahan aturan, dan penanganannya direkomendasikan pada saran pengembangan di Bab VI.
