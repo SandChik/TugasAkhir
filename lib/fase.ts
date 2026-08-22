@@ -31,6 +31,30 @@ export const bolehDosenInput = (f: Fase) => f === "pengisian";
 export const bolehDosenPerbaiki = (f: Fase) => f === "pengisian" || f === "perbaikan";
 export const bolehAsesorNilai = (f: Fase) => f === "penilaian" || f === "perbaikan";
 
+/**
+ * Kegiatan yang dikembalikan asesor: ada hasil penilaian berstatus revisi atau
+ * ditolak. Relasi `hasil_penilaian` harus ikut di-query.
+ */
+export function perluPerbaikan(kegiatan: any): boolean {
+  return (kegiatan?.hasil_penilaian ?? []).some(
+    (h: any) => h.status === "revisi" || h.status === "ditolak"
+  );
+}
+
+/**
+ * Gate tunggal untuk unggah, ganti, dan hapus bukti. Dipakai server action dan
+ * UI supaya keduanya tidak pernah berbeda; dicek di server juga karena UI yang
+ * menyembunyikan tombol bukan pengaman, kiriman form bisa dibuat manual.
+ *
+ * Terbuka pada masa pengisian selama laporan belum disimpan permanen, lalu
+ * terbuka lagi pada masa perbaikan khusus kegiatan yang dikembalikan asesor.
+ */
+export function bolehUbahBukti(kegiatan: any): boolean {
+  const fase = faseAktif(kegiatan?.lkd?.periode_bkd);
+  if (!kegiatan?.lkd?.simpan_permanen && bolehDosenInput(fase)) return true;
+  return bolehDosenPerbaiki(fase) && perluPerbaikan(kegiatan);
+}
+
 /** Rentang tanggal milik fase tersebut; fase selesai memakai rentang periode. */
 export function rentangFase(
   periode: any,

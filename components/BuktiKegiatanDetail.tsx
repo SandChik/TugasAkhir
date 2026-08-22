@@ -149,6 +149,10 @@ export default function BuktiKegiatanDetail({
 
       {canUpload && (
         <form
+          // Isian form direset dengan remount begitu daftar bukti berubah:
+          // redirect balik ke halaman yang sama tidak melepas node input, jadi
+          // nilai lama akan tertinggal di layar setelah unggahan berhasil.
+          key={`${dokumen.length}-${dokumen[0]?.id_dokumen ?? ""}`}
           id="unggah-bukti"
           action={uploadBukti}
           className="mt-6 scroll-mt-6 rounded-[10px] border border-line p-6"

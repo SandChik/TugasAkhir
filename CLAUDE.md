@@ -128,6 +128,21 @@ npx tsc --noEmit            # typecheck
 Setelah mengubah TypeScript, jalankan `npx tsc --noEmit`. Setelah mengubah
 contract, jalankan `npm run test:contracts`.
 
+## Cache build
+
+Setiap selesai mengubah file yang masuk build Next.js (`app/`, `components/`,
+`lib/`, `middleware.ts`, config), hapus cache build sebelum melapor selesai.
+Tanpa ini dev server sering menyajikan chunk lama dan halaman terlihat tidak
+berubah.
+
+```
+Remove-Item -Recurse -Force .next
+```
+
+Kalau `npm run dev` sedang jalan, sebagian file `.next` terkunci dan
+penghapusan gagal sebagian. Sebutkan itu supaya dev server di-restart.
+Konsekuensinya build berikutnya jadi full compile, bukan incremental.
+
 Jangan jalankan `prettier` atau `eslint --fix` massal. Repo ini tidak punya
 konfigurasi prettier, jadi hasilnya menulis ulang seluruh file dan menutupi
 perubahan asli. Format kode manual, ikuti gaya file di sekitarnya.

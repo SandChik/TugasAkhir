@@ -1,30 +1,45 @@
 "use client";
 
 import { useState } from "react";
-import { IconAlert, IconChevronLeft, IconChevronRight } from "./Icons";
+import { IconChevronLeft, IconChevronRight } from "./Icons";
 
-export type SeksiPenilaian = {
+export type SeksiPanel = {
   key: string;
   letter: string;
   judul: string;
-  jumlah: number;
-  dinilai: number;
-  temuan: number;
+  /** Seksi tanpa isi: huruf dan judul diredupkan di daftar seksi. */
+  kosong?: boolean;
+  /** Angka ringkas di kanan daftar seksi, mis. "2" atau "1/3". */
+  badge?: string;
+  badgeNada?: "netral" | "sukses" | "redup";
+  /** Penanda tambahan di kiri badge (ikon peringatan, chip jumlah baru). */
+  penanda?: React.ReactNode;
+  /** Teks di kanan judul panel. */
+  ringkas?: React.ReactNode;
+  /** Tombol di kanan judul panel. */
+  aksi?: React.ReactNode;
   isi: React.ReactNode;
 };
 
 const navCls =
   "inline-flex max-w-[46%] items-center gap-1.5 rounded-lg border border-line bg-white px-3 py-2 text-[11px] font-medium text-cell transition-colors hover:border-primary hover:text-primary";
 
+const badgeCls: Record<string, string> = {
+  netral: "bg-head-bg text-head-tx",
+  sukses: "bg-[#e6f4ec] text-success-tx",
+  redup: "text-crumb",
+};
+
 /**
- * Penilaian dipecah per seksi LKD: hanya satu seksi yang tampil sehingga asesor
- * mengisi satu tabel pendek, bukan sebelas tabel sekaligus.
+ * Daftar seksi LKD di kiri, isi satu seksi di kanan. Dipakai halaman penilaian
+ * asesor dan rekap kegiatan dosen supaya sebelas seksi tidak menumpuk jadi satu
+ * halaman panjang.
  *
  * Seksi non-aktif tetap dirender (disembunyikan lewat `display:none`, bukan
- * di-unmount) supaya seluruh input tetap ikut terkirim sekali submit form.
+ * di-unmount) supaya input di dalamnya tetap ikut terkirim sekali submit form.
  */
-export default function PenilaianPerSeksi({ seksi }: { seksi: SeksiPenilaian[] }) {
-  const pertamaTerisi = seksi.findIndex((s) => s.jumlah > 0);
+export default function PanelSeksi({ seksi }: { seksi: SeksiPanel[] }) {
+  const pertamaTerisi = seksi.findIndex((s) => !s.kosong);
   const [aktif, setAktif] = useState(pertamaTerisi < 0 ? 0 : pertamaTerisi);
   const kini = seksi[aktif];
   const sebelum = aktif > 0 ? seksi[aktif - 1] : null;
@@ -32,11 +47,10 @@ export default function PenilaianPerSeksi({ seksi }: { seksi: SeksiPenilaian[] }
 
   return (
     <div className="grid gap-4 lg:grid-cols-[248px_minmax(0,1fr)]">
-      <nav aria-label="Seksi penilaian" className="self-start lg:sticky lg:top-4">
+      <nav aria-label="Daftar seksi" className="self-start lg:sticky lg:top-4">
         <ul className="overflow-hidden rounded-[10px] border border-line">
           {seksi.map((s, i) => {
             const dipilih = i === aktif;
-            const kosong = s.jumlah === 0;
             return (
               <li key={s.key} className="border-t border-line first:border-t-0">
                 <button
@@ -51,7 +65,7 @@ export default function PenilaianPerSeksi({ seksi }: { seksi: SeksiPenilaian[] }
                     className={`flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded text-[9.5px] font-semibold ${
                       dipilih
                         ? "bg-primary text-white"
-                        : kosong
+                        : s.kosong
                           ? "bg-head-bg text-crumb"
                           : "bg-head-bg text-head-tx"
                     }`}
@@ -60,28 +74,22 @@ export default function PenilaianPerSeksi({ seksi }: { seksi: SeksiPenilaian[] }
                   </span>
                   <span
                     className={`line-clamp-2 flex-1 text-[10.5px] leading-tight ${
-                      dipilih ? "font-medium text-primary" : kosong ? "text-crumb" : "text-cell"
+                      dipilih ? "font-medium text-primary" : s.kosong ? "text-crumb" : "text-cell"
                     }`}
                   >
                     {s.judul}
                   </span>
                   <span className="flex shrink-0 items-center gap-1">
-                    {s.temuan > 0 && (
-                      <span className="text-danger" title={`${s.temuan} kegiatan dengan bukti tidak sesuai`}>
-                        <IconAlert size={11} />
+                    {s.penanda}
+                    {s.badge && (
+                      <span
+                        className={`rounded px-1 py-px text-[9.5px] font-medium ${
+                          badgeCls[s.badgeNada ?? "netral"]
+                        }`}
+                      >
+                        {s.badge}
                       </span>
                     )}
-                    <span
-                      className={`rounded px-1 py-px text-[9.5px] font-medium ${
-                        kosong
-                          ? "text-crumb"
-                          : s.dinilai >= s.jumlah
-                            ? "bg-[#e6f4ec] text-success-tx"
-                            : "bg-head-bg text-head-tx"
-                      }`}
-                    >
-                      {kosong ? "0" : `${s.dinilai}/${s.jumlah}`}
-                    </span>
                   </span>
                 </button>
               </li>
@@ -96,11 +104,10 @@ export default function PenilaianPerSeksi({ seksi }: { seksi: SeksiPenilaian[] }
             <h2 className="text-[12px] font-semibold leading-snug text-navy">
               {kini.letter}. {kini.judul}
             </h2>
-            <span className="shrink-0 text-[11px] text-muted">
-              {kini.jumlah === 0
-                ? "0 kegiatan"
-                : `${kini.dinilai}/${kini.jumlah} kegiatan dinilai`}
-            </span>
+            <div className="flex shrink-0 items-center gap-3">
+              {kini.ringkas && <span className="text-[11px] text-muted">{kini.ringkas}</span>}
+              {kini.aksi}
+            </div>
           </div>
           <div className="p-4">
             {seksi.map((s, i) => (

@@ -8,7 +8,8 @@ import { faseAktif, bolehAsesorNilai, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
 import { KELAS_TABEL } from "../../../../components/DataTable";
-import PenilaianPerSeksi, { SeksiPenilaian } from "../../../../components/PenilaianPerSeksi";
+import PanelSeksi, { SeksiPanel } from "../../../../components/PanelSeksi";
+import BarAksi from "../../../../components/BarAksi";
 import BarAksiPenilaian from "../../../../components/BarAksiPenilaian";
 import { simpanPenilaian, sahkanPenilaian } from "./actions";
 import { IconDoc, IconAlert } from "../../../../components/Icons";
@@ -56,7 +57,9 @@ export default async function PenilaianPage({ params }: { params: { id: string }
               // Jumlah bukti = artefak unggahan dosen; lampiran surat otomatis
               // dari admin dikecualikan agar angkanya jujur soal kelengkapan.
               unggahan_dokumen: { select: { file_url: true } },
-              dokumen_kegiatan: { select: { file_url: true, verifikasi: true } },
+              dokumen_kegiatan: {
+                select: { file_url: true, verifikasi: true, tanggal_upload: true },
+              },
             },
             orderBy: { created_at: "asc" },
           },
@@ -96,7 +99,15 @@ export default async function PenilaianPage({ params }: { params: { id: string }
         !(d.verifikasi as any)?.acc // sudah di-ACC manual asesor -> bukan temuan lagi
     ).length;
   };
+  // Bukti yang diunggah setelah penilaian tersimpan membuat penilaian lama basi.
+  // Nilai dan komentar sebelumnya tetap ditampilkan, kegiatannya ditandai.
+  const perluNilaiUlang = (k: any) => {
+    const h = nilaiSaya(k);
+    if (!h) return false;
+    return k.dokumen_kegiatan.some((d: any) => d.tanggal_upload > h.tanggal_penilaian);
+  };
   const kegiatanBermasalah = claimed.filter((k: any) => buktiTakSesuai(k) > 0);
+  const kegiatanNilaiUlang = claimed.filter((k: any) => perluNilaiUlang(k));
   const totalDinilai = claimed.filter((k: any) => nilaiSaya(k)).length;
 
   const hrefBukti = (k: any) =>
@@ -134,6 +145,11 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                     <span className="block text-[10px] text-crumb">
                       {k.referensi_kegiatan.kode_rule}
                     </span>
+                    {perluNilaiUlang(k) && (
+                      <span className="mt-1 block">
+                        <StatusChip label="Bukti baru setelah dinilai" variant="warningSoft" />
+                      </span>
+                    )}
                   </td>
                   <td className="w-24">
                     <span className="inline-flex items-center gap-1.5">
@@ -223,23 +239,45 @@ export default async function PenilaianPage({ params }: { params: { id: string }
     </div>
   );
 
-  const seksi: SeksiPenilaian[] = SEKSI_BKD.map((s) => {
+  const seksi: SeksiPanel[] = SEKSI_BKD.map((s) => {
     const items = bySeksi(s.kodeRules);
+    const kosong = items.length === 0;
+    const dinilai = items.filter((k: any) => nilaiSaya(k)).length;
+    const temuan = items.filter((k: any) => buktiTakSesuai(k) > 0).length;
+    const ulang = items.filter((k: any) => perluNilaiUlang(k)).length;
     return {
       key: s.key,
       letter: s.letter,
       judul: s.title,
-      jumlah: items.length,
-      dinilai: items.filter((k: any) => nilaiSaya(k)).length,
-      temuan: items.filter((k: any) => buktiTakSesuai(k) > 0).length,
-      isi:
-        items.length === 0 ? (
-          <div className="rounded-lg bg-head-bg py-6 text-center text-[11.5px] text-muted">
-            Belum ada kegiatan yang diklaim
-          </div>
-        ) : (
-          tabelSeksi(items)
-        ),
+      kosong,
+      badge: kosong ? "0" : `${dinilai}/${items.length}`,
+      badgeNada: kosong ? "redup" : dinilai >= items.length ? "sukses" : "netral",
+      penanda:
+        temuan > 0 || ulang > 0 ? (
+          <>
+            {temuan > 0 && (
+              <span className="text-danger" title={`${temuan} kegiatan dengan bukti tidak sesuai`}>
+                <IconAlert size={11} />
+              </span>
+            )}
+            {ulang > 0 && (
+              <span
+                className="rounded bg-warning px-1 py-px text-[9px] font-medium text-white"
+                title={`${ulang} kegiatan dengan bukti baru setelah dinilai`}
+              >
+                {ulang}
+              </span>
+            )}
+          </>
+        ) : undefined,
+      ringkas: kosong ? "0 kegiatan" : `${dinilai}/${items.length} kegiatan dinilai`,
+      isi: kosong ? (
+        <div className="rounded-lg bg-head-bg py-6 text-center text-[11.5px] text-muted">
+          Belum ada kegiatan yang diklaim
+        </div>
+      ) : (
+        tabelSeksi(items)
+      ),
     };
   });
 
@@ -271,6 +309,9 @@ export default async function PenilaianPage({ params }: { params: { id: string }
           <div className="grid grid-cols-2 gap-x-4 gap-y-3">
             <Fakta label="Kegiatan diklaim" nilai={claimed.length} />
             <Fakta label="Sudah Anda nilai" nilai={`${totalDinilai} dari ${claimed.length}`} />
+            {kegiatanNilaiUlang.length > 0 && (
+              <Fakta label="Perlu dinilai ulang" nilai={kegiatanNilaiUlang.length} />
+            )}
           </div>
           <ul className="mt-3 space-y-2 border-t border-line pt-3">
             <li className="flex items-center justify-between gap-3">
@@ -309,9 +350,12 @@ export default async function PenilaianPage({ params }: { params: { id: string }
       )}
 
       {terkunci ? (
-        <div className="mt-4 rounded-[10px] bg-info-bg px-4 py-4 text-xs font-medium text-info-tx">
-          Penilaian terkunci. {terkunci}
-        </div>
+        <>
+          <div className="mt-4 rounded-[10px] bg-info-bg px-4 py-4 text-xs font-medium text-info-tx">
+            Penilaian terkunci. {terkunci}
+          </div>
+          <BarAksi hrefKembali="/asesor/asesor-bkd" />
+        </>
       ) : (
         <>
           {kegiatanBermasalah.length > 0 && (
@@ -338,27 +382,32 @@ export default async function PenilaianPage({ params }: { params: { id: string }
             </div>
           )}
 
-          <form id="form-nilai" action={simpanPenilaian} className="mt-4">
-            <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
-            <PenilaianPerSeksi seksi={seksi} />
-          </form>
-
-          {/* Form pengesahan dipisah (form tidak boleh bersarang); tombolnya ada
-              di bar aksi lewat atribut form. */}
-          {bisaNilai && (
-            <form id="form-sahkan" action={sahkanPenilaian}>
+          {bisaNilai ? (
+            /* Bar aksi ikut di dalam form penilaian: tombol simpan mengirim form
+               ini, tombol sahkan menunjuk server action lain lewat formAction,
+               dan keduanya membaca status submit dari useFormStatus. */
+            <form action={simpanPenilaian} className="mt-4">
               <input type="hidden" name="id_penugasan" value={penugasan.id_penugasan} />
+              <PanelSeksi seksi={seksi} />
+              <BarAksiPenilaian
+                hrefKembali="/asesor/asesor-bkd"
+                progres={`${totalDinilai}/${claimed.length} kegiatan dinilai`}
+                aksiSahkan={sahkanPenilaian}
+              />
             </form>
+          ) : (
+            <>
+              <div className="mt-4">
+                <PanelSeksi seksi={seksi} />
+              </div>
+              <BarAksi
+                hrefKembali="/asesor/asesor-bkd"
+                info={`${totalDinilai}/${claimed.length} kegiatan dinilai`}
+              />
+            </>
           )}
         </>
       )}
-
-      <BarAksiPenilaian
-        hrefKembali="/asesor/asesor-bkd"
-        formNilai={bisaNilai ? "form-nilai" : undefined}
-        formSahkan={bisaNilai ? "form-sahkan" : undefined}
-        progres={terkunci ? undefined : `${totalDinilai}/${claimed.length} kegiatan dinilai`}
-      />
     </AppShell>
   );
 }

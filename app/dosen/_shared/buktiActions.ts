@@ -8,7 +8,7 @@ import path from "path";
 import crypto from "crypto";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-import { bolehDosenInput, faseAktif } from "../../../lib/fase";
+import { bolehUbahBukti } from "../../../lib/fase";
 import { withFlash } from "../../../lib/flash";
 import { bisaDiverifikasi, verifikasiNamaBukti } from "../../../lib/verifikasiBukti";
 
@@ -32,22 +32,11 @@ async function pastikanMilikDosen(idKegiatan: string, idPengguna: string) {
     include: {
       lkd: { include: { periode_bkd: true, pengguna: { select: { nama: true } } } },
       referensi_kegiatan: { select: { kode_rule: true } },
+      hasil_penilaian: { select: { status: true } },
     },
   });
   if (!kegiatan || kegiatan.lkd.id_pengguna !== idPengguna) return null;
   return kegiatan;
-}
-
-/**
- * Bukti hanya boleh berubah selama masa pengisian dan sebelum laporan disimpan
- * permanen — sama seperti gate di UI. Dicek di sini juga karena UI yang
- * menyembunyikan tombol bukan pengaman: kiriman form bisa dibuat manual.
- */
-function bolehUbahBukti(kegiatan: any): boolean {
-  return (
-    !kegiatan.lkd.simpan_permanen &&
-    bolehDosenInput(faseAktif(kegiatan.lkd.periode_bkd))
-  );
 }
 
 /** FR-09: unggah dokumen bukti (file fisik ATAU tautan). returnTo = halaman balik + flash. */
@@ -157,6 +146,7 @@ export async function hapusBukti(formData: FormData) {
         include: {
           lkd: { include: { periode_bkd: true } },
           unggahan_dokumen: { select: { file_url: true } },
+          hasil_penilaian: { select: { status: true } },
         },
       },
     },
@@ -170,7 +160,7 @@ export async function hapusBukti(formData: FormData) {
     }));
   if (!bolehUbahBukti(dok!.kegiatan))
     redirect(withFlash(returnTo, {
-      err: "Bukti tidak dapat dihapus setelah masa pengisian berakhir",
+      err: "Bukti kegiatan ini sedang terkunci",
     }));
 
   await prisma.dokumen_kegiatan.delete({ where: { id_dokumen: idDokumen } });
