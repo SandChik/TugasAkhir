@@ -31,8 +31,6 @@ export type BarisTabel = {
 
 const RATA = { kiri: "", tengah: "!text-center", kanan: "!text-right" } as const;
 const PILIHAN_PER_HALAMAN = [5, 10, 25, 50, 100];
-/** Di bawah jumlah ini baris pasti muat satu halaman, footer disembunyikan. */
-const AMBANG_FOOTER = 10;
 
 const kendaliCls =
   "rounded-md border border-line bg-white px-2.5 py-1.5 text-[11px] text-cell outline-none placeholder:text-crumb focus:border-primary";
@@ -78,7 +76,7 @@ export default function TabelData({
   kolom,
   baris,
   kosong = "Belum ada data.",
-  perHalamanAwal = 25,
+  perHalamanAwal = 10,
   pencarian,
   placeholderCari = "Cari…",
   aksi,
@@ -88,7 +86,7 @@ export default function TabelData({
   /** Teks saat tabel memang tidak punya data sama sekali. */
   kosong?: string;
   perHalamanAwal?: number;
-  /** Paksa tampilkan/sembunyikan kotak cari. Default: muncul bila baris lebih dari 8. */
+  /** Paksa tampilkan/sembunyikan kotak cari. Default: muncul selama tabel ada isinya. */
   pencarian?: boolean;
   placeholderCari?: string;
   /** Slot kanan toolbar (mis. tombol tambah atau ekspor). */
@@ -100,7 +98,7 @@ export default function TabelData({
   const [perHalaman, setPerHalaman] = useState(perHalamanAwal);
   const [halaman, setHalaman] = useState(1);
 
-  const tampilCari = pencarian ?? baris.length > 8;
+  const tampilCari = pencarian ?? baris.length > 0;
   const indeksFilter = kolom.map((k, i) => (k.filter ? i : -1)).filter((i) => i >= 0);
 
   const opsiFilter = useMemo(() => {
@@ -288,7 +286,7 @@ export default function TabelData({
           </table>
         </div>
 
-        {hasil.length > 0 && (baris.length > AMBANG_FOOTER || totalHalaman > 1) && (
+        {hasil.length > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-white px-3.5 py-2">
             <span className="text-[11px] text-muted">
               {mulai + 1}–{mulai + potong.length} dari {hasil.length}

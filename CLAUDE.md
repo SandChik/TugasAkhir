@@ -77,7 +77,7 @@ Halaman tetap server component; kirim `kolom` dan `baris` ke template:
   yang ikut dicari tapi tidak tampil.
 - Baris yang butuh state sendiri (input inline per baris) dikirim lewat
   `elemen` berisi `<tr>` utuh. Contoh: `components/BarisPengguna.tsx`.
-- Kotak cari muncul otomatis kalau baris lebih dari 8. Matikan dengan
+- Kotak cari muncul otomatis selama tabel ada isinya. Matikan dengan
   `pencarian={false}` bila halaman sudah punya pencarian server-side
   (mis. `app/admin/log-blockchain/page.tsx`).
 
