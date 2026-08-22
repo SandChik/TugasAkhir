@@ -4,7 +4,7 @@ import PratinjauPdf from "./PratinjauPdf";
 import SubmitButton from "./SubmitButton";
 import { adalahPdf, tampilNilai } from "../lib/tampilNilai";
 import { uploadBukti, hapusBukti } from "../app/dosen/_shared/buktiActions";
-import { IconUpload, IconBack } from "./Icons";
+import { IconUpload, IconBack, IconEye, IconTrash } from "./Icons";
 
 const inputCls =
   "w-full rounded-lg border border-line px-3.5 py-2.5 text-xs outline-none placeholder:text-crumb focus:border-primary";
@@ -88,7 +88,7 @@ export default function BuktiKegiatanDetail({
               { label: "Jenis", width: "180px" },
               { label: "Keterangan", width: "200px" },
               { label: "Tanggal Upload", width: "130px" },
-              { label: "Aksi", width: "150px" },
+              { label: "Aksi", width: "90px" },
             ]}
           >
             {dokumen.map((dok: any, i: number) => (
@@ -108,17 +108,18 @@ export default function BuktiKegiatanDetail({
                         <PratinjauPdf
                           url={dok.file_url}
                           judul={dok.nama_dokumen}
-                          className="rounded-md bg-primary-soft px-3 py-1.5 text-[10.5px] font-medium text-primary"
+                          className="rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]"
                         >
-                          Lihat
+                          <IconEye size={13} />
                         </PratinjauPdf>
                       ) : (
                         <a
                           href={dok.file_url}
                           target="_blank"
-                          className="rounded-md bg-primary-soft px-3 py-1.5 text-[10.5px] font-medium text-primary"
+                          title="Lihat dokumen"
+                          className="rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]"
                         >
-                          Lihat
+                          <IconEye size={13} />
                         </a>
                       ))}
                     {canUpload && (
@@ -127,12 +128,14 @@ export default function BuktiKegiatanDetail({
                         <input type="hidden" name="return_to" value={returnTo} />
                         <SubmitButton
                           variant="danger"
-                          className="!px-3 !py-1.5 !text-[10.5px]"
-                          labelProses="Menghapus…"
+                          className="!p-2"
+                          title="Hapus dokumen"
+                          icon={<IconTrash size={13} />}
+                          labelProses=""
                           judulKonfirmasi="Hapus dokumen bukti?"
                           konfirmasi={`"${dok.nama_dokumen}" akan dihapus dari kegiatan ini.`}
                         >
-                          Hapus
+                          {""}
                         </SubmitButton>
                       </form>
                     )}

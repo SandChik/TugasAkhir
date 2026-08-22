@@ -7,7 +7,7 @@ import AppShell from "../../../../components/AppShell";
 import StatusChip from "../../../../components/StatusChip";
 import StatTile from "../../../../components/StatTile";
 import SubmitButton from "../../../../components/SubmitButton";
-import { IconBack, IconCheck, IconDoc, IconPencil, IconSave } from "../../../../components/Icons";
+import { IconBack, IconCheck, IconDoc, IconPencil, IconSave, IconX } from "../../../../components/Icons";
 import PratinjauPdf from "../../../../components/PratinjauPdf";
 import { labelParameter, tampilNilai } from "../../../../lib/tampilNilai";
 import { LABEL_JENIS, spekJenis, type JenisUnggahan } from "../../../../lib/parserDokumen";
@@ -328,8 +328,7 @@ export default async function PratinjauUnggahanPage({
 
       {peta.jumlahDitolak > 0 && (
         <div className="mt-3 rounded-[10px] border border-line bg-info-bg px-4 py-3 text-[11px] leading-snug text-info-tx">
-          <b>{peta.jumlahDitolak} baris dokumen ditolak parser</b> (gagal validasi per baris) dan
-          tidak ikut dipetakan. Rinciannya tersimpan pada JSON hasil ekstraksi.
+          <b>{peta.jumlahDitolak} baris dokumen ditolak parser</b> dan tidak ikut dipetakan.
         </div>
       )}
 
@@ -547,13 +546,14 @@ export default async function PratinjauUnggahanPage({
                         ? `${url({ edit: undefined })}#baris-${i}`
                         : `${url({ edit: String(i), sorot: undefined })}#baris-${i}`
                     }
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium ${
+                    title={sedangDiubah ? "Tutup panel koreksi" : "Ubah baris"}
+                    className={`inline-flex items-center rounded-md p-2 ${
                       sedangDiubah
                         ? "border border-line text-muted hover:bg-head-bg"
                         : "bg-primary-soft text-primary hover:bg-[#dde9fb]"
                     }`}
                   >
-                    {sedangDiubah ? "Tutup" : <><IconPencil size={11} /> Ubah</>}
+                    {sedangDiubah ? <IconX size={13} /> : <IconPencil size={13} />}
                   </Link>
                 </div>
               </div>

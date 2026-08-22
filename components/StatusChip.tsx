@@ -8,6 +8,12 @@ const VARIANTS = {
   navy: "bg-navy text-white",
   primary: "bg-primary text-white",
   neutral: "bg-crumb text-white",
+  /* Varian lembut untuk state yang belum berjalan: latar redup + garis tepi,
+     supaya chip berwarna solid tetap jadi fokus mata. */
+  neutralSoft: "bg-head-bg text-muted ring-1 ring-inset ring-line",
+  infoSoft: "bg-info-bg text-info-tx ring-1 ring-inset ring-info/30",
+  warningSoft: "bg-[#fdf3e0] text-[#96682a] ring-1 ring-inset ring-warning/35",
+  successSoft: "bg-[#e6f4ec] text-success-tx ring-1 ring-inset ring-success/35",
 } as const;
 
 export type ChipVariant = keyof typeof VARIANTS;
@@ -29,6 +35,11 @@ export const STATUS_VARIAN: Record<string, ChipVariant> = {
   success: "success",
   pending: "warning",
   failed: "danger",
+  // status_lkd: tiap tahap warnanya beda supaya kolom status terbaca sekilas
+  draft: "neutralSoft",
+  diajukan: "infoSoft",
+  dinilai: "warning",
+  final: "successDeep",
 };
 
 export default function StatusChip({
@@ -40,7 +51,7 @@ export default function StatusChip({
 }) {
   return (
     <span
-      className={`inline-block rounded px-2 py-1 text-[10px] font-medium ${VARIANTS[variant]}`}
+      className={`inline-block rounded px-2 py-1 text-[10px] font-medium leading-snug ${VARIANTS[variant]}`}
     >
       {label}
     </span>

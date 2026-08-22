@@ -7,7 +7,6 @@ import { SEKSI_BKD } from "../../../../lib/seksiBkd";
 import { faseAktif, bolehAsesorNilai, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
-import InfoBox from "../../../../components/InfoBox";
 import { simpanPenilaian, sahkanPenilaian } from "./actions";
 import { IconSave, IconShield, IconDoc, IconBack, IconAlert } from "../../../../components/Icons";
 import SubmitButton from "../../../../components/SubmitButton";
@@ -150,19 +149,6 @@ export default async function PenilaianPage({ params }: { params: { id: string }
                 ))}
               </ul>
             </div>
-          )}
-
-          {bisaNilai ? (
-            <InfoBox>
-              <b>Info:</b> SKS hasil smart contract adalah acuan deterministik. Isi SKS keputusan,
-              status, dan komentar (wajib untuk Tolak/Revisi). Jika nilai Anda berbeda dengan asesor
-              lain, nilai final = rata-rata. Klik <b>Simpan Penilaian</b>, lalu <b>Sahkan</b> bila final.
-            </InfoBox>
-          ) : (
-            <InfoBox>
-              <b>Penilaian Anda sudah disahkan</b> dan tidak dapat diubah lagi. Rincian di bawah
-              hanya untuk dibaca.
-            </InfoBox>
           )}
 
           <div className="mt-5 space-y-6">

@@ -18,11 +18,6 @@ export function fieldFormulir<T extends { name: string }>(fields: T[]): T[] {
   return fields.filter((f) => !(f.name in PARAMETER_TETAP));
 }
 
-/** Field yang nilainya dikunci sistem — untuk catatan penjelas di formulir. */
-export function fieldTetap<T extends { name: string }>(fields: T[]): T[] {
-  return fields.filter((f) => f.name in PARAMETER_TETAP);
-}
-
 /**
  * Baca parameter rubrik dari formulir. Parameter tetap TIDAK dibaca dari input:
  * nilainya selalu dari `PARAMETER_TETAP`, sehingga kiriman yang dibuat-buat pun

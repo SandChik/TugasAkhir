@@ -2,7 +2,7 @@ import Link from "next/link";
 import { prisma } from "../lib/prisma";
 import { tambahKegiatan, ubahKegiatan } from "../app/dosen/_shared/kegiatanActions";
 import { DETAIL_FIELDS } from "../lib/kolomKategori";
-import { fieldFormulir, fieldTetap, PARAMETER_TETAP } from "../lib/parameterKegiatan";
+import { fieldFormulir } from "../lib/parameterKegiatan";
 import { IconCalc, IconBack, IconSave } from "./Icons";
 
 const inputCls =
@@ -38,7 +38,6 @@ export default async function TambahKegiatanForm({
   const fields: any[] = selected ? ((selected.skema_parameter as any)?.fields ?? []) : [];
   // Parameter yang nilainya ditentukan periode (jumlahSemester) tidak ditanyakan.
   const fieldsIsian = fieldFormulir(fields);
-  const fieldsTetap = fieldTetap(fields);
   const detailFields = DETAIL_FIELDS[slug] ?? [];
   const dNilai: any = editMode ? (kegiatan.detail_kegiatan ?? {}) : {};
   const pNilai: any = editMode ? (kegiatan.parameter ?? {}) : {};
@@ -83,18 +82,7 @@ export default async function TambahKegiatanForm({
           <input type="hidden" name="kode_rule" value={selected.kode_rule} />
           {editMode && <input type="hidden" name="id_kegiatan" value={kegiatan.id_kegiatan} />}
 
-          <p className="rounded bg-info-bg px-3 py-2 text-[10.5px] text-info-tx">
-            {selected.fungsi_contract ? (
-              <>
-                Nilai SKS dihitung otomatis &amp; deterministik oleh smart contract{" "}
-                <b>{selected.fungsi_contract}()</b>.
-              </>
-            ) : (
-              <>Kegiatan ini bernilai SKS maksimum pada rubrik — dinilai langsung oleh asesor.</>
-            )}
-          </p>
-
-          <div className="mt-4 grid grid-cols-[190px_1fr] items-start gap-y-4">
+          <div className="grid grid-cols-[190px_1fr] items-start gap-y-4">
             <label className="pt-2.5 text-[11.5px] font-medium text-cell">
               Nama Kegiatan <span className="text-danger">*</span>
             </label>
@@ -127,20 +115,10 @@ export default async function TambahKegiatanForm({
             ))}
           </div>
 
-          {fieldsTetap.length > 0 && (
-            <p className="mt-3 text-[10.5px] leading-snug text-muted">
-              {fieldsTetap.map((f: any) => `${f.label} = ${PARAMETER_TETAP[f.name]}`).join(", ")}{" "}
-              mengikuti periode BKD — satu laporan mencakup satu semester, jadi tidak perlu diisi.
-            </p>
-          )}
-
           {detailFields.length > 0 && (
             <>
               <p className="mt-6 border-t border-line pt-4 text-[11.5px] font-semibold text-navy">
                 Detail Kegiatan
-              </p>
-              <p className="mt-1 text-[10.5px] text-crumb">
-                Data berikut ditampilkan pada kolom tabel daftar kegiatan (opsional).
               </p>
               <div className="mt-3 grid grid-cols-[190px_1fr] items-start gap-y-4">
                 {detailFields.map((f) => (

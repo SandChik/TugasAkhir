@@ -2,10 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
+import TabelData from "../../../components/TabelData";
 import StatusChip from "../../../components/StatusChip";
 import StatTile from "../../../components/StatTile";
-import InfoBox from "../../../components/InfoBox";
 import SubmitButton from "../../../components/SubmitButton";
 import { IconSave, IconTrash, IconLock } from "../../../components/Icons";
 import { simpanPenugasan, tugaskanMassal, hapusPenugasan } from "./actions";
@@ -20,7 +19,7 @@ type Saring = "semua" | "belum" | "lengkap" | "dinilai";
 export default async function PenugasanAsesorPage({
   searchParams,
 }: {
-  searchParams: { f?: string; q?: string };
+  searchParams: { f?: string };
 }) {
   const session = await getServerSession(authOptions);
 
@@ -73,23 +72,17 @@ export default async function PenugasanAsesorPage({
   const f: Saring = (["belum", "lengkap", "dinilai"] as const).includes(searchParams.f as any)
     ? (searchParams.f as Saring)
     : "semua";
-  const q = (searchParams.q ?? "").trim();
-  const cari = q.toLowerCase();
 
   const tampil = daftar.filter((l: any) => {
     if (f === "belum" && jumlahTerisi(l) === 2) return false;
     if (f === "lengkap" && jumlahTerisi(l) !== 2) return false;
     if (f === "dinilai" && !sedangDinilai(l)) return false;
-    if (!cari) return true;
-    return [l.pengguna.nama, l.pengguna.nidn, l.pengguna.kode_dosen]
-      .filter(Boolean)
-      .some((v: string) => String(v).toLowerCase().includes(cari));
+    return true;
   });
 
   const url = (ubah: Record<string, string>) => {
     const p = new URLSearchParams();
     if (f !== "semua") p.set("f", f);
-    if (q) p.set("q", q);
     for (const [k, v] of Object.entries(ubah)) v ? p.set(k, v) : p.delete(k);
     const s = p.toString();
     return s ? `${DASAR}?${s}` : DASAR;
@@ -110,15 +103,13 @@ export default async function PenugasanAsesorPage({
       }
     >
       {!periode ? (
-        <InfoBox>
-          Belum ada periode aktif. Aktifkan satu periode di <b>Periode BKD</b> sebelum menetapkan
-          asesor.
-        </InfoBox>
+        <div className="rounded-[10px] border border-line bg-head-bg px-4 py-3 text-[11.5px] text-muted">
+          Belum ada periode aktif.
+        </div>
       ) : asesor.length < 2 ? (
-        <InfoBox>
-          Butuh minimal dua akun <b>asesor</b> yang aktif. Saat ini baru ada {asesor.length}
-          {" — "}tambahkan di <b>Manajemen Pengguna</b>.
-        </InfoBox>
+        <div className="rounded-[10px] border border-line bg-head-bg px-4 py-3 text-[11.5px] text-muted">
+          Asesor aktif: {asesor.length}. Minimal dua.
+        </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -196,153 +187,131 @@ export default async function PenugasanAsesorPage({
             </SubmitButton>
           </form>
 
-          {/* Pencarian */}
-          <form className="mt-3 flex flex-wrap items-end gap-2">
-            {f !== "semua" && <input type="hidden" name="f" value={f} />}
-            <div className="flex flex-1 flex-col">
-              <label className="text-[10px] font-medium text-muted">
-                Cari dosen (nama, NIDN, kode dosen)
-              </label>
-              <input
-                name="q"
-                defaultValue={q}
-                placeholder="mis. Transmissia / KO019N"
-                className="mt-1 rounded-md border border-line px-2.5 py-1.5 text-[11px] outline-none focus:border-primary"
-              />
-            </div>
-            <button className="rounded-md bg-primary px-4 py-2 text-[11px] font-medium text-white">
-              Cari
-            </button>
-            {(q || f !== "semua") && (
-              <a
-                href={DASAR}
-                className="rounded-md bg-head-bg px-3 py-2 text-[11px] font-medium text-muted"
-              >
-                Reset
-              </a>
-            )}
-          </form>
-
-          <p className="mt-3 text-[11px] text-muted">
-            Menampilkan <b>{tampil.length}</b> dari {total} LKD
-          </p>
-
-          <div className="mt-2">
-            <DataTable
-              columns={[
+          <div className="mt-4">
+            <TabelData
+              placeholderCari="Cari nama dosen, NIDN, kode dosen…"
+              kosong="Belum ada LKD pada periode ini."
+              kolom={[
                 { label: "No", width: "45px" },
-                { label: "Dosen" },
-                { label: "Status LKD", width: "140px" },
+                { label: "Dosen", urut: true },
+                { label: "Status LKD", width: "140px", filter: true },
                 { label: "Asesor ke-1 & ke-2", width: "430px" },
-                { label: "Aksi", width: "110px" },
+                { label: "Aksi", width: "70px" },
               ]}
-            >
-              {tampil.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="!text-center !text-crumb">
-                    {total === 0
-                      ? "Belum ada LKD pada periode ini."
-                      : "Tidak ada LKD yang cocok dengan filter."}
-                  </td>
-                </tr>
-              ) : (
-                tampil.map((l: any, i: number) => {
+              baris={tampil.map((l: any, i: number) => {
                   const s1 = slot(l, 1);
                   const s2 = slot(l, 2);
                   const dikunci = s1.terkunci || s2.terkunci;
 
-                  const sel = (urutan: number, s: ReturnType<typeof slot>) => (
-                    <div className="min-w-0 flex-1">
-                      <label className="text-[9.5px] font-medium text-muted">
-                        Asesor ke-{urutan}
-                      </label>
-                      {s.terkunci ? (
-                        <>
-                          <p className="truncate text-[11px] font-medium text-navy">
-                            {s.p.asesor.nama}
-                          </p>
-                          <p className="flex items-center gap-1 text-[9.5px] text-muted">
-                            <IconLock size={9} />
-                            {s.p.disahkan ? "sudah disahkan" : "sedang menilai"}
-                          </p>
-                          <input type="hidden" name={`asesor_${urutan}`} value={s.idAsesor} />
-                        </>
-                      ) : (
-                        <select
-                          name={`asesor_${urutan}`}
-                          defaultValue={s.idAsesor}
-                          className={`mt-0.5 ${selectCls}`}
-                        >
-                          <option value="">— belum ditetapkan —</option>
-                          {asesor.map((a: any) => (
-                            <option key={a.id_pengguna} value={a.id_pengguna}>
-                              {a.nama}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  );
+                  /* Slot terkunci dan slot yang masih bisa diganti dibuat
+                     setinggi select supaya kedua kolom sejajar. */
+                  const kendali = (urutan: number, s: ReturnType<typeof slot>) =>
+                    s.terkunci ? (
+                      <div className="flex min-w-0 items-center gap-1.5 rounded-md border border-line bg-head-bg px-2 py-1.5">
+                        <IconLock size={10} className="shrink-0 text-muted" />
+                        <span className="truncate text-[11px] font-medium text-navy">
+                          {s.p.asesor.nama}
+                        </span>
+                        <input type="hidden" name={`asesor_${urutan}`} value={s.idAsesor} />
+                      </div>
+                    ) : (
+                      <select
+                        name={`asesor_${urutan}`}
+                        defaultValue={s.idAsesor}
+                        className={selectCls}
+                      >
+                        <option value="">— belum ditetapkan —</option>
+                        {asesor.map((a: any) => (
+                          <option key={a.id_pengguna} value={a.id_pengguna}>
+                            {a.nama}
+                          </option>
+                        ))}
+                      </select>
+                    );
 
-                  return (
-                    <tr key={l.id_lkd}>
-                      <td>{i + 1}</td>
-                      <td>
+                  const catatan = (s: ReturnType<typeof slot>) =>
+                    s.terkunci ? (
+                      <span className="truncate text-[9.5px] text-muted">
+                        {s.p.disahkan ? "sudah disahkan" : "sedang menilai"}
+                      </span>
+                    ) : (
+                      <span />
+                    );
+
+                  return {
+                    id: l.id_lkd,
+                    cari: `${l.pengguna.nidn ?? ""} ${l.pengguna.kode_dosen ?? ""} ${
+                      s1.p?.asesor.nama ?? ""
+                    } ${s2.p?.asesor.nama ?? ""}`,
+                    nilai: [
+                      i + 1,
+                      l.pengguna.nama,
+                      l.simpan_permanen ? "Siap dinilai" : "Belum dikunci dosen",
+                      null,
+                      null,
+                    ],
+                    sel: [
+                      i + 1,
+                      <>
                         {l.pengguna.nama}
                         <span className="block text-[10px] text-crumb">
                           {l.pengguna.nidn ?? "tanpa NIDN"}
                           {l.pengguna.kode_dosen ? ` · ${l.pengguna.kode_dosen}` : ""}
                         </span>
-                      </td>
-                      <td>
-                        {l.simpan_permanen ? (
-                          <StatusChip label="Siap dinilai" variant="success" />
-                        ) : (
-                          <StatusChip label="Belum dikunci dosen" variant="dangerSoft" />
-                        )}
-                      </td>
-                      <td>
-                        {/* Kedua <select> + tombolnya satu form agar status
-                            "sedang menyimpan" ikut terbaca tombolnya. */}
-                        <form action={simpanPenugasan} className="flex items-end gap-2">
+                      </>,
+                      l.simpan_permanen ? (
+                        <StatusChip label="Siap dinilai" variant="success" />
+                      ) : (
+                        <StatusChip label="Belum dikunci dosen" variant="dangerSoft" />
+                      ),
+                      /* Kedua select + tombolnya satu form agar status
+                         "sedang menyimpan" ikut terbaca tombolnya. */
+                      <form
+                        action={simpanPenugasan}
+                        className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-0.5"
+                      >
+                        <input type="hidden" name="id_lkd" value={l.id_lkd} />
+                        <input type="hidden" name="kembali" value={kembali} />
+                        <span className="text-[9.5px] font-medium text-muted">Asesor ke-1</span>
+                        <span className="text-[9.5px] font-medium text-muted">Asesor ke-2</span>
+                        <span />
+                        {kendali(1, s1)}
+                        {kendali(2, s2)}
+                        <SubmitButton
+                          variant="soft"
+                          className="!p-2"
+                          title="Simpan penugasan"
+                          icon={<IconSave size={13} />}
+                          labelProses=""
+                        >
+                          {""}
+                        </SubmitButton>
+                        {catatan(s1)}
+                        {catatan(s2)}
+                        <span />
+                      </form>,
+                      !dikunci && l.penugasan_asesor.length > 0 ? (
+                        <form action={hapusPenugasan}>
                           <input type="hidden" name="id_lkd" value={l.id_lkd} />
                           <input type="hidden" name="kembali" value={kembali} />
-                          {sel(1, s1)}
-                          {sel(2, s2)}
                           <SubmitButton
-                            variant="soft"
-                            className="!px-2.5 !py-1.5 !text-[10.5px]"
-                            icon={<IconSave size={11} />}
-                            labelProses="Menyimpan…"
+                            variant="danger"
+                            className="!p-2"
+                            title="Lepas penugasan"
+                            icon={<IconTrash size={13} />}
+                            labelProses=""
+                            judulKonfirmasi="Lepas penugasan?"
+                            konfirmasi={`Kedua asesor ${l.pengguna.nama} akan dilepas dari LKD ini.`}
+                            tombolKonfirmasi="Ya, lepas"
                           >
-                            Simpan
+                            {""}
                           </SubmitButton>
                         </form>
-                      </td>
-                      <td>
-                        {!dikunci && l.penugasan_asesor.length > 0 && (
-                          <form action={hapusPenugasan}>
-                            <input type="hidden" name="id_lkd" value={l.id_lkd} />
-                            <input type="hidden" name="kembali" value={kembali} />
-                            <SubmitButton
-                              variant="danger"
-                              className="!px-2.5 !py-1.5 !text-[10.5px]"
-                              icon={<IconTrash size={11} />}
-                              labelProses="Melepas…"
-                              judulKonfirmasi="Lepas penugasan?"
-                              konfirmasi={`Kedua asesor ${l.pengguna.nama} akan dilepas dari LKD ini.`}
-                              tombolKonfirmasi="Ya, lepas"
-                            >
-                              Lepas
-                            </SubmitButton>
-                          </form>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </DataTable>
+                      ) : null,
+                    ],
+                  };
+                })}
+            />
           </div>
         </>
       )}

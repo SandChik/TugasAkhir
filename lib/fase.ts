@@ -30,3 +30,32 @@ export function faseAktif(periode: any, now: Date = new Date()): Fase {
 export const bolehDosenInput = (f: Fase) => f === "pengisian";
 export const bolehDosenPerbaiki = (f: Fase) => f === "pengisian" || f === "perbaikan";
 export const bolehAsesorNilai = (f: Fase) => f === "penilaian" || f === "perbaikan";
+
+/** Rentang tanggal milik fase tersebut; fase selesai memakai rentang periode. */
+export function rentangFase(
+  periode: any,
+  fase: Fase,
+): { mulai: Date | null; selesai: Date | null } {
+  const kunci: Record<Fase, [string, string]> = {
+    pengisian: ["pengisian_mulai", "pengisian_selesai"],
+    penilaian: ["penilaian_mulai", "penilaian_selesai"],
+    perbaikan: ["perbaikan_mulai", "perbaikan_selesai"],
+    selesai: ["tanggal_mulai", "tanggal_selesai"],
+  };
+  const [a, b] = kunci[fase];
+  return { mulai: periode?.[a] ?? null, selesai: periode?.[b] ?? null };
+}
+
+/** Field tanggal periode_bkd, urutannya sekaligus urutan tampil di form ubah. */
+export const FIELD_TANGGAL = [
+  ["tanggal_mulai", "Mulai Periode"],
+  ["tanggal_selesai", "Selesai Periode"],
+  ["pengisian_mulai", "Pengisian Mulai"],
+  ["pengisian_selesai", "Pengisian Selesai"],
+  ["penilaian_mulai", "Penilaian Mulai"],
+  ["penilaian_selesai", "Penilaian Selesai"],
+  ["perbaikan_mulai", "Perbaikan Mulai"],
+  ["perbaikan_selesai", "Perbaikan Selesai"],
+] as const;
+
+export type KunciTanggal = (typeof FIELD_TANGGAL)[number][0];

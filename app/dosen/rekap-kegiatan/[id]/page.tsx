@@ -8,7 +8,6 @@ import { SUMBER_LABEL } from "../../../../lib/kategoriDosen";
 import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import StatusChip, { STATUS_VARIAN } from "../../../../components/StatusChip";
-import InfoBox from "../../../../components/InfoBox";
 import {
   IconRefresh,
   IconLock,
@@ -250,11 +249,12 @@ function Pendidikan({ lkd, editable, fase }: { lkd: any; editable: boolean; fase
 
   return (
     <>
-      <InfoBox>
-        <b>Info untuk dosen:</b> {FASE_LABEL[fase]}. Klaim kegiatan dari portofolio ke laporan
-        dengan tombol <b>Tarik data</b> per seksi atau <b>Tarik Semua</b>. Total SKS diklaim:{" "}
-        <b>{(totalClaimed / 100).toFixed(2)} SKS</b>.
-      </InfoBox>
+      <div className="flex items-center justify-between rounded-[10px] border border-line px-4 py-2.5">
+        <span className="text-[11px] text-muted">{FASE_LABEL[fase]}</span>
+        <span className="text-[11px] text-cell">
+          Total SKS diklaim: <b className="text-navy">{(totalClaimed / 100).toFixed(2)}</b>
+        </span>
+      </div>
 
       {editable && (
         <form action={tarikData} className="mt-4">
@@ -464,10 +464,6 @@ function Simpulan({ claimed, totalSks, lkd }: { claimed: any[]; totalSks: number
 
   return (
     <div className="space-y-4">
-      <InfoBox>
-        <b>Info:</b> Simpulan dihitung dari kegiatan yang telah diklaim. Nilai final ditetapkan
-        setelah kedua asesor mengesahkan (nilai berbeda dirata-ratakan).
-      </InfoBox>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {[
           ["SKS Pendidikan (diklaim)", sksPendidikan.toFixed(2)],
