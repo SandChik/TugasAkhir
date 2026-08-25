@@ -29,12 +29,9 @@ import SubmitButton from "../../../../components/SubmitButton";
 import ModalUbahStatus from "../../../../components/ModalUbahStatus";
 
 const TABS = [
-  { key: "biodata", label: "Biodata", enabled: true },
-  { key: "pendidikan", label: "Pelaksanaan Pendidikan", enabled: true },
-  { key: "penelitian", label: "Pelaksanaan Penelitian", enabled: false },
-  { key: "pengabdian", label: "Pelaksanaan Pengabdian", enabled: false },
-  { key: "penunjang", label: "Pelaksanaan Penunjang", enabled: false },
-  { key: "simpulan", label: "Simpulan", enabled: true },
+  { key: "biodata", label: "Biodata" },
+  { key: "pendidikan", label: "Pelaksanaan Pendidikan" },
+  { key: "simpulan", label: "Simpulan" },
 ];
 
 export default async function LkdDetailPage({
@@ -45,7 +42,7 @@ export default async function LkdDetailPage({
   searchParams: { tab?: string };
 }) {
   const session = await getServerSession(authOptions);
-  const tab = TABS.find((t) => t.key === searchParams.tab && t.enabled)?.key ?? "pendidikan";
+  const tab = TABS.find((t) => t.key === searchParams.tab)?.key ?? "pendidikan";
 
   const lkd = await prisma.lkd.findUnique({
     where: { id_lkd: params.id },
@@ -96,27 +93,17 @@ export default async function LkdDetailPage({
       }
     >
       <div className="flex gap-2 border-b border-line">
-        {TABS.map((t) =>
-          t.enabled ? (
-            <Link
-              key={t.key}
-              href={tabHref(t.key)}
-              className={`rounded-t-md px-3.5 py-2.5 text-[11.5px] ${
-                tab === t.key ? "bg-primary font-medium text-white" : "text-muted hover:text-navy"
-              }`}
-            >
-              {t.label}
-            </Link>
-          ) : (
-            <span
-              key={t.key}
-              className="cursor-not-allowed rounded-t-md px-3.5 py-2.5 text-[11.5px] text-crumb/50"
-              title="Di luar lingkup sistem (hanya unsur pendidikan)"
-            >
-              {t.label}
-            </span>
-          )
-        )}
+        {TABS.map((t) => (
+          <Link
+            key={t.key}
+            href={tabHref(t.key)}
+            className={`rounded-t-md px-3.5 py-2.5 text-[11.5px] ${
+              tab === t.key ? "bg-primary font-medium text-white" : "text-muted hover:text-navy"
+            }`}
+          >
+            {t.label}
+          </Link>
+        ))}
       </div>
 
       <div className="mt-5">

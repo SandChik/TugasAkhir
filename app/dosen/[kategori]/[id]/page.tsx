@@ -8,6 +8,7 @@ import { faseAktif, bolehDosenInput } from "../../../../lib/fase";
 import AppShell from "../../../../components/AppShell";
 import BuktiKegiatanDetail from "../../../../components/BuktiKegiatanDetail";
 import DetailBimbingan from "../../../../components/DetailBimbingan";
+import DetailPengujian from "../../../../components/DetailPengujian";
 import { IconBack } from "../../../../components/Icons";
 
 /** Lihat detail kegiatan kategori (read-only; upload bukti via Layanan BKD). */
@@ -34,15 +35,19 @@ export default async function DetailKategoriPage({
   ]);
   if (!kegiatan || kegiatan.lkd.id_pengguna !== session!.user.id) notFound();
 
-  // Bimbingan mahasiswa punya tampilan detail sendiri (frame Figma 83:2).
-  if (params.kategori === "bimbingan-mahasiswa") {
+  // Bimbingan & pengujian mahasiswa punya tampilan detail sendiri: rincian yang
+  // bisa diralat dosen + daftar mahasiswa dari dokumen sumber (frame Figma 83:2).
+  const rinci = params.kategori === "bimbingan-mahasiswa" || params.kategori === "pengujian-mahasiswa";
+  if (rinci) {
+    const bimbingan = params.kategori === "bimbingan-mahasiswa";
+    const Rincian = bimbingan ? DetailBimbingan : DetailPengujian;
     return (
       <AppShell
         peran="dosen"
         nama={session?.user.name ?? "-"}
         deskripsi="Dosen, D3 Teknik Informatika"
-        breadcrumb={["Beranda", "Pelaksanaan pendidikan", "Bimbingan mahasiswa"]}
-        title="Detail Bimbingan Mahasiswa"
+        breadcrumb={["Beranda", "Pelaksanaan pendidikan", kategori.label]}
+        title={bimbingan ? "Detail Bimbingan Mahasiswa" : "Detail Pengujian Mahasiswa"}
         actions={
           <Link
             href={`/dosen/${params.kategori}`}
@@ -54,7 +59,7 @@ export default async function DetailKategoriPage({
           </Link>
         }
       >
-        <DetailBimbingan
+        <Rincian
           kegiatan={kegiatan}
           namaDosen={dosen?.nama ?? session?.user.name ?? "-"}
           prodi={dosen?.program_studi ?? "-"}

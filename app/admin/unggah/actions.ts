@@ -31,13 +31,16 @@ const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25 MB — SK hasil pindai bisa besar
 const DASAR = "/admin/unggah";
 
 /**
- * URL kembali yang dikirim formulir pratinjau. Divalidasi agar hanya menunjuk
- * ke halaman pratinjau unggahan tersebut (mencegah open redirect).
+ * URL kembali yang dikirim formulir pratinjau maupun daftar unggahan.
+ * Divalidasi agar hanya menunjuk ke halaman unggah atau pratinjau unggahan
+ * tersebut (mencegah open redirect).
  */
 function kembaliAman(raw: unknown, id: string) {
   const dasar = `${DASAR}/${id}`;
   const s = String(raw ?? "");
-  return s === dasar || s.startsWith(`${dasar}?`) || s.startsWith(`${dasar}#`) ? s : dasar;
+  const cocok = (awalan: string) =>
+    s === awalan || s.startsWith(`${awalan}?`) || s.startsWith(`${awalan}#`);
+  return cocok(dasar) || cocok(DASAR) ? s : dasar;
 }
 
 async function pastikanAdmin() {
@@ -94,7 +97,6 @@ export async function unggahDokumen(formData: FormData) {
   let berhasil = 0;
   let gagal = 0;
   const catatan: string[] = [];
-  let idTerakhir: string | null = null;
 
   for (const file of berkas) {
     const jenis: JenisUnggahan | null =
@@ -133,7 +135,7 @@ export async function unggahDokumen(formData: FormData) {
         if (h.status === "cocok") idCocok.add(h.dosen.id_pengguna);
       }
 
-      const rec = await prisma.unggahan_dokumen.create({
+      await prisma.unggahan_dokumen.create({
         data: {
           id_periode: periode?.id_periode ?? null,
           id_admin: (session.user as any).id,
@@ -150,7 +152,6 @@ export async function unggahDokumen(formData: FormData) {
           jumlah_dosen_cocok: idCocok.size,
         } as any,
       });
-      idTerakhir = rec.id_unggahan;
       berhasil++;
     } catch (e: any) {
       await prisma.unggahan_dokumen.create({
@@ -172,14 +173,8 @@ export async function unggahDokumen(formData: FormData) {
 
   revalidatePath(DASAR);
 
-  // Satu berkas sukses -> langsung ke pratinjau; sisanya kembali ke daftar.
-  if (berhasil === 1 && gagal === 0 && idTerakhir) {
-    redirect(
-      withFlash(`${DASAR}/${idTerakhir}`, {
-        ok: "Dokumen berhasil diekstrak. Periksa pratinjau lalu terapkan.",
-      })
-    );
-  }
+  // Selalu kembali ke halaman unggah supaya admin bisa langsung unggah batch
+  // berikutnya; pratinjau dibuka sendiri dari riwayat unggahan.
   if (berhasil > 0) {
     redirect(
       withFlash(DASAR, {
@@ -436,6 +431,7 @@ export async function terapkanUnggahan(formData: FormData) {
 
   revalidatePath(DASAR);
   revalidatePath(jalur);
+  revalidatePath(DASAR);
 
   const bagian = [`${dibuat} kegiatan dibuat untuk ${dosenTersentuh.size} dosen`];
   if (diperbarui) bagian.push(`${diperbarui} diperbarui sesuai koreksi`);

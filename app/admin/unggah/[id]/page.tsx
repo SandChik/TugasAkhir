@@ -9,7 +9,7 @@ import StatTile from "../../../../components/StatTile";
 import SubmitButton from "../../../../components/SubmitButton";
 import { IconBack, IconCheck, IconDoc, IconPencil, IconSave, IconX } from "../../../../components/Icons";
 import PratinjauPdf from "../../../../components/PratinjauPdf";
-import { labelParameter, tampilNilai } from "../../../../lib/tampilNilai";
+import { labelOpsi, labelParameter, tampilNilai } from "../../../../lib/tampilNilai";
 import { LABEL_JENIS, spekJenis, type JenisUnggahan } from "../../../../lib/parserDokumen";
 import { gabungKoreksi, petakanDokumen } from "../../../../lib/pemetaanPenugasan";
 import { buatPencocokDosen } from "../../../../lib/namaDosen";
@@ -636,7 +636,7 @@ export default async function PratinjauUnggahanPage({
                                   >
                                     {(f.options ?? []).map((o: string) => (
                                       <option key={o} value={o}>
-                                        {o}
+                                        {labelOpsi(o)}
                                       </option>
                                     ))}
                                   </select>

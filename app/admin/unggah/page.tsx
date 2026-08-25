@@ -13,6 +13,7 @@ import {
   IconEye,
   IconTrash,
   IconDoc,
+  IconCheck,
   IconChevronRight,
 } from "../../../components/Icons";
 import PratinjauPdf from "../../../components/PratinjauPdf";
@@ -22,7 +23,7 @@ import {
   kesehatanParser,
   parserDikonfigurasi,
 } from "../../../lib/parserDokumen";
-import { unggahDokumen, hapusUnggahan } from "./actions";
+import { unggahDokumen, hapusUnggahan, terapkanUnggahan } from "./actions";
 
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat("id-ID", {
@@ -504,6 +505,33 @@ export default async function UnggahPage({
                   </td>
                   <td>
                     <div className="flex flex-wrap items-center gap-1.5">
+                      {u.status !== "gagal" && (
+                        <form action={terapkanUnggahan}>
+                          <input type="hidden" name="id_unggahan" value={u.id_unggahan} />
+                          <input type="hidden" name="kembali" value={tautan({})} />
+                          <SubmitButton
+                            disabled={!periode}
+                            className="!bg-[#e6f4ec] !p-2 !text-success-tx hover:!bg-[#d8ecdf]"
+                            icon={<IconCheck size={13} />}
+                            labelProses=""
+                            title={
+                              !periode
+                                ? "Belum ada periode aktif"
+                                : u.status === "diterapkan"
+                                  ? "Terapkan ulang ke LKD dosen"
+                                  : "Terapkan ke LKD dosen"
+                            }
+                            konfirmasi={
+                              u.status === "diterapkan"
+                                ? `Terapkan ulang "${u.nama_file}"? Kegiatan yang sudah dibuat diperbarui mengikuti koreksi terbaru; kegiatan yang sudah diklaim dosen tidak diubah.`
+                                : `Terapkan "${u.nama_file}" ke LKD dosen periode ${periode?.nama_periode ?? "aktif"}?`
+                            }
+                            tombolKonfirmasi="Ya, terapkan"
+                          >
+                            {""}
+                          </SubmitButton>
+                        </form>
+                      )}
                       {u.status !== "gagal" && (
                         <Link
                           href={`/admin/unggah/${u.id_unggahan}`}
