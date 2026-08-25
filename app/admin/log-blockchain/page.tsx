@@ -3,7 +3,7 @@ import { authOptions } from "../../../lib/auth";
 import { bacaEventToken } from "../../../lib/blockchain";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
+import TabelData from "../../../components/TabelData";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
 
 const inputCls =
@@ -175,41 +175,38 @@ export default async function LogBlockchainPage({
       </div>
 
       <div className="mt-2">
-        <DataTable
-          columns={[
-            { label: "Block", width: "80px" },
+        <TabelData
+          pencarian={false}
+          kosong={error ? "—" : "Belum ada transaksi tercatat di blockchain."}
+          kolom={[
+            { label: "Block", width: "80px", urut: true },
             { label: "Jenis", width: "85px" },
-            { label: "Dosen / pemilik wallet", width: "260px" },
-            { label: "Jumlah SKS", width: "130px" },
+            { label: "Dosen / pemilik wallet", width: "260px", urut: true },
+            { label: "Jumlah SKS", width: "130px", urut: true },
             { label: "Keterangan" },
             { label: "Tx Hash", width: "170px" },
           ]}
-        >
-          {baris.length === 0 ? (
-            <tr>
-              <td colSpan={6} className="!text-center !text-crumb">
-                {error
-                  ? "—"
-                  : semua.length === 0
-                    ? "Belum ada transaksi tercatat di blockchain."
-                    : "Tidak ada event yang cocok dengan filter."}
-              </td>
-            </tr>
-          ) : (
-            baris.map((e, i) => {
-              const pemilik: any = pemilikEvent(e);
-              const operator = perTx.get(e.txHash)?.admin?.nama;
-              return (
-                <tr key={`${e.txHash}-${i}`}>
-                  <td>#{e.block}</td>
-                  <td>
-                    <StatusChip
-                      label={e.jenis === "mint" ? "Mint" : "Burn"}
-                      variant={STATUS_VARIAN[e.jenis]}
-                    />
-                  </td>
-                  <td>
-                    {pemilik ? (
+          baris={baris.map((e, i) => {
+            const pemilik: any = pemilikEvent(e);
+            const operator = perTx.get(e.txHash)?.admin?.nama;
+            return {
+              id: `${e.txHash}-${i}`,
+              nilai: [
+                e.block,
+                e.jenis === "mint" ? "Mint" : "Burn",
+                pemilik?.nama ?? "Wallet tanpa akun terdaftar",
+                e.jumlah.sks,
+                null,
+                e.txHash,
+              ],
+              sel: [
+                `#${e.block}`,
+                <StatusChip
+                  label={e.jenis === "mint" ? "Mint" : "Burn"}
+                  variant={STATUS_VARIAN[e.jenis]}
+                />,
+                <>
+                  {pemilik ? (
                       <>
                         <span className="font-medium text-navy">{pemilik.nama}</span>
                         <span className="block text-[10.5px] text-muted">
@@ -227,14 +224,14 @@ export default async function LogBlockchainPage({
                     >
                       {e.akun ? `${e.akun.slice(0, 10)}…${e.akun.slice(-6)}` : "-"}
                     </span>
-                  </td>
-                  <td title={`${e.jumlah.mentah} satuan on-chain`}>
-                    <b>{tampilSks(e.jumlah.sks)}</b> SKS
-                    {e.jumlah.skalaLama && (
-                      <span className="block text-[9px] text-warning">transaksi skala lama</span>
-                    )}
-                  </td>
-                  <td className="!text-[11px] !text-muted">
+                </>,
+                <span title={`${e.jumlah.mentah} satuan on-chain`}>
+                  <b>{tampilSks(e.jumlah.sks)}</b> SKS
+                  {e.jumlah.skalaLama && (
+                    <span className="block text-[9px] text-warning">transaksi skala lama</span>
+                  )}
+                </span>,
+                <span className="text-[11px] text-muted">
                     {e.jenis === "burn" ? (
                       e.referensi || <span className="text-crumb">tanpa alasan</span>
                     ) : e.referensi ? (
@@ -252,15 +249,14 @@ export default async function LogBlockchainPage({
                     {operator && (
                       <span className="block text-[10px] text-crumb">oleh {operator}</span>
                     )}
-                  </td>
-                  <td className="!font-mono !text-[10px] !text-primary" title={e.txHash}>
-                    {e.txHash ? `${e.txHash.slice(0, 10)}…${e.txHash.slice(-8)}` : "-"}
-                  </td>
-                </tr>
-              );
-            })
-          )}
-        </DataTable>
+                </span>,
+                <span className="font-mono text-[10px] text-primary" title={e.txHash}>
+                  {e.txHash ? `${e.txHash.slice(0, 10)}…${e.txHash.slice(-8)}` : "-"}
+                </span>,
+              ],
+            };
+          })}
+        />
       </div>
     </AppShell>
   );

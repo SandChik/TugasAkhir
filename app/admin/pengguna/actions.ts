@@ -61,50 +61,62 @@ export async function createPengguna(formData: FormData) {
   redirect(withFlash(DASAR, { ok: `Akun ${nama} (${peran}) dibuat` }));
 }
 
-/** Isi/ubah kode dosen ST agar hasil ekstraksi SK/ST dapat dicocokkan. */
-export async function setKodeDosen(formData: FormData) {
-  const id = String(formData.get("id") ?? "");
-  const kode = String(formData.get("kode_dosen") ?? "").trim().toUpperCase() || null;
-  if (!id) redirect(withFlash(DASAR, { err: "Pengguna tidak dikenal" }));
+const LABEL_IDENTITAS = {
+  nidn: "NIDN",
+  kode_dosen: "Kode dosen",
+  nira: "NIRA",
+} as const;
 
-  const dipakai = kode
-    ? await prisma.pengguna.findFirst({
-        where: { kode_dosen: kode, id_pengguna: { not: id } },
-        select: { nama: true },
-      })
-    : null;
-  if (dipakai)
-    redirect(withFlash(DASAR, { err: `Kode ${kode} sudah dipakai ${dipakai.nama}` }));
-
-  await prisma.pengguna.update({
-    where: { id_pengguna: id },
-    data: { kode_dosen: kode },
+/** Nama pemilik lain yang sudah memakai nilai ini, atau null bila bebas. */
+async function pemakaiLain(
+  kolom: keyof typeof LABEL_IDENTITAS,
+  nilai: string | null,
+  id: string,
+): Promise<string | null> {
+  if (!nilai) return null;
+  const lain = await prisma.pengguna.findFirst({
+    where: { [kolom]: nilai, id_pengguna: { not: id } },
+    select: { nama: true },
   });
-  revalidatePath(DASAR);
-  redirect(withFlash(DASAR, { ok: kode ? `Kode dosen disimpan: ${kode}` : "Kode dosen dikosongkan" }));
+  return lain?.nama ?? null;
 }
 
-/** Isi/ubah NIRA (Nomor Induk Registrasi Asesor) — hanya relevan untuk akun asesor. */
-export async function setNira(formData: FormData) {
+/**
+ * Simpan identitas satu baris pengguna: NIDN, program studi, kode dosen ST,
+ * dan NIRA. Berlaku untuk semua peran termasuk admin, jadi akun apa pun bisa
+ * dilengkapi datanya dari tabel.
+ */
+export async function simpanIdentitas(formData: FormData) {
   const id = String(formData.get("id") ?? "");
-  const nira = String(formData.get("nira") ?? "").trim() || null;
   if (!id) redirect(withFlash(DASAR, { err: "Pengguna tidak dikenal" }));
 
-  const dipakai = nira
-    ? await prisma.pengguna.findFirst({
-        where: { nira, id_pengguna: { not: id } },
-        select: { nama: true },
-      })
-    : null;
-  if (dipakai)
-    redirect(withFlash(DASAR, { err: `NIRA ${nira} sudah dipakai ${dipakai.nama}` }));
-
-  await prisma.pengguna.update({
+  const akun = await prisma.pengguna.findUnique({
     where: { id_pengguna: id },
-    data: { nira },
+    select: { nama: true },
   });
+  if (!akun) redirect(withFlash(DASAR, { err: "Pengguna tidak ditemukan" }));
+
+  const isi = (nama: string) => String(formData.get(nama) ?? "").trim() || null;
+
+  const data = {
+    program_studi: isi("program_studi"),
+    nidn: isi("nidn"),
+    kode_dosen: isi("kode_dosen")?.toUpperCase() ?? null,
+    nira: isi("nira"),
+  };
+
+  for (const kolom of ["nidn", "kode_dosen", "nira"] as const) {
+    const nilai = data[kolom];
+    const pemilik = await pemakaiLain(kolom, nilai, id);
+    if (pemilik)
+      redirect(
+        withFlash(DASAR, { err: `${LABEL_IDENTITAS[kolom]} ${nilai} sudah dipakai ${pemilik}` }),
+      );
+  }
+
+  await prisma.pengguna.update({ where: { id_pengguna: id }, data });
   revalidatePath(DASAR);
-  redirect(withFlash(DASAR, { ok: nira ? `NIRA disimpan: ${nira}` : "NIRA dikosongkan" }));
+  redirect(withFlash(DASAR, { ok: `Data ${akun.nama} disimpan` }));
 }
 
 export async function setAktifPengguna(formData: FormData) {

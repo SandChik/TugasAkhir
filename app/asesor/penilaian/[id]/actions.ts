@@ -161,19 +161,33 @@ export async function simpanPenilaian(formData: FormData) {
   if ((pn as any).disahkan) redirect(flash(idPenugasan, { err: "Penilaian sudah disahkan, tidak dapat diubah" }));
 
   const kegiatanDiklaim = pn!.lkd.kegiatan.filter((k: any) => k.diklaim);
+  const butuhKomentar: string[] = [];
+  let tersimpan = 0;
   for (const k of kegiatanDiklaim) {
     const sksRaw = String(formData.get(`sks_${k.id_kegiatan}`) ?? "").replace(",", ".");
     const status = String(formData.get(`status_${k.id_kegiatan}`) ?? "");
     const catatan = String(formData.get(`catatan_${k.id_kegiatan}`) ?? "").trim() || null;
     if (!["disetujui", "ditolak", "revisi"].includes(status)) continue;
-    if (status !== "disetujui" && !catatan) continue; // PSPEC-011: tolak/revisi wajib catatan
+    // PSPEC-011: tolak/revisi wajib catatan. Barisnya dilewati, tapi kegiatan
+    // yang dilewati dilaporkan balik supaya asesor tahu statusnya tidak masuk.
+    if (status !== "disetujui" && !catatan) {
+      butuhKomentar.push(k.judul);
+      continue;
+    }
 
     const sks = parseFloat(sksRaw);
     const sksX100 = Number.isFinite(sks) ? Math.round(sks * 100) : null;
 
     await prisma.hasil_penilaian.upsert({
       where: { id_kegiatan_id_penugasan: { id_kegiatan: k.id_kegiatan, id_penugasan: idPenugasan } },
-      update: { sks_disetujui_x100: sksX100, status: status as any, catatan },
+      update: {
+        sks_disetujui_x100: sksX100,
+        status: status as any,
+        catatan,
+        // Diperbarui manual (bukan @updatedAt) karena dipakai membandingkan
+        // umur penilaian dengan tanggal unggah bukti.
+        tanggal_penilaian: new Date(),
+      },
       create: {
         id_kegiatan: k.id_kegiatan,
         id_penugasan: idPenugasan,
@@ -182,10 +196,25 @@ export async function simpanPenilaian(formData: FormData) {
         catatan,
       },
     });
+    tersimpan += 1;
   }
 
   await prisma.lkd.update({ where: { id_lkd: pn!.id_lkd }, data: { status: "dinilai" } });
-  redirect(flash(idPenugasan, { ok: "Penilaian tersimpan. Klik Sahkan jika sudah final." }));
+  // Setiap simpan mengembalikan angka hasilnya, bukan kalimat tetap, supaya
+  // asesor bisa membedakan simpan yang berhasil penuh dan yang sebagian.
+  const ringkas = `${tersimpan} dari ${kegiatanDiklaim.length} kegiatan tersimpan`;
+  if (butuhKomentar.length > 0) {
+    const daftar = butuhKomentar.slice(0, 3).join(", ");
+    const sisa = butuhKomentar.length - 3;
+    redirect(
+      flash(idPenugasan, {
+        err: `${ringkas}. Status revisi dan ditolak wajib berkomentar: ${daftar}${
+          sisa > 0 ? ` dan ${sisa} kegiatan lain` : ""
+        }`,
+      })
+    );
+  }
+  redirect(flash(idPenugasan, { ok: `${ringkas}.` }));
 }
 
 /**
@@ -202,11 +231,52 @@ export async function sahkanPenilaian(formData: FormData) {
 
   // pastikan semua kegiatan diklaim sudah dinilai oleh asesor ini
   const kegiatanDiklaim = pn!.lkd.kegiatan.filter((k: any) => k.diklaim);
-  const nilaiSaya = await prisma.hasil_penilaian.findMany({
-    where: { id_penugasan: idPenugasan },
+  const semuaHasil = await prisma.hasil_penilaian.findMany({
+    where: { penugasan_asesor: { id_lkd: pn!.id_lkd } },
   });
+  const nilaiSaya = semuaHasil.filter((h: any) => h.id_penugasan === idPenugasan);
   if (nilaiSaya.length < kegiatanDiklaim.length)
     redirect(flash(idPenugasan, { err: "Nilai seluruh kegiatan sebelum mengesahkan" }));
+
+  // Pengesahan hanya untuk laporan yang seluruh kegiatannya berakhir disetujui.
+  // Penilaian asesor lain ikut dicek: kalau kegiatan masih dikembalikan, dosen
+  // masih boleh mengganti buktinya, dan pengesahan yang terlanjur masuk jadi
+  // basi tanpa bisa dicabut.
+  const punyaSaya = nilaiSaya.filter((h: any) => h.status !== "disetujui").length;
+  const punyaLain = semuaHasil.filter(
+    (h: any) => h.status !== "disetujui" && h.id_penugasan !== idPenugasan
+  ).length;
+  if (punyaSaya > 0)
+    redirect(
+      flash(idPenugasan, { err: `${punyaSaya} kegiatan belum Anda setujui` })
+    );
+  if (punyaLain > 0)
+    redirect(
+      flash(idPenugasan, {
+        err: `${punyaLain} kegiatan masih dikembalikan asesor lain`,
+      })
+    );
+
+  // Bukti yang masuk setelah penilaian tersimpan membuat penilaian itu basi.
+  const dokumen = await prisma.dokumen_kegiatan.findMany({
+    where: { id_kegiatan: { in: kegiatanDiklaim.map((k: any) => k.id_kegiatan) } },
+    select: { id_kegiatan: true, tanggal_upload: true },
+  });
+  const waktuNilai = new Map(nilaiSaya.map((h: any) => [h.id_kegiatan, h.tanggal_penilaian]));
+  const basi = new Set(
+    dokumen
+      .filter((d: any) => {
+        const t = waktuNilai.get(d.id_kegiatan);
+        return t != null && d.tanggal_upload > t;
+      })
+      .map((d: any) => d.id_kegiatan)
+  );
+  if (basi.size > 0)
+    redirect(
+      flash(idPenugasan, {
+        err: `${basi.size} kegiatan punya bukti baru setelah dinilai`,
+      })
+    );
 
   await prisma.penugasan_asesor.update({
     where: { id_penugasan: idPenugasan },

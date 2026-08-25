@@ -9,6 +9,7 @@ export type SeksiBkd = {
   title: string;
   kodeRules: string[];
   sumberTarik?: string; // label "Data diambil dari menu" (informatif)
+  wajib?: boolean; // harus terisi sebelum laporan dikunci permanen
 };
 
 export const SEKSI_BKD: SeksiBkd[] = [
@@ -26,6 +27,7 @@ export const SEKSI_BKD: SeksiBkd[] = [
       "Melaksanakan perkuliahan (tutorial, tatap muka, dan/atau daring) dan membimbing, menguji serta menyelenggarakan pendidikan di laboratorium sesuai penugasan",
     kodeRules: ["EDU101"],
     sumberTarik: "Pelaks. pendidikan > Pengajaran",
+    wajib: true,
   },
   {
     key: "C",
@@ -94,6 +96,9 @@ export const SEKSI_BKD: SeksiBkd[] = [
     sumberTarik: "Kualifikasi > Pendidikan Formal",
   },
 ];
+
+/** Seksi yang minimal berisi satu kegiatan diklaim sebelum simpan permanen. */
+export const SEKSI_WAJIB = SEKSI_BKD.filter((s) => s.wajib);
 
 export const CAPAIAN_LABEL: Record<string, string> = {
   selesai: "Selesai",

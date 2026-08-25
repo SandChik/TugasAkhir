@@ -23,7 +23,9 @@ export type JenisRingkas = {
  */
 export default function FormUnggahIsian({ daftarJenis }: { daftarJenis: JenisRingkas[] }) {
   const [jenis, setJenis] = useState("auto");
-  const vlmMungkin = jenis === "auto" || daftarJenis.some((j) => j.key === jenis && j.mesin === "vlm");
+  // Petunjuk hanya untuk jenis yang sedang dipilih; mode otomatis tidak
+  // menampilkan apa pun karena tak ada satu jenis pun yang dipastikan.
+  const spek = daftarJenis.find((j) => j.key === jenis);
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 py-4 md:grid-cols-3">
@@ -45,14 +47,7 @@ export default function FormUnggahIsian({ daftarJenis }: { daftarJenis: JenisRin
             </option>
           ))}
         </select>
-        <p className={bantuan}>Kata kunci nama berkas untuk deteksi otomatis:</p>
-        <ul className="mt-1.5 space-y-1">
-          {daftarJenis.map((j) => (
-            <li key={j.key} className="text-[10.5px] leading-snug text-muted">
-              <span className="text-cell">{j.label}</span> ← {j.petunjukTeks}
-            </li>
-          ))}
-        </ul>
+        {spek && <p className={bantuan}>Kata kunci nama berkas: {spek.petunjukTeks}</p>}
       </div>
 
       <div className="md:col-span-2">
@@ -62,11 +57,8 @@ export default function FormUnggahIsian({ daftarJenis }: { daftarJenis: JenisRin
         <InputBerkasPdf
           className={`${kolom} file:mr-3 file:rounded file:border-0 file:bg-head-bg file:px-2.5 file:py-1 file:text-[10.5px] file:text-cell`}
         />
-        {vlmMungkin && (
-          <p className={bantuan}>
-            Jenis ber-parser VLM (SK Pembina Ormawa, Artefak Dokumen Umum) bisa beberapa menit per
-            berkas — biarkan halaman ini terbuka sampai selesai.
-          </p>
+        {spek?.mesin === "vlm" && (
+          <p className={bantuan}>Parser VLM: beberapa menit per berkas.</p>
         )}
 
         {jenis === "sk_pembinaan" && (

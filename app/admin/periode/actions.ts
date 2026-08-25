@@ -8,16 +8,55 @@ import { FASE_LABEL } from "../../../lib/fase";
 
 const DASAR = "/admin/periode";
 
+const KUNCI_TANGGAL = [
+  "tanggal_mulai",
+  "tanggal_selesai",
+  "pengisian_mulai",
+  "pengisian_selesai",
+  "penilaian_mulai",
+  "penilaian_selesai",
+  "perbaikan_mulai",
+  "perbaikan_selesai",
+] as const;
+
+type Tanggal = Record<(typeof KUNCI_TANGGAL)[number], Date | null>;
+
+function bacaTanggal(formData: FormData): Tanggal {
+  const hasil = {} as Tanggal;
+  for (const k of KUNCI_TANGGAL) {
+    const v = String(formData.get(k) ?? "").trim();
+    hasil[k] = v ? new Date(v) : null;
+  }
+  return hasil;
+}
+
+/** Pasangan mulai-selesai yang terbalik ditolak sebelum tersimpan. */
+function cekRentang(t: Tanggal): string | null {
+  const pasangan: [keyof Tanggal, keyof Tanggal, string][] = [
+    ["tanggal_mulai", "tanggal_selesai", "periode"],
+    ["pengisian_mulai", "pengisian_selesai", "pengisian"],
+    ["penilaian_mulai", "penilaian_selesai", "penilaian"],
+    ["perbaikan_mulai", "perbaikan_selesai", "perbaikan"],
+  ];
+  for (const [a, b, label] of pasangan) {
+    const mulai = t[a];
+    const selesai = t[b];
+    if (mulai && selesai && mulai > selesai)
+      return `Tanggal ${label} selesai lebih awal dari tanggal mulai`;
+  }
+  return null;
+}
+
 /** FR-05: kelola periode. Constraint #8: hanya satu periode aktif. R3: rentang fase. */
 export async function createPeriode(formData: FormData) {
   const tahun = String(formData.get("tahun_ajaran") ?? "").trim();
   const semester = String(formData.get("semester") ?? "").trim();
-  const d = (k: string) => {
-    const v = String(formData.get(k) ?? "");
-    return v ? new Date(v) : null;
-  };
   if (!tahun || !semester)
     redirect(withFlash(DASAR, { err: "Tahun ajaran dan semester wajib diisi" }));
+
+  const tanggal = bacaTanggal(formData);
+  const salah = cekRentang(tanggal);
+  if (salah) redirect(withFlash(DASAR, { err: salah }));
 
   const nama = `${tahun} ${semester}`;
   const kembar = await prisma.periode_bkd.findFirst({ where: { nama_periode: nama } });
@@ -28,19 +67,40 @@ export async function createPeriode(formData: FormData) {
       nama_periode: nama,
       tahun_ajaran: tahun,
       semester,
-      tanggal_mulai: d("tanggal_mulai"),
-      tanggal_selesai: d("tanggal_selesai"),
-      pengisian_mulai: d("pengisian_mulai"),
-      pengisian_selesai: d("pengisian_selesai"),
-      penilaian_mulai: d("penilaian_mulai"),
-      penilaian_selesai: d("penilaian_selesai"),
-      perbaikan_mulai: d("perbaikan_mulai"),
-      perbaikan_selesai: d("perbaikan_selesai"),
+      ...tanggal,
       status: "nonaktif",
     } as any,
   });
   revalidatePath(DASAR);
   redirect(withFlash(DASAR, { ok: `Periode ${nama} dibuat (masih nonaktif)` }));
+}
+
+/** Perbaikan salah input periode yang sudah tersimpan (identitas + rentang fase). */
+export async function ubahPeriode(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  if (!id) redirect(withFlash(DASAR, { err: "Periode tidak dikenal" }));
+
+  const tahun = String(formData.get("tahun_ajaran") ?? "").trim();
+  const semester = String(formData.get("semester") ?? "").trim();
+  if (!tahun || !semester)
+    redirect(withFlash(DASAR, { err: "Tahun ajaran dan semester wajib diisi" }));
+
+  const tanggal = bacaTanggal(formData);
+  const salah = cekRentang(tanggal);
+  if (salah) redirect(withFlash(DASAR, { err: salah }));
+
+  const nama = `${tahun} ${semester}`;
+  const kembar = await prisma.periode_bkd.findFirst({
+    where: { nama_periode: nama, NOT: { id_periode: id } },
+  });
+  if (kembar) redirect(withFlash(DASAR, { err: `Periode ${nama} sudah ada` }));
+
+  await prisma.periode_bkd.update({
+    where: { id_periode: id },
+    data: { nama_periode: nama, tahun_ajaran: tahun, semester, ...tanggal } as any,
+  });
+  revalidatePath(DASAR);
+  redirect(withFlash(DASAR, { ok: `Periode ${nama} diperbarui` }));
 }
 
 export async function aktifkanPeriode(formData: FormData) {

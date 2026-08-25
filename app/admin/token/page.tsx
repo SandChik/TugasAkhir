@@ -2,9 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
+import TabelData from "../../../components/TabelData";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
-import InfoBox from "../../../components/InfoBox";
 import SubmitButton from "../../../components/SubmitButton";
 import PilihDosenBurn from "../../../components/PilihDosenBurn";
 import { saldoTokenBanyak } from "../../../lib/blockchain";
@@ -90,16 +89,6 @@ export default async function TokenPage() {
       title="Operasi Token SKS"
       subtitle="Riwayat penerbitan (mint) dan pembakaran (burn) token SKS non-transferable"
     >
-      {!kontrak && (
-        <div className="mb-4">
-          <InfoBox>
-            <b>Perhatian:</b> alamat kontrak token belum dikonfigurasi
-            (NEXT_PUBLIC_SKS_TOKEN_ADDRESS). Jalankan hardhat node + deploy, lalu isi .env.
-            Operasi burn akan tercatat gagal sampai konfigurasi lengkap.
-          </InfoBox>
-        </div>
-      )}
-
       {/* Kartu ringkas */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[
@@ -152,38 +141,40 @@ export default async function TokenPage() {
       </form>
 
       <div className="mt-4">
-        <DataTable
-          columns={[
+        <TabelData
+          placeholderCari="Cari nama dosen, wallet, tx hash…"
+          kosong="Belum ada transaksi token."
+          kolom={[
             { label: "No", width: "45px" },
-            { label: "Waktu", width: "150px" },
-            { label: "Jenis", width: "80px" },
-            { label: "Dosen / pemilik wallet", width: "230px" },
-            { label: "Jumlah SKS", width: "100px" },
+            { label: "Waktu", width: "150px", urut: true },
+            { label: "Jenis", width: "80px", filter: true },
+            { label: "Dosen / pemilik wallet", width: "230px", urut: true },
+            { label: "Jumlah SKS", width: "100px", urut: true },
             { label: "Keterangan" },
             { label: "Tx Hash", width: "150px" },
-            { label: "Status", width: "95px" },
+            { label: "Status", width: "95px", filter: true },
           ]}
-        >
-          {riwayat.length === 0 ? (
-            <tr>
-              <td colSpan={8} className="!text-center !text-crumb">
-                Belum ada transaksi token.
-              </td>
-            </tr>
-          ) : (
-            riwayat.map((r: any, i: number) => {
-              const pemilik: any = pemilikBaris(r);
-              return (
-              <tr key={r.id_transaksi}>
-                <td>{i + 1}</td>
-                <td>{fmt(r.created_at)}</td>
-                <td>
-                  <StatusChip
-                    label={r.jenis_transaksi === "mint" ? "Mint" : "Burn"}
-                    variant={STATUS_VARIAN[r.jenis_transaksi]}
-                  />
-                </td>
-                <td>
+          baris={riwayat.map((r: any, i: number) => {
+            const pemilik: any = pemilikBaris(r);
+            const jenis = r.jenis_transaksi === "mint" ? "Mint" : "Burn";
+            return {
+              id: r.id_transaksi,
+              cari: `${fmt(r.created_at)} ${r.alamat_wallet ?? ""} ${r.tx_hash ?? ""} ${r.reference_id ?? ""} ${r.alasan ?? ""} ${r.admin?.nama ?? ""} ${pemilik?.kode_dosen ?? ""}`,
+              nilai: [
+                i + 1,
+                r.created_at instanceof Date ? r.created_at.getTime() : null,
+                jenis,
+                pemilik?.nama ?? "Wallet tanpa akun terdaftar",
+                r.jumlah_token_x100 != null ? r.jumlah_token_x100 / 100 : null,
+                null,
+                r.tx_hash,
+                r.status,
+              ],
+              sel: [
+                i + 1,
+                fmt(r.created_at),
+                <StatusChip label={jenis} variant={STATUS_VARIAN[r.jenis_transaksi]} />,
+                <>
                   {pemilik ? (
                     <>
                       <span className="font-medium text-navy">{pemilik.nama}</span>
@@ -205,9 +196,9 @@ export default async function TokenPage() {
                       ? `${r.alamat_wallet.slice(0, 10)}…${r.alamat_wallet.slice(-6)}`
                       : "-"}
                   </span>
-                </td>
-                <td>{r.jumlah_token_x100 != null ? (r.jumlah_token_x100 / 100).toFixed(2) : "-"}</td>
-                <td className="!text-[11px] !text-muted">
+                </>,
+                r.jumlah_token_x100 != null ? (r.jumlah_token_x100 / 100).toFixed(2) : "-",
+                <span className="text-[11px] text-muted">
                   {r.jenis_transaksi === "burn" ? (
                     r.alasan || <span className="text-crumb">tanpa alasan</span>
                   ) : r.reference_id ? (
@@ -225,21 +216,15 @@ export default async function TokenPage() {
                   {r.admin?.nama && (
                     <span className="block text-[10px] text-crumb">oleh {r.admin.nama}</span>
                   )}
-                </td>
-                <td className="!font-mono !text-[10px] !text-primary">
+                </span>,
+                <span className="font-mono text-[10px] text-primary">
                   {r.tx_hash ? `${r.tx_hash.slice(0, 8)}…${r.tx_hash.slice(-6)}` : "-"}
-                </td>
-                <td>
-                  <StatusChip
-                    label={r.status}
-                    variant={STATUS_VARIAN[r.status] ?? "neutral"}
-                  />
-                </td>
-              </tr>
-              );
-            })
-          )}
-        </DataTable>
+                </span>,
+                <StatusChip label={r.status} variant={STATUS_VARIAN[r.status] ?? "neutral"} />,
+              ],
+            };
+          })}
+        />
       </div>
     </AppShell>
   );

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../../lib/auth";
 import { prisma } from "../../../../../lib/prisma";
 import { KATEGORI_DOSEN } from "../../../../../lib/kategoriDosen";
-import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../../../lib/fase";
+import { faseAktif, bolehUbahBukti, FASE_LABEL } from "../../../../../lib/fase";
 import AppShell from "../../../../../components/AppShell";
 import BuktiKegiatanDetail from "../../../../../components/BuktiKegiatanDetail";
 import { tampilNilai } from "../../../../../lib/tampilNilai";
@@ -56,6 +56,7 @@ export default async function BuktiKategoriPage({
     include: {
       lkd: { include: { periode_bkd: true } },
       referensi_kegiatan: true,
+      hasil_penilaian: { select: { status: true } },
       unggahan_dokumen: { select: { file_url: true } },
       dokumen_kegiatan: { orderBy: { tanggal_upload: "desc" } },
     },
@@ -63,7 +64,7 @@ export default async function BuktiKategoriPage({
   if (!kegiatan || kegiatan.lkd.id_pengguna !== session!.user.id) notFound();
 
   const fase = faseAktif(kegiatan.lkd.periode_bkd);
-  const bolehUnggah = !kegiatan.lkd.simpan_permanen && bolehDosenInput(fase);
+  const bolehUnggah = bolehUbahBukti(kegiatan);
   const jalurDetail = `/dosen/${params.kategori}/${params.id}`;
 
   return (

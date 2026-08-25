@@ -4,7 +4,7 @@ import { useState } from "react";
 import StatusChip from "./StatusChip";
 import SubmitButton from "./SubmitButton";
 import PratinjauPdf from "./PratinjauPdf";
-import { IconDoc } from "./Icons";
+import { IconChevronRight, IconDoc } from "./Icons";
 import { periksaBukti, accVerifikasiBukti } from "../app/asesor/penilaian/[id]/actions";
 
 /** Label enum peran parser -> sebutan baku aplikasi. */
@@ -138,10 +138,14 @@ export default function BarisDokumenBukti({
               <button
                 type="button"
                 onClick={() => setBuka(!buka)}
-                className="inline-flex items-center gap-1 rounded-md border border-line bg-white px-2 py-1 text-[10px] font-medium text-muted hover:text-navy"
+                aria-expanded={buka}
+                title={buka ? "Tutup detail verifikasi" : "Detail verifikasi"}
+                className="inline-flex items-center rounded-md border border-line bg-white p-1.5 text-muted hover:text-navy"
               >
-                Detail
-                <span className={`transition-transform ${buka ? "rotate-180" : ""}`}>▾</span>
+                <IconChevronRight
+                  size={12}
+                  className={`transition-transform ${buka ? "-rotate-90" : "rotate-90"}`}
+                />
               </button>
             )}
           </div>

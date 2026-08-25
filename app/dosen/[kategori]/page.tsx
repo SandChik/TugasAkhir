@@ -7,8 +7,7 @@ import { KATEGORI_DOSEN } from "../../../lib/kategoriDosen";
 import { KOLOM_KATEGORI } from "../../../lib/kolomKategori";
 import { faseAktif, bolehDosenInput, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
-import InfoBox from "../../../components/InfoBox";
+import TabelData from "../../../components/TabelData";
 import { IconDoc, IconEye, IconPencil, IconTrash } from "../../../components/Icons";
 import { hapusKegiatan } from "../_shared/kegiatanActions";
 
@@ -66,86 +65,71 @@ export default async function KategoriPage({ params }: { params: { kategori: str
         </>
       }
     >
-      {kategori.sumberPenugasan && (
-        <InfoBox>
-          <b>Info:</b> Data {kategori.label.toLowerCase()} berasal dari penugasan institusi —
-          diinput admin atau hasil ekstraksi dokumen SK/ST yang diunggah admin, sehingga tidak dapat
-          ditambah/diedit manual. Klaim data ini ke laporan melalui{" "}
-          <b>Layanan BKD → Rekap Kegiatan</b>.
-        </InfoBox>
-      )}
-
       <div className="mt-4">
-        <DataTable
-          columns={[
+        <TabelData
+          placeholderCari="Cari kegiatan…"
+          kosong={
+            kategori.sumberPenugasan
+              ? "Belum ada data penugasan dari admin maupun dokumen SK/ST untuk periode ini."
+              : "Belum ada kegiatan."
+          }
+          kolom={[
             { label: "No.", width: "50px" },
-            ...kolom.map((c) => ({ label: c.label, width: c.width })),
+            ...kolom.map((c) => ({ label: c.label, width: c.width, urut: true })),
             { label: "Rubrik BKD", width: "120px" },
             { label: "Aksi", width: "130px" },
           ]}
-        >
-          {kegiatan.length === 0 ? (
-            <tr>
-              <td colSpan={kolom.length + 3} className="!text-center !text-crumb">
-                {kategori.sumberPenugasan
-                  ? "Belum ada data penugasan dari admin maupun dokumen SK/ST untuk periode ini."
-                  : "Belum ada kegiatan. Gunakan tombol Tambah kegiatan."}
-              </td>
-            </tr>
-          ) : (
-            kegiatan.map((k: any, i: number) => {
-              const manual = k.sumber_data === "manual";
-              return (
-                <tr key={k.id_kegiatan}>
-                  <td>{i + 1}</td>
-                  {kolom.map((c) => (
-                    <td key={c.label}>{c.get(k, ctx)}</td>
-                  ))}
-                  <td className="!text-primary">Rubrik BKD 2021</td>
-                  <td>
-                    <div className="flex items-center gap-1.5">
+          baris={kegiatan.map((k: any, i: number) => {
+            const manual = k.sumber_data === "manual";
+            const isi = kolom.map((c) => c.get(k, ctx));
+            return {
+              id: k.id_kegiatan,
+              nilai: [i + 1, ...isi, "Rubrik BKD 2021", null],
+              sel: [
+                i + 1,
+                ...isi,
+                <span className="text-primary">Rubrik BKD 2021</span>,
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
+                    className="rounded-md bg-primary-soft p-2 text-primary"
+                    title="Lihat detail"
+                  >
+                    <IconEye size={13} />
+                  </Link>
+                  <Link
+                    href={`/dosen/${params.kategori}/${k.id_kegiatan}/bukti`}
+                    className="rounded-md bg-primary p-2 text-white"
+                    title="Bukti kegiatan"
+                  >
+                    <IconDoc size={13} />
+                  </Link>
+                  {manual && bisaInput && (
+                    <>
                       <Link
-                        href={`/dosen/${params.kategori}/${k.id_kegiatan}`}
-                        className="rounded-md bg-primary-soft p-2 text-primary"
-                        title="Lihat detail"
+                        href={`/dosen/${params.kategori}/${k.id_kegiatan}/edit`}
+                        className="rounded-md bg-head-bg p-2 text-muted"
+                        title="Edit kegiatan"
                       >
-                        <IconEye size={13} />
+                        <IconPencil size={13} />
                       </Link>
-                      <Link
-                        href={`/dosen/${params.kategori}/${k.id_kegiatan}/bukti`}
-                        className="rounded-md bg-primary p-2 text-white"
-                        title="Bukti kegiatan"
-                      >
-                        <IconDoc size={13} />
-                      </Link>
-                      {manual && bisaInput && (
-                        <>
-                          <Link
-                            href={`/dosen/${params.kategori}/${k.id_kegiatan}/edit`}
-                            className="rounded-md bg-head-bg p-2 text-muted"
-                            title="Edit kegiatan"
-                          >
-                            <IconPencil size={13} />
-                          </Link>
-                          <form action={hapusKegiatan}>
-                            <input type="hidden" name="slug" value={params.kategori} />
-                            <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
-                            <button
-                              className="rounded-md bg-danger-soft p-2 text-danger"
-                              title="Hapus kegiatan"
-                            >
-                              <IconTrash size={13} />
-                            </button>
-                          </form>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
-          )}
-        </DataTable>
+                      <form action={hapusKegiatan}>
+                        <input type="hidden" name="slug" value={params.kategori} />
+                        <input type="hidden" name="id_kegiatan" value={k.id_kegiatan} />
+                        <button
+                          className="rounded-md bg-danger-soft p-2 text-danger"
+                          title="Hapus kegiatan"
+                        >
+                          <IconTrash size={13} />
+                        </button>
+                      </form>
+                    </>
+                  )}
+                </div>,
+              ],
+            };
+          })}
+        />
       </div>
     </AppShell>
   );

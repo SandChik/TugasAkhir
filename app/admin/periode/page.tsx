@@ -1,14 +1,23 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-import { faseAktif, FASE_LABEL } from "../../../lib/fase";
+import {
+  faseAktif,
+  rentangFase,
+  FASE_LABEL,
+  FIELD_TANGGAL,
+  type KunciTanggal,
+} from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
-import StatusChip from "../../../components/StatusChip";
-import { createPeriode, aktifkanPeriode, nonaktifkanPeriode, setFaseOverride } from "./actions";
+import TabelData from "../../../components/TabelData";
+import BarisPeriode from "../../../components/BarisPeriode";
+import { createPeriode } from "./actions";
 
 const fmt = (d: Date | null) =>
-  d ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(d) : "-";
+  d ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(d) : "-";
+
+/** Nilai untuk input type=date: tanggal disimpan sebagai date murni (UTC). */
+const iso = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 
 const dInput = "mt-1 w-full rounded-md border border-line px-2.5 py-2 text-[11px] outline-none focus:border-primary";
 
@@ -72,75 +81,43 @@ export default async function PeriodePage() {
       </form>
 
       <div className="mt-4">
-        <DataTable
-          columns={[
-            { label: "Nama Periode", width: "170px" },
-            { label: "Fase Aktif", width: "230px" },
-            { label: "Rentang Penilaian", width: "200px" },
-            { label: "Status", width: "100px" },
-            { label: "Aksi", width: "260px" },
+        <TabelData
+          kosong="Belum ada periode BKD."
+          kolom={[
+            { label: "Nama Periode", width: "170px", urut: true },
+            { label: "Fase Aktif", width: "230px", filter: true },
+            { label: "Rentang Fase", width: "200px" },
+            { label: "Status", width: "100px", filter: true },
+            { label: "Aksi", width: "220px" },
           ]}
-        >
-          {periode.map((p: any) => {
+          baris={periode.map((p: any) => {
             const fase = faseAktif(p);
-            return (
-              <tr key={p.id_periode}>
-                <td>{p.nama_periode}</td>
-                <td>
-                  <StatusChip label={FASE_LABEL[fase]} variant="primary" />
-                  {p.fase_override && (
-                    <span className="ml-1 text-[9px] text-warning">(override)</span>
-                  )}
-                </td>
-                <td className="!text-[10px]">
-                  {fmt(p.penilaian_mulai)} — {fmt(p.penilaian_selesai)}
-                </td>
-                <td>
-                  <StatusChip
-                    label={p.status === "aktif" ? "Aktif" : "Nonaktif"}
-                    variant={p.status === "aktif" ? "success" : "neutral"}
-                  />
-                </td>
-                <td>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {p.status === "aktif" ? (
-                      <form action={nonaktifkanPeriode}>
-                        <input type="hidden" name="id" value={p.id_periode} />
-                        <button className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[10px] font-medium text-danger">
-                          Nonaktifkan
-                        </button>
-                      </form>
-                    ) : (
-                      <form action={aktifkanPeriode}>
-                        <input type="hidden" name="id" value={p.id_periode} />
-                        <button className="rounded-md bg-[#e6f4ec] px-2.5 py-1.5 text-[10px] font-medium text-success-tx">
-                          Aktifkan
-                        </button>
-                      </form>
-                    )}
-                    <form action={setFaseOverride} className="flex items-center gap-1">
-                      <input type="hidden" name="id" value={p.id_periode} />
-                      <select
-                        name="fase"
-                        defaultValue={p.fase_override ?? ""}
-                        className="rounded border border-line bg-white px-1.5 py-1 text-[10px]"
-                      >
-                        <option value="">(auto tanggal)</option>
-                        <option value="pengisian">Pengisian</option>
-                        <option value="penilaian">Penilaian</option>
-                        <option value="perbaikan">Perbaikan</option>
-                        <option value="selesai">Selesai</option>
-                      </select>
-                      <button className="rounded bg-primary-soft px-2 py-1 text-[10px] font-medium text-primary">
-                        Set
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            );
+            const { mulai, selesai } = rentangFase(p, fase);
+            const status = p.status === "aktif" ? "Aktif" : "Nonaktif";
+            const tanggal = Object.fromEntries(
+              FIELD_TANGGAL.map(([k]) => [k, iso(p[k])]),
+            ) as Record<KunciTanggal, string>;
+            return {
+              id: p.id_periode,
+              nilai: [p.nama_periode, FASE_LABEL[fase], null, status, null],
+              elemen: (
+                <BarisPeriode
+                  p={{
+                    id: p.id_periode,
+                    nama: p.nama_periode,
+                    tahun_ajaran: p.tahun_ajaran ?? "",
+                    semester: p.semester ?? "Ganjil",
+                    status: p.status,
+                    fase_override: p.fase_override ?? "",
+                    fase_label: FASE_LABEL[fase],
+                    rentang: mulai || selesai ? `${fmt(mulai)} s/d ${fmt(selesai)}` : "-",
+                    tanggal,
+                  }}
+                />
+              ),
+            };
           })}
-        </DataTable>
+        />
       </div>
     </AppShell>
   );

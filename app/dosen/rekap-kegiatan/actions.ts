@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-import { SEKSI_BKD } from "../../../lib/seksiBkd";
+import { SEKSI_BKD, SEKSI_WAJIB } from "../../../lib/seksiBkd";
 import { faseAktif, bolehDosenInput } from "../../../lib/fase";
 import { withFlash } from "../../../lib/flash";
 
@@ -65,7 +65,10 @@ export async function simpanSementara(formData: FormData) {
   );
 }
 
-/** Kunci LKD agar dinilai asesor (butuh minimal 1 kegiatan diklaim). */
+/**
+ * Kunci LKD agar dinilai asesor. Butuh minimal 1 kegiatan diklaim, dan tiap
+ * seksi wajib (`SEKSI_WAJIB`) harus punya minimal 1 kegiatan diklaim.
+ */
 export async function simpanPermanen(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session) return;
@@ -77,6 +80,20 @@ export async function simpanPermanen(formData: FormData) {
 
   const jumlah = await prisma.kegiatan.count({ where: { id_lkd: idLkd, diklaim: true } as any });
   if (jumlah === 0) redirect(url(idLkd, "pendidikan", { err: "Klaim minimal satu kegiatan dahulu" }));
+
+  const kurang: string[] = [];
+  for (const seksi of SEKSI_WAJIB) {
+    const terisi = await prisma.kegiatan.count({
+      where: {
+        id_lkd: idLkd,
+        diklaim: true,
+        referensi_kegiatan: { kode_rule: { in: seksi.kodeRules } },
+      } as any,
+    });
+    if (terisi === 0) kurang.push(seksi.letter);
+  }
+  if (kurang.length > 0)
+    redirect(url(idLkd, "pendidikan", { err: `Seksi wajib belum terisi: ${kurang.join(", ")}` }));
 
   await prisma.lkd.update({
     where: { id_lkd: idLkd },

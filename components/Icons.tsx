@@ -120,3 +120,51 @@ export const IconBack = ({ size, className }: P) => (
     <path d="M19 12H5M12 19l-7-7 7-7" />
   </svg>
 );
+
+export const IconSearch = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </svg>
+);
+
+export const IconChevronLeft = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="m15 18-6-6 6-6" />
+  </svg>
+);
+
+export const IconChevronRight = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="m9 18 6-6-6-6" />
+  </svg>
+);
+
+export const IconSort = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M8 5v14M8 19l-3-3M8 5l3 3M16 19V5M16 5l3 3M16 19l-3-3" />
+  </svg>
+);
+
+export const IconPower = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M12 2v10" />
+    <path d="M18.4 6.6a9 9 0 1 1-12.8 0" />
+  </svg>
+);
+
+export const IconWallet = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v3" />
+    <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3" />
+    <path d="M21 10h-4a2 2 0 0 0 0 4h4v-4z" />
+  </svg>
+);
+
+export const IconClipboardCheck = ({ size, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <rect x="8" y="2" width="8" height="4" rx="1" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+    <path d="m9 14 2 2 4-4" />
+  </svg>
+);
