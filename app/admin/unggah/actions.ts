@@ -77,7 +77,7 @@ export async function unggahDokumen(formData: FormData) {
   const [periode, dosenSistem] = await Promise.all([
     prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
     prisma.pengguna.findMany({
-      where: { peran: "dosen", aktif: true },
+      where: { peran: { in: ["dosen", "asesor"] }, aktif: true },
       select: { id_pengguna: true, nama: true, nip: true, nidn: true, kode_dosen: true },
     }),
   ]);
@@ -289,7 +289,7 @@ export async function terapkanUnggahan(formData: FormData) {
 
   const [dosenSistem, referensi] = await Promise.all([
     prisma.pengguna.findMany({
-      where: { peran: "dosen", aktif: true },
+      where: { peran: { in: ["dosen", "asesor"] }, aktif: true },
       select: { id_pengguna: true, nama: true, nip: true, nidn: true, kode_dosen: true },
     }),
     prisma.referensi_kegiatan.findMany({

@@ -4,10 +4,9 @@ import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { faseAktif, FASE_LABEL } from "../../../lib/fase";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
-import InfoBox from "../../../components/InfoBox";
+import TabelData from "../../../components/TabelData";
 import { buatLkd } from "./actions";
-import { IconCheck, IconPencil } from "../../../components/Icons";
+import { IconEye, IconPlus } from "../../../components/Icons";
 
 /** Layanan BKD - Rekap Kegiatan (mockup 142:2): status laporan per semester. */
 export default async function RekapKegiatanPage() {
@@ -30,67 +29,71 @@ export default async function RekapKegiatanPage() {
       title="Layanan BKD"
       subtitle="Rekap kegiatan dan status penilaian BKD per semester"
     >
-      <InfoBox>
-        <b>Info:</b> Kegiatan diisi pada <b>Laporan Kinerja</b>. Rencana kerja terisi otomatis
-        setelah laporan pada semester tersebut divalidasi asesor.
-      </InfoBox>
-
       <div className="mt-4">
-        <DataTable
-          columns={[
-            { label: "Semester", width: "150px" },
-            { label: "Fase", width: "180px" },
-            { label: "Simpulan Final", width: "140px" },
-            { label: "Rencana", width: "200px" },
-            { label: "Laporan", width: "230px" },
+        <TabelData
+          kosong="Belum ada periode BKD."
+          kolom={[
+            { label: "Semester", width: "150px", urut: true },
+            { label: "Fase", width: "180px", filter: true },
+            { label: "Simpulan Final", width: "140px", filter: true },
+            { label: "Rencana", width: "110px" },
+            { label: "Laporan", width: "110px" },
           ]}
-        >
-          {periode.map((p: any) => {
+          baris={periode.map((p: any) => {
             const rencana = byPeriode(p.id_periode, "rencana");
             const laporan = byPeriode(p.id_periode, "laporan");
             const s = laporan?.simpulan;
             const aktif = p.status === "aktif";
-            return (
-              <tr key={p.id_periode}>
-                <td>{p.nama_periode}</td>
-                <td className="!text-[10.5px] !text-muted">{FASE_LABEL[faseAktif(p)]}</td>
-                <td className={s?.status_final ? "!text-success-tx" : "!text-crumb"}>
-                  {s?.status_final === "M" ? "Memenuhi" : s?.status_final === "TM" ? "Tidak Memenuhi" : "-"}
-                </td>
-                <td>
-                  {rencana ? (
-                    <Link
-                      href={`/dosen/rekap-kegiatan/${rencana.id_lkd}?tab=pendidikan`}
-                      className="inline-block rounded-md bg-primary px-3 py-1.5 text-[10.5px] font-medium text-white"
+            const simpulan =
+              s?.status_final === "M"
+                ? "Memenuhi"
+                : s?.status_final === "TM"
+                  ? "Tidak Memenuhi"
+                  : "-";
+            return {
+              id: p.id_periode,
+              nilai: [p.nama_periode, FASE_LABEL[faseAktif(p)], simpulan, null, null],
+              sel: [
+                p.nama_periode,
+                <span className="text-[10.5px] text-muted">{FASE_LABEL[faseAktif(p)]}</span>,
+                <span className={s?.status_final ? "text-success-tx" : "text-crumb"}>
+                  {simpulan}
+                </span>,
+                rencana ? (
+                  <Link
+                    href={`/dosen/rekap-kegiatan/${rencana.id_lkd}?tab=pendidikan`}
+                    title="Lihat rencana kerja"
+                    className="inline-block rounded-md bg-primary p-2 text-white hover:bg-[#255cc2]"
+                  >
+                    <IconEye size={13} />
+                  </Link>
+                ) : (
+                  <span className="text-[10.5px] text-crumb">Belum tersedia</span>
+                ),
+                laporan ? (
+                  <Link
+                    href={`/dosen/rekap-kegiatan/${laporan.id_lkd}?tab=pendidikan`}
+                    title="Lihat laporan kinerja"
+                    className="inline-block rounded-md bg-success-deep p-2 text-white hover:opacity-90"
+                  >
+                    <IconEye size={13} />
+                  </Link>
+                ) : aktif ? (
+                  <form action={buatLkd}>
+                    <button
+                      title="Buat laporan kinerja"
+                      className="rounded-md bg-warning-deep p-2 text-white hover:opacity-90"
                     >
-                      <span className="inline-flex items-center gap-1.5"><IconCheck size={11}/> Lihat Rencana Kerja</span>
-                    </Link>
-                  ) : (
-                    <span className="text-[10.5px] text-crumb">Belum tersedia</span>
-                  )}
-                </td>
-                <td>
-                  {laporan ? (
-                    <Link
-                      href={`/dosen/rekap-kegiatan/${laporan.id_lkd}?tab=pendidikan`}
-                      className="inline-block rounded-md bg-success-deep px-3 py-1.5 text-[10.5px] font-medium text-white"
-                    >
-                      <span className="inline-flex items-center gap-1.5"><IconPencil size={11}/> Lihat Laporan Kinerja</span>
-                    </Link>
-                  ) : aktif ? (
-                    <form action={buatLkd}>
-                      <button className="rounded-md bg-warning-deep px-3 py-1.5 text-[10.5px] font-medium text-white">
-                        <span className="inline-flex items-center gap-1.5"><IconPencil size={11}/> Isi Laporan Kinerja</span>
-                      </button>
-                    </form>
-                  ) : (
-                    <span className="text-[10.5px] text-crumb">-</span>
-                  )}
-                </td>
-              </tr>
-            );
+                      <IconPlus size={13} />
+                    </button>
+                  </form>
+                ) : (
+                  <span className="text-[10.5px] text-crumb">-</span>
+                ),
+              ],
+            };
           })}
-        </DataTable>
+        />
       </div>
     </AppShell>
   );

@@ -8,7 +8,13 @@ import StatusChip, { type ChipVariant } from "../../../components/StatusChip";
 import StatTile from "../../../components/StatTile";
 import SubmitButton from "../../../components/SubmitButton";
 import FormUnggahIsian from "../../../components/FormUnggahIsian";
-import { IconUpload, IconEye, IconTrash, IconDoc } from "../../../components/Icons";
+import {
+  IconUpload,
+  IconEye,
+  IconTrash,
+  IconDoc,
+  IconChevronRight,
+} from "../../../components/Icons";
 import PratinjauPdf from "../../../components/PratinjauPdf";
 import {
   JENIS_UNGGAHAN,
@@ -65,25 +71,51 @@ function namaJenis(u: any): string {
   return b === "ta" ? "SK Pembimbing Tugas Akhir" : "ST Pembimbing PKL";
 }
 
-/** Ringkasan parser -> teks pendek untuk kolom tabel. */
-function ringkasanTeks(r: any): string {
-  if (!r || typeof r !== "object") return "-";
-  const urut = [
-    ["terekstrak", "baris"],
-    ["mahasiswa", "mahasiswa"],
-    ["kelompok", "kelompok"],
-    ["grup_sidang", "sidang"],
-    ["total_mahasiswa", "mahasiswa"],
-    ["jumlah_mk", "MK"],
-    ["baris_tergabung", "baris SK"],
-    ["jumlah_dosen", "dosen"],
-    ["jumlah_dosen_jtk", "dosen JTK"],
-    ["ditolak", "ditolak"],
-  ] as const;
-  const bagian = urut
-    .filter(([k]) => typeof r[k] === "number")
-    .map(([k, label]) => `${r[k]} ${label}`);
-  return bagian.length ? bagian.join(" · ") : "-";
+const URUT_RINGKASAN = [
+  ["terekstrak", "baris"],
+  ["mahasiswa", "mahasiswa"],
+  ["kelompok", "kelompok"],
+  ["grup_sidang", "sidang"],
+  ["total_mahasiswa", "mahasiswa"],
+  ["jumlah_mk", "MK"],
+  ["baris_tergabung", "baris SK"],
+  ["jumlah_dosen", "dosen"],
+  ["jumlah_dosen_jtk", "dosen JTK"],
+  ["ditolak", "ditolak"],
+] as const;
+
+/** Ringkasan parser -> pasangan angka + label, satu chip per angka. */
+function ringkasanBagian(r: any) {
+  if (!r || typeof r !== "object") return [];
+  return URUT_RINGKASAN.filter(([k]) => typeof r[k] === "number").map(([k, label]) => ({
+    kunci: k,
+    nilai: r[k] as number,
+    label,
+  }));
+}
+
+/** Kolom "Hasil ekstraksi": satu chip per angka supaya tidak jadi satu baris panjang. */
+function selRingkasan(r: any) {
+  const bagian = ringkasanBagian(r);
+  if (bagian.length === 0) return <span className="text-crumb">-</span>;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {bagian.map((b) => {
+        const tolak = b.kunci === "ditolak" && b.nilai > 0;
+        return (
+          <span
+            key={b.kunci}
+            className={`inline-flex items-baseline gap-1 rounded border px-1.5 py-0.5 text-[10px] leading-4 ${
+              tolak ? "border-danger/40 bg-danger-soft text-danger" : "border-line bg-zebra text-muted"
+            }`}
+          >
+            <b className={`text-[11px] font-semibold ${tolak ? "" : "text-cell"}`}>{b.nilai}</b>
+            {b.label}
+          </span>
+        );
+      })}
+    </div>
+  );
 }
 
 /** Fitur admin: unggah SK & ST lalu ekstrak lewat layanan parser dokumen. */
@@ -235,53 +267,60 @@ export default async function UnggahPage({
 
       {sehat && !sehat.vlm_aktif && (
         <div className="mt-3 rounded-[10px] border border-line bg-info-bg px-4 py-3 text-[11px] leading-snug text-info-tx">
-          <b>Parser VLM nonaktif</b> (<code>ROUTER_API_KEY</code> kosong di layanan): SK Pembina
-          Ormawa dan Artefak Dokumen Umum belum bisa diekstrak. Tiga jenis ST lain berjalan
-          offline dan tetap dapat dipakai.
+          <b>Parser VLM nonaktif.</b> SK Pembina Ormawa dan Artefak Dokumen Umum belum bisa
+          diekstrak.
         </div>
       )}
 
-      {/* ---- Langkah 1: form unggah ---- */}
-      <form action={unggahDokumen} className="mt-4 rounded-[10px] border border-line">
-        <div className="border-b border-line bg-head-bg px-4 py-2.5">
-          <h2 className="text-[12px] font-semibold text-navy">Unggah berkas</h2>
-          <p className="text-[10.5px] text-muted">
-            Format PDF, maksimal 25 MB per berkas, boleh banyak berkas sekaligus.
-          </p>
-        </div>
+      {/* ---- Langkah 1: form unggah, terlipat sampai admin membukanya ---- */}
+      <details className="group mt-4 overflow-hidden rounded-[10px] border border-line">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 bg-head-bg px-4 py-2.5 [&::-webkit-details-marker]:hidden">
+          <span>
+            <span className="block text-[12px] font-semibold text-navy">Unggah berkas</span>
+            <span className="block text-[10.5px] text-muted">
+              Format PDF, maksimal 25 MB per berkas, boleh banyak berkas sekaligus.
+            </span>
+          </span>
+          <IconChevronRight
+            size={14}
+            className="shrink-0 text-muted transition-transform group-open:rotate-90"
+          />
+        </summary>
 
-        <FormUnggahIsian
-          daftarJenis={JENIS_UNGGAHAN.map((j) => ({
-            key: j.key,
-            label: j.label,
-            mesin: j.mesin,
-            petunjukTeks: j.petunjukTeks,
-          }))}
-        />
+        <form action={unggahDokumen} className="border-t border-line">
+          <FormUnggahIsian
+            daftarJenis={JENIS_UNGGAHAN.map((j) => ({
+              key: j.key,
+              label: j.label,
+              mesin: j.mesin,
+              petunjukTeks: j.petunjukTeks,
+            }))}
+          />
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
-          <p className="text-[11px] text-muted">
-            {periode ? (
-              <>
-                Periode tujuan: <b className="text-cell">{periode.nama_periode}</b>
-              </>
-            ) : (
-              "Belum ada periode aktif — hasil ekstraksi tidak dapat diterapkan."
-            )}
-          </p>
-          <div className="flex items-center gap-3">
-            {alasanTombol && <span className="text-[10.5px] text-danger">{alasanTombol}</span>}
-            <SubmitButton
-              disabled={!layananSiap}
-              icon={<IconUpload size={13} />}
-              labelProses="Mengekstrak berkas…"
-              title={alasanTombol}
-            >
-              Unggah &amp; Ekstrak
-            </SubmitButton>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
+            <p className="text-[11px] text-muted">
+              {periode ? (
+                <>
+                  Periode tujuan: <b className="text-cell">{periode.nama_periode}</b>
+                </>
+              ) : (
+                "Belum ada periode aktif — hasil ekstraksi tidak dapat diterapkan."
+              )}
+            </p>
+            <div className="flex items-center gap-3">
+              {alasanTombol && <span className="text-[10.5px] text-danger">{alasanTombol}</span>}
+              <SubmitButton
+                disabled={!layananSiap}
+                icon={<IconUpload size={13} />}
+                labelProses="Mengekstrak berkas…"
+                title={alasanTombol}
+              >
+                Unggah &amp; Ekstrak
+              </SubmitButton>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </details>
 
       {/* ---- Riwayat unggahan ---- */}
       <div className="mt-6 flex items-end justify-between gap-3">
@@ -370,7 +409,7 @@ export default async function UnggahPage({
             { label: "Hasil ekstraksi", width: "210px" },
             { label: "Dosen dikenali", width: "130px" },
             { label: "Status", width: "155px" },
-            { label: "Aksi", width: "165px" },
+            { label: "Aksi", width: "90px" },
           ]}
         >
           {daftar.length === 0 ? (
@@ -426,7 +465,7 @@ export default async function UnggahPage({
                     )}
                   </td>
                   <td className="!text-[11px]">{u.nomor_surat ?? "-"}</td>
-                  <td className="!text-[11px] !text-muted">{ringkasanTeks(u.ringkasan)}</td>
+                  <td>{selRingkasan(u.ringkasan)}</td>
                   <td>
                     {u.status === "gagal" ? (
                       <span className="text-crumb">-</span>
@@ -468,10 +507,10 @@ export default async function UnggahPage({
                       {u.status !== "gagal" && (
                         <Link
                           href={`/admin/unggah/${u.id_unggahan}`}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-primary-soft px-3 py-1.5 text-[11px] font-medium text-primary hover:bg-[#dde9fb]"
+                          title={u.status === "diterapkan" ? "Lihat hasil ekstraksi" : "Periksa hasil ekstraksi"}
+                          className="inline-flex items-center rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]"
                         >
-                          <IconEye size={12} />
-                          {u.status === "diterapkan" ? "Lihat" : "Periksa"}
+                          <IconEye size={13} />
                         </Link>
                       )}
                       {u.status !== "diterapkan" && (
@@ -479,12 +518,13 @@ export default async function UnggahPage({
                           <input type="hidden" name="id_unggahan" value={u.id_unggahan} />
                           <SubmitButton
                             variant="danger"
-                            className="!px-3 !py-1.5 !text-[11px]"
-                            icon={<IconTrash size={12} />}
-                            labelProses="Menghapus…"
+                            className="!p-2"
+                            title="Hapus unggahan"
+                            icon={<IconTrash size={13} />}
+                            labelProses=""
                             konfirmasi={`Hapus unggahan "${u.nama_file}"? Hasil ekstraksi dan koreksinya ikut hilang. Berkas PDF tetap tersimpan di arsip.`}
                           >
-                            Hapus
+                            {""}
                           </SubmitButton>
                         </form>
                       )}

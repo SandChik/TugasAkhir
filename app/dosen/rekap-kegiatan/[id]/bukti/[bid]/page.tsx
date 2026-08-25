@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/prisma";
-import { faseAktif, bolehDosenInput } from "../../../../../../lib/fase";
+import { bolehUbahBukti } from "../../../../../../lib/fase";
 import AppShell from "../../../../../../components/AppShell";
 import BuktiKegiatanDetail from "../../../../../../components/BuktiKegiatanDetail";
 
@@ -19,6 +19,7 @@ export default async function LkdBuktiPage({
     include: {
       lkd: { include: { periode_bkd: true } },
       referensi_kegiatan: true,
+      hasil_penilaian: { select: { status: true } },
       unggahan_dokumen: { select: { file_url: true } },
       dokumen_kegiatan: { orderBy: { tanggal_upload: "desc" } },
     },
@@ -30,9 +31,9 @@ export default async function LkdBuktiPage({
   )
     notFound();
 
-  const editable =
-    !kegiatan.lkd.simpan_permanen && bolehDosenInput(faseAktif(kegiatan.lkd.periode_bkd));
+  const editable = bolehUbahBukti(kegiatan);
   const back = `/dosen/rekap-kegiatan/${params.id}?tab=pendidikan`;
+  const halamanIni = `/dosen/rekap-kegiatan/${params.id}/bukti/${params.bid}`;
 
   return (
     <AppShell
@@ -44,7 +45,7 @@ export default async function LkdBuktiPage({
     >
       <BuktiKegiatanDetail
         kegiatan={kegiatan}
-        returnTo={back}
+        returnTo={halamanIni}
         backHref={back}
         canUpload={editable}
       />

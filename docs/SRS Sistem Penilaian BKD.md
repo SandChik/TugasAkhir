@@ -55,6 +55,7 @@
 [III.2.9	Penilaian dan Pengesahan Asesor (NIL)](#penilaian-dan-pengesahan-asesor-nil)
 [III.2.10	Simpulan BKD dan Penerbitan Token (TOK)](#simpulan-bkd-dan-penerbitan-token-tok)
 [III.2.11	Koreksi Token dan Pelaporan (LAP)](#pelaporan-dan-penelusuran-lap)
+[III.2.12	Verifikasi Keaslian Dokumen Bukti (VER)](#verifikasi-keaslian-dokumen-bukti-ver)
 [III.3	Performance Requirements](#performance-requirements)
 [III.4	Logical Database Requirements](#logical-database-requirements)
 [III.5	Design Constraints](#design-constraints)
@@ -86,7 +87,7 @@ Dokumen ini merupakan lampiran dari Laporan Tugas Akhir dengan judul “Pengemba
 
 Produk yang dispesifikasikan dalam dokumen ini adalah LedgerDik, sebuah sistem berbasis web yang terintegrasi dengan *smart contract* pada jaringan *blockchain* berbasis *Ethereum Virtual Machine* (EVM) Layer-2. Sistem berfungsi mengotomatisasi perhitungan kredit kegiatan BKD unsur pendidikan sesuai Pedoman Operasional Beban Kerja Dosen (PO BKD) tahun 2021, serta mencatat hasil penilaian yang telah disahkan asesor pada *blockchain* sebagai token kredit yang melekat pada dosen.
 
-Sistem menyediakan tiga kapabilitas utama yang saling melengkapi. Pertama, ekstraksi parameter kegiatan langsung dari berkas Surat Keputusan (SK) dan Surat Tugas (ST), sehingga parameter yang diproses berasal dari dokumen sumber dan bukan dari pengetikan ulang. Kedua, eksekusi aturan penilaian PO BKD 2021 melalui *smart contract* sebagai mesin aturan deterministik, sehingga hasil perhitungan konsisten lintas asesor dan lintas waktu. Ketiga, penerbitan kredit yang telah disahkan dua asesor sebagai token ERC-20 bersifat *non-transferable* beserta pencatatan *hash* simpulan penilaian, sehingga riwayat penerbitan dan koreksi kredit dapat ditelusuri melalui *transaction hash*.
+Sistem menyediakan empat kapabilitas utama yang saling melengkapi. Pertama, ekstraksi parameter kegiatan langsung dari berkas Surat Keputusan (SK) dan Surat Tugas (ST), sehingga parameter yang diproses berasal dari dokumen sumber dan bukan dari pengetikan ulang. Kedua, eksekusi aturan penilaian PO BKD 2021 melalui *smart contract* sebagai mesin aturan deterministik, sehingga hasil perhitungan konsisten lintas asesor dan lintas waktu. Ketiga, penerbitan kredit yang telah disahkan dua asesor sebagai token ERC-20 bersifat *non-transferable* beserta pencatatan *hash* simpulan penilaian, sehingga riwayat penerbitan dan koreksi kredit dapat ditelusuri melalui *transaction hash*. Keempat, pemeriksaan keaslian dokumen bukti pada kegiatan pembimbingan melalui pembacaan nama dan peran pada dokumen, sehingga bukti yang tidak memuat nama pengunggah atau menuliskan peran yang berbeda dari yang diklaim tersaji sebagai temuan bagi asesor.
 
 Manfaat utama yang ditargetkan adalah hilangnya variasi hasil perhitungan yang selama ini timbul dari kalkulasi manual antar-asesor, berkurangnya ketergantungan pada pembacaan manual dokumen penugasan, serta tersedianya mekanisme penelusuran hasil penilaian yang dapat dilakukan secara mandiri tanpa bergantung pada administrator basis data institusi.
 
@@ -97,7 +98,7 @@ Hal-hal berikut secara eksplisit berada di luar lingkup (*out of scope*) sistem 
 3. Integrasi langsung dengan sistem akademik resmi perguruan tinggi maupun sistem BKD nasional. Sinkronisasi dengan sumber data eksternal disediakan sebagai simulasi prototipe, bukan sebagai integrasi produksi.
 4. *Deployment smart contract* ke jaringan produksi. Penempatan kontrak dibatasi pada jaringan uji Base Sepolia.
 5. Integrasi identitas formal seperti *single sign-on* institusi.
-6. Verifikasi keaslian dokumen SK dan ST, seperti pemeriksaan tanda tangan atau stempel.
+6. Verifikasi keabsahan formal dokumen, yaitu pemeriksaan tanda tangan, stempel, dan nomor surat terhadap unit penerbitnya. Pemeriksaan yang disediakan sistem terbatas pada kesesuaian isi dokumen bukti terhadap identitas dan peran yang diklaim, bukan pada keabsahan penerbitan dokumen tersebut.
 7. Pengelolaan dompet kripto mandiri oleh dosen. Alamat *wallet* diturunkan dan dikendalikan peladen sebagai *wallet* kustodian.
 8. Aspek infrastruktur jaringan *blockchain* seperti mekanisme konsensus, pengelolaan *node*, dan optimasi performa jaringan.
 
@@ -112,18 +113,23 @@ Tabel I.1. Definisi Istilah
 | Aturan (*rule*) | Satu butir ketentuan perhitungan kredit pada rubrik PO BKD 2021 yang memiliki kode pengidentifikasi, parameter masukan, dan formula tersendiri. |
 | *Blockchain* | Buku besar digital terdistribusi yang menyimpan transaksi dalam blok yang saling terhubung menggunakan fungsi *hash* kriptografi, sehingga catatan yang telah tersimpan tidak dapat diubah tanpa terdeteksi. |
 | Dokumen BKD | Satu dokumen penilaian milik satu dosen pada satu periode untuk satu jenis, yaitu rencana atau laporan. Pada basis data direpresentasikan sebagai entitas lkd. |
+| Dokumen bukti | Berkas atau tautan yang dilampirkan dosen pada suatu kegiatan sebagai bukti pelaksanaan, misalnya lembar pengesahan, berita acara, atau surat tugas. |
 | Fase | Tahap yang sedang berjalan pada suatu periode BKD, yaitu pengisian, penilaian, perbaikan, atau selesai, yang menentukan aksi apa saja yang boleh dijalankan setiap peran. |
 | Kegiatan | Satu catatan aktivitas pendidikan yang dilaporkan dosen, memuat butir aturan yang berlaku, parameter perhitungan, dokumen bukti, dan nilai kredit hasil perhitungan. |
 | Kredit kegiatan | Nilai beban kerja suatu kegiatan yang dinyatakan dalam Satuan Kredit Semester (SKS) sesuai rubrik PO BKD. |
 | *Non-transferable* | Sifat token yang tidak dapat dipindahkan antar-alamat, sehingga token tetap melekat pada alamat penerimanya. |
+| Parser artefak universal | Titik akhir layanan ekstraksi yang membaca dokumen dosen berbentuk bebas menggunakan model bahasa visual dan mengembalikan daftar orang beserta perannya, jenis dokumen, dan penanda isian tulisan tangan. |
 | Parameter kegiatan | Kumpulan nilai masukan yang dibutuhkan suatu butir aturan untuk menghitung kredit, misalnya jumlah SKS mata kuliah dan jumlah pertemuan realisasi. |
+| Pemeriksaan keaslian dokumen bukti | Proses membandingkan nama dan peran yang terbaca pada dokumen bukti terhadap nama pemilik akun pengunggah dan peran yang diklaim kegiatan, dengan lima kemungkinan status, yaitu cocok, peran tidak sesuai, tidak cocok, tanpa nama, dan gagal. |
 | Penerbitan token (*mint*) | Operasi pembuatan token baru dan penambahannya ke saldo suatu alamat. |
 | Penghapusan token (*burn*) | Operasi pengurangan token dari saldo suatu alamat, digunakan sebagai mekanisme koreksi. |
 | Penugasan asesor | Penetapan seorang asesor pada suatu dokumen BKD dengan urutan tertentu, yaitu asesor pertama atau asesor kedua. |
 | Periode BKD | Rentang waktu penilaian, umumnya satu semester akademik, yang memuat rentang tanggal untuk setiap fase. |
+| Persetujuan manual asesor | Penanda yang ditambahkan asesor pada hasil pemeriksaan keaslian dokumen bukti untuk mengesampingkan penanda ketidaksesuaian, tanpa menghapus hasil pembacaan parser. |
 | Simpulan BKD | Rekapitulasi akhir suatu dokumen BKD berupa total kredit per unsur beserta status memenuhi atau tidak memenuhi, yang dibentuk setelah kedua asesor mengesahkan penilaiannya. |
 | Skala kali seratus | Representasi nilai kredit sebagai bilangan bulat yang telah dikalikan seratus, dipakai karena bahasa Solidity tidak mendukung bilangan desimal. Nilai 1,00 SKS dinyatakan sebagai 100. |
 | *Smart contract* | Program yang disimpan dan dieksekusi pada *blockchain*, yang menjalankan aturan tertentu secara otomatis dan deterministik tanpa memerlukan pihak ketiga. |
+| Temuan | Kegiatan yang dokumen buktinya berstatus tidak cocok atau peran tidak sesuai dan belum disetujui manual, yang ditandai bagi asesor pada halaman penilaian. |
 | Token kredit SKS | Representasi digital kredit BKD yang telah disahkan, diterbitkan sebagai token ERC-20 pada alamat *wallet* dosen. |
 | *Transaction hash* | Pengenal unik suatu transaksi pada *blockchain* yang dapat digunakan untuk menelusuri transaksi tersebut melalui penjelajah blok publik. |
 | *Wallet* kustodian | Alamat *blockchain* milik dosen yang kunci privatnya diturunkan dan disimpan peladen sistem, bukan oleh dosen yang bersangkutan. |
@@ -147,7 +153,9 @@ Tabel I.2. Daftar Akronim
 | JSON | *JavaScript Object Notation* |
 | JWT | *JSON Web Token* |
 | LKD | Laporan Kinerja Dosen |
+| MIME | *Multipurpose Internet Mail Extensions* |
 | NFR | *Non-Functional Requirement* |
+| NIRA | Nomor Induk Registrasi Asesor |
 | ORM | *Object-Relational Mapping* |
 | PDF | *Portable Document Format* |
 | PO BKD | Pedoman Operasional Beban Kerja Dosen |
@@ -306,10 +314,11 @@ Secara garis besar, LedgerDik menyediakan kelompok fungsi utama sebagai berikut.
 8. Perhitungan kredit kegiatan melalui pemanggilan *smart contract* kalkulator.
 9. Penilaian dan pengesahan oleh dua asesor, pembentukan simpulan, serta penerbitan token kredit.
 10. Koreksi token, penelusuran log *blockchain*, dan penyajian rekapitulasi BKD.
+11. Verifikasi keaslian dokumen bukti melalui pembacaan nama dan peran pada dokumen, beserta peninjauan dan persetujuan manualnya oleh asesor.
 
-Kesepuluh kelompok fungsi tersebut dimodelkan sebagai sepuluh proses utama pada *Data Flow Diagram* level 1 sebagaimana dirangkum pada Tabel II.3. Pemodelan berjenjang ini menggantikan peran *Use Case Diagram* pada dokumen yang menggunakan pendekatan berorientasi objek. Rincian logika setiap proses disajikan pada Appendix A.
+Kesebelas kelompok fungsi tersebut dimodelkan sebagai sebelas proses utama pada *Data Flow Diagram* level 1 sebagaimana dirangkum pada Tabel II.3. Pemodelan berjenjang ini menggantikan peran *Use Case Diagram* pada dokumen yang menggunakan pendekatan berorientasi objek. Rincian logika setiap proses disajikan pada Appendix A.
 
-**\[LENGKAPI GAMBAR: DFD level 1 dengan sepuluh proses P1–P10, enam entitas eksternal, dan sebelas penyimpanan data. Gambar identik dengan Gambar IV.7 pada Laporan Tugas Akhir.\]**
+**\[LENGKAPI GAMBAR: DFD level 1 dengan sebelas proses P1–P11, enam entitas eksternal, dan sebelas penyimpanan data. Gambar identik dengan Gambar IV.7 pada Laporan Tugas Akhir.\]**
 
 Gambar I.2. *Data Flow Diagram* Level 1
 
@@ -317,16 +326,17 @@ Tabel II.3. Ringkasan Proses Sistem
 
 | Kode Proses | Nama Proses | Aktor Terkait | FR Terkait |
 | :---: | ----- | ----- | ----- |
-| P1 | Autentikasi dan Otorisasi | Dosen, Asesor, Administrator | FR-01, FR-02 |
+| P1 | Autentikasi dan Otorisasi | Dosen, Asesor, Administrator | FR-01, FR-02, FR-32 |
 | P2 | Pengelolaan Pengguna dan *Wallet* | Administrator | FR-03, FR-04 |
 | P3 | Pengelolaan Periode dan Fase | Administrator | FR-05, FR-06 |
 | P4 | Penugasan Asesor | Administrator | FR-07 |
 | P5 | Pengelolaan Referensi Kegiatan | Administrator | FR-08 |
-| P6 | Ekstraksi dan Penerapan Dokumen | Administrator, Layanan Model Bahasa Visual | FR-09, FR-10, FR-11, FR-12 |
+| P6 | Ekstraksi dan Penerapan Dokumen | Administrator, Layanan Model Bahasa Visual | FR-09, FR-10, FR-11, FR-12, FR-31 |
 | P7 | Pengelolaan Kegiatan dan Dokumen BKD | Dosen | FR-13, FR-14, FR-15, FR-16, FR-17 |
 | P8 | Perhitungan Kredit Kegiatan | *Smart Contract* Kalkulator BKD | FR-18, FR-19 |
 | P9 | Penilaian, Simpulan, dan Penerbitan Token | Asesor, *Smart Contract* Token SKS | FR-20, FR-21, FR-22, FR-23, FR-24 |
 | P10 | Koreksi Token dan Pelaporan | Administrator, *Smart Contract* Token SKS | FR-25, FR-26, FR-27 |
+| P11 | Verifikasi Keaslian Dokumen Bukti | Dosen, Asesor, Layanan Model Bahasa Visual | FR-28, FR-29, FR-30 |
 
 3. ## **User Characteristics** {#user-characteristics}
 
@@ -382,13 +392,13 @@ Persyaratan sistem memiliki ketergantungan terhadap komponen eksternal berikut. 
 
 2. **Pustaka OpenZeppelin Contracts.** Kontrak token diturunkan dari implementasi ERC20 dan AccessControl pada pustaka ini. Perubahan mayor pada pustaka berdampak pada perilaku pembatasan pemindahan token dan kontrol akses, yaitu FR-24 dan FR-25.
 
-3. **Layanan model bahasa visual melalui API.** Ekstraksi dokumen hasil pemindaian bergantung sepenuhnya pada layanan ini. Ketidaktersediaan layanan atau perubahan model yang digunakan berdampak pada FR-09 khusus untuk jenis dokumen pindaian.
+3. **Layanan model bahasa visual melalui API.** Ekstraksi dokumen hasil pemindaian dan pemeriksaan keaslian dokumen bukti bergantung sepenuhnya pada layanan ini. Ketidaktersediaan layanan atau perubahan model yang digunakan berdampak pada FR-09 khusus untuk jenis dokumen pindaian, dan pada FR-28 untuk seluruh pemeriksaan dokumen bukti.
 
 4. **PostgreSQL dan Prisma ORM.** Integritas dan performa seluruh data operasional bergantung pada versi yang digunakan. Perubahan mayor berdampak pada seluruh persyaratan yang melibatkan penyimpanan data.
 
 5. **Tata letak dokumen SK dan ST.** Aturan ekstraksi deterministik disusun berdasarkan struktur kolom dokumen yang berlaku. Perubahan tata letak oleh unit penerbit menuntut penyesuaian aturan ekstraksi dan berdampak pada FR-09 dan FR-10.
 
-Sistem dirancang agar kegagalan pada ketergantungan nomor 1 dan nomor 3 tidak menghentikan operasi secara keseluruhan. Kegagalan pemanggilan *blockchain* dicatat sebagai transaksi berstatus gagal tanpa membatalkan data penilaian yang telah tersimpan, sedangkan kegagalan layanan ekstraksi dikembalikan sebagai pesan galat yang dapat dibedakan penyebabnya oleh administrator.
+Sistem dirancang agar kegagalan pada ketergantungan nomor 1 dan nomor 3 tidak menghentikan operasi secara keseluruhan. Kegagalan pemanggilan *blockchain* dicatat sebagai transaksi berstatus gagal tanpa membatalkan data penilaian yang telah tersimpan, kegagalan layanan ekstraksi dikembalikan sebagai pesan galat yang dapat dibedakan penyebabnya oleh administrator, dan kegagalan pemeriksaan dokumen bukti disimpan sebagai hasil berstatus gagal tanpa membatalkan pengunggahan dokumen oleh dosen.
 
 # **Section 3 \- Specific Requirements** {#section-3---specific-requirements}
 
@@ -408,13 +418,15 @@ Antarmuka pengguna dirancang di atas dua landasan. Secara struktural, seluruh ha
 2. Sistem harus menggunakan kerangka tampilan seragam pada seluruh halaman pasca-autentikasi, terdiri atas bilah sisi navigasi, bilah atas identitas institusi, dan area konten. \[UI-02\]
 3. Sistem harus menampilkan umpan balik visual langsung atas setiap aksi peladen yang selesai dijalankan, baik ketika berhasil maupun ketika gagal, disertai pesan yang menjelaskan penyebab kegagalan. \[UI-03\]
 4. Sistem harus menampilkan dialog konfirmasi sebelum mengeksekusi aksi yang tidak dapat dibatalkan, yaitu penyimpanan permanen dokumen BKD oleh dosen, pengesahan penilaian oleh asesor, penerapan hasil ekstraksi dokumen, dan penghapusan token oleh administrator. \[UI-04\]
-5. Sistem tidak boleh menampilkan konsep teknis *blockchain* berupa alamat *wallet*, biaya *gas*, maupun permintaan penandatanganan transaksi kepada dosen dan asesor. \[UI-05\]
+5. Sistem tidak boleh mensyaratkan dosen dan asesor memahami mekanisme *blockchain*, yaitu tidak menampilkan biaya *gas*, tidak meminta penandatanganan transaksi, dan tidak menuntut kepemilikan dompet kripto. Alamat *wallet* kustodian boleh ditampilkan sebagai keterangan identitas baca saja pada halaman profil dan pada blok biodata dokumen BKD sebagai keterbukaan atas alamat tujuan kredit, dan tidak boleh disajikan sebagai elemen yang menuntut tindakan pengguna. \[UI-05\]
 6. Sistem harus menampilkan nilai kredit kepada pengguna dalam satuan SKS berdesimal, bukan dalam skala kali seratus yang digunakan secara internal. \[UI-06\]
 7. Sistem harus menyediakan pratinjau dokumen bukti berformat PDF di dalam halaman, tanpa memaksa pengguna mengunduh berkas terlebih dahulu. \[UI-07\]
 8. Sistem harus menyediakan penyaring, pencarian, dan paginasi pada halaman yang berpotensi menampilkan lebih dari dua puluh baris data, khususnya halaman pratinjau hasil ekstraksi dokumen. \[UI-08\]
 9. Sistem harus menampilkan nilai asli hasil ekstraksi berdampingan dengan nilai koreksi pada setiap baris yang telah dikoreksi administrator. \[UI-09\]
 10. Sistem harus menampilkan penanda status kegiatan, status penilaian, dan status transaksi menggunakan perlakuan visual yang seragam di seluruh halaman. \[UI-10\]
 11. Seluruh teks antarmuka dan konten utama harus disajikan dalam Bahasa Indonesia. \[UI-11\]
+12. Sistem harus menyajikan hasil pemeriksaan keaslian dokumen bukti kepada asesor sebagai panel rincian yang memuat seluruh nama yang terbaca beserta perannya menurut dokumen, sehingga asesor dapat menilai kewajaran pembacaan parser sebelum mengambil keputusan. \[UI-12\]
+13. Sistem harus membedakan penyajian status pemeriksaan yang menyimpulkan ketidaksesuaian dari status yang tidak menyimpulkan apa pun, sehingga kegagalan layanan tidak tersaji sebagai tuduhan terhadap dosen. \[UI-13\]
 
 2. ### **Hardware Interfaces** {#hardware-interfaces-1}
 
@@ -433,6 +445,7 @@ Sistem berinteraksi dengan perangkat lunak eksternal sebagaimana dirinci pada Ta
 4. Sistem harus mengakses layanan ekstraksi dokumen melalui HTTP dengan autentikasi kunci API pada *header* permintaan, dan menerima hasil dalam format JSON terstruktur. \[SW-04\]
 5. Sistem harus membedakan penanganan kegagalan layanan ekstraksi berdasarkan kode status yang dikembalikan, mencakup berkas tidak sesuai, kunci tidak sah, perubahan tata letak dokumen, kegagalan layanan model bahasa visual, dan konfigurasi belum lengkap. \[SW-05\]
 6. Sistem harus memverifikasi kode sumber kedua kontrak pada penjelajah blok setelah penempatan, sehingga aturan yang berjalan dapat ditinjau pihak eksternal. \[SW-06\]
+7. Sistem harus memakai titik akhir parser artefak universal pada layanan yang sama untuk membaca nama orang beserta perannya dari dokumen bukti, dan memperlakukan ketidaktersediaan titik akhir tersebut sebagai hasil pemeriksaan berstatus gagal, bukan sebagai kegagalan operasi pemanggilnya. \[SW-07\]
 
 4. ### **Communications Interfaces** {#communications-interfaces-1}
 
@@ -472,6 +485,9 @@ Tabel III.1. Urutan Stimulus dan Respons AUT
 | 4\. | Pengguna dengan sesi aktif membuka halaman pada ruang kerja perannya. | Sistem menampilkan halaman yang diminta. |
 | 5\. | Pengguna mencoba membuka halaman pada ruang kerja peran lain. | Sistem menolak permintaan dan mengarahkan pengguna kembali ke beranda perannya sendiri. |
 | 6\. | Permintaan menuju halaman terlindungi datang tanpa sesi sah. | Sistem mengarahkan permintaan ke halaman masuk. |
+| **Profil Akun** |  |  |
+| 7\. | Pengguna membuka halaman profil pada ruang kerjanya. | Sistem menampilkan data akun pengguna tersebut secara baca saja, meliputi identitas akademik, atribut asesor bagi pemegang peran asesor, dan alamat *wallet* kustodian bagi dosen. |
+| 8\. | Pengguna berupaya menyunting data profilnya sendiri. | Sistem tidak menyediakan penyuntingan pada halaman tersebut, karena perubahan data akun merupakan kewenangan administrator. |
 
 3. #### **Functional Requirement Terkait**
 
@@ -483,6 +499,7 @@ Tabel III.2. *Functional Requirement* AUT
 | :---: | ----- | ----- | :---: |
 | 1\. | FR-01 | Sistem harus menyediakan mekanisme masuk menggunakan surel dan kata sandi, dengan verifikasi kata sandi dilakukan terhadap *hash* yang tersimpan. | P1 / PSPEC-01 |
 | 2\. | FR-02 | Sistem harus membatasi akses halaman berdasarkan peran pengguna dan mengarahkan pengguna ke ruang kerja sesuai perannya. | P1 / PSPEC-01 |
+| 3\. | FR-32 | Sistem harus menampilkan data profil akun pengguna yang sedang masuk sebagai tampilan baca saja pada ketiga ruang kerja, tanpa menyediakan penyuntingan mandiri. | P1 / PSPEC-01 |
 
 2. ### **Manajemen Pengguna dan Wallet (USR)** {#manajemen-pengguna-dan-wallet-usr}
 
@@ -490,7 +507,7 @@ Fitur Manajemen Pengguna dan Wallet menyediakan pengelolaan akun bagi ketiga per
 
 1. #### **Pendahuluan**
 
-Fitur ini memungkinkan administrator menambah akun, mengisi kode dosen sebagaimana tercantum pada dokumen penugasan, serta mengaktifkan dan menonaktifkan akun. Fitur ini juga menyediakan penetapan alamat *wallet* kustodian bagi dosen, yaitu alamat yang diturunkan secara deterministik dari satu frasa induk pada peladen sehingga dosen tidak perlu memiliki dompet kripto sendiri. Pengisian kode dosen menjadi prasyarat penting karena kode tersebut merupakan penanda utama yang dipakai untuk mencocokkan baris hasil ekstraksi dokumen ke akun dosen yang bersangkutan. Prioritas fitur ini Tinggi karena menjadi prasyarat bagi ekstraksi dokumen dan penerbitan token, dengan aktor terkait Administrator dan Sistem. Fitur ini merealisasikan proses P2.
+Fitur ini memungkinkan administrator menambah akun, mengisi kode dosen sebagaimana tercantum pada dokumen penugasan, mengisi nomor induk registrasi asesor bagi pemegang peran asesor, serta mengaktifkan dan menonaktifkan akun. Fitur ini juga menyediakan penetapan alamat *wallet* kustodian bagi dosen, yaitu alamat yang diturunkan secara deterministik dari satu frasa induk pada peladen sehingga dosen tidak perlu memiliki dompet kripto sendiri. Pengisian kode dosen menjadi prasyarat penting karena kode tersebut merupakan penanda utama yang dipakai untuk mencocokkan baris hasil ekstraksi dokumen ke akun dosen yang bersangkutan. Prioritas fitur ini Tinggi karena menjadi prasyarat bagi ekstraksi dokumen dan penerbitan token, dengan aktor terkait Administrator dan Sistem. Fitur ini merealisasikan proses P2.
 
 2. #### **Urutan Stimulus**
 
@@ -502,9 +519,10 @@ Tabel III.3. Urutan Stimulus dan Respons USR
 | ----- | ----- | ----- |
 | 1\. | Administrator mengisi data akun baru berupa nama, surel, kata sandi awal, dan peran, lalu menyimpan. | Sistem memvalidasi keunikan surel, menyimpan kata sandi dalam bentuk *hash*, dan menambahkan akun ke daftar pengguna. |
 | 2\. | Administrator mengisi kode dosen pada akun dosen tertentu. | Sistem menyimpan kode dosen tersebut dan melepaskan kode yang sama apabila sebelumnya melekat pada akun lain, agar pencocokan hasil ekstraksi tidak menjadi ambigu. |
-| 3\. | Administrator menonaktifkan sebuah akun. | Sistem menandai akun sebagai tidak aktif sehingga akun tersebut tidak dapat lagi masuk ke sistem, tanpa menghapus data yang tertaut padanya. |
-| 4\. | Administrator menetapkan *wallet* bagi seorang dosen yang belum memilikinya. | Sistem mencari indeks *wallet* terbesar yang telah terpakai, menurunkan alamat pada indeks berikutnya dari frasa induk, lalu menyimpan alamat beserta indeksnya pada akun dosen. |
-| 5\. | Administrator menetapkan *wallet* bagi dosen yang telah memilikinya. | Sistem menolak permintaan agar akumulasi kredit yang telah terbit tetap berada pada satu alamat. |
+| 3\. | Administrator mengisi nomor induk registrasi asesor pada akun asesor tertentu. | Sistem memvalidasi bahwa nomor tersebut belum dipakai akun lain, lalu menyimpannya; pengosongan nilai diperlakukan sebagai pencabutan nomor. |
+| 4\. | Administrator menonaktifkan sebuah akun. | Sistem menandai akun sebagai tidak aktif sehingga akun tersebut tidak dapat lagi masuk ke sistem, tanpa menghapus data yang tertaut padanya. |
+| 5\. | Administrator menetapkan *wallet* bagi seorang dosen yang belum memilikinya. | Sistem mencari indeks *wallet* terbesar yang telah terpakai, menurunkan alamat pada indeks berikutnya dari frasa induk, lalu menyimpan alamat beserta indeksnya pada akun dosen. |
+| 6\. | Administrator menetapkan *wallet* bagi dosen yang telah memilikinya. | Sistem menolak permintaan agar akumulasi kredit yang telah terbit tetap berada pada satu alamat. |
 
 3. #### **Functional Requirement Terkait**
 
@@ -512,7 +530,7 @@ Tabel III.4. *Functional Requirement* USR
 
 | No. | ID | Deskripsi | Sumber |
 | :---: | ----- | ----- | :---: |
-| 1\. | FR-03 | Sistem harus menyediakan penambahan akun pengguna, pengisian kode dosen, serta pengaktifan dan penonaktifan akun bagi administrator. | P2 / PSPEC-02 |
+| 1\. | FR-03 | Sistem harus menyediakan penambahan akun pengguna, pengisian kode dosen, pengisian nomor induk registrasi asesor yang unik lintas akun, serta pengaktifan dan penonaktifan akun bagi administrator. | P2 / PSPEC-02 |
 | 2\. | FR-04 | Sistem harus dapat menetapkan alamat *wallet* kustodian bagi dosen yang diturunkan secara deterministik dari frasa induk pada peladen, dengan indeks penurunan yang unik untuk setiap dosen. | P2 / PSPEC-02 |
 
 3. ### **Manajemen Periode dan Fase BKD (PRD)** {#manajemen-periode-dan-fase-bkd-prd}
@@ -600,7 +618,7 @@ Tabel III.10. *Functional Requirement* REF
 
 6. ### **Ekstraksi dan Penerapan Dokumen Penugasan (EKS)** {#ekstraksi-dan-penerapan-dokumen-penugasan-eks}
 
-Fitur Ekstraksi dan Penerapan Dokumen Penugasan mengubah berkas SK dan ST menjadi kegiatan BKD per dosen, sehingga parameter yang diproses sistem berasal langsung dari dokumen sumber.
+Fitur Ekstraksi dan Penerapan Dokumen Penugasan mengubah berkas SK dan ST menjadi kegiatan BKD per dosen, sehingga parameter yang diproses sistem berasal langsung dari dokumen sumber, dan menyediakan jalur masukan manual bagi penugasan yang dokumennya tidak tersedia atau tidak terbaca parser.
 
 1. #### **Pendahuluan**
 
@@ -608,7 +626,9 @@ Fitur ini merupakan pembeda utama sistem terhadap praktik yang berjalan. Adminis
 
 Sistem menyediakan dua jalur ekstraksi yang berbeda sesuai bentuk dokumen. Jalur deterministik berbasis posisi kolom digunakan bagi dokumen yang berasal dari sumber digital dan memiliki lapisan teks utuh, karena menghasilkan keluaran identik pada setiap eksekusi. Jalur penafsiran citra oleh model bahasa visual digunakan bagi dokumen hasil pemindaian yang lapisan teksnya terdegradasi. Karena keluaran jalur kedua bersifat probabilistik, hasilnya wajib melalui koreksi administrator sebelum diterapkan.
 
-Koreksi administrator disimpan sebagai selisih pada kolom terpisah, tidak dengan menimpa hasil ekstraksi asli, sehingga keluaran mentah parser tetap utuh sebagai bukti audit. Prioritas fitur ini Tinggi karena menjadi sumber utama kegiatan dosen sekaligus jaminan bahwa parameter berasal dari dokumen resmi, dengan aktor terkait Administrator, Layanan Model Bahasa Visual, dan Sistem. Fitur ini merealisasikan proses P6.
+Koreksi administrator disimpan sebagai selisih pada kolom terpisah, tidak dengan menimpa hasil ekstraksi asli, sehingga keluaran mentah parser tetap utuh sebagai bukti audit.
+
+Fitur ini juga menyediakan jalur masukan manual sebagai pelengkap kedua jalur ekstraksi di atas. Jalur manual diperlukan untuk penugasan yang dokumen resminya belum terbit, tidak tersedia dalam bentuk berkas, atau tidak terbaca kedua parser. Melalui jalur ini administrator menginput kegiatan berbasis penugasan atas nama seorang dosen dengan hasil akhir yang setara dengan penerapan hasil ekstraksi, yaitu kegiatan berstatus portofolio yang belum diklaim. Jalur manual dibatasi pada butir aturan yang dasarnya penugasan institusi, yaitu perkuliahan, pembimbingan, pengujian, dan pembinaan mahasiswa, sehingga butir yang menjadi hak pengisian dosen tetap tidak dapat diisikan administrator. Prioritas fitur ini Tinggi karena menjadi sumber utama kegiatan dosen sekaligus jaminan bahwa parameter berasal dari dokumen resmi, dengan aktor terkait Administrator, Layanan Model Bahasa Visual, dan Sistem. Fitur ini merealisasikan proses P6.
 
 2. #### **Urutan Stimulus**
 
@@ -630,6 +650,12 @@ Tabel III.11. Urutan Stimulus dan Respons EKS
 | **Penerapan** |  |  |
 | 10\. | Administrator menekan tombol terapkan. | Sistem membentuk kegiatan pada dokumen BKD periode aktif untuk setiap baris yang tidak dilewati, menghitung nilai kreditnya melalui kontrak kalkulator, dan melampirkan berkas sumber sebagai dokumen bukti. |
 | 11\. | Administrator menerapkan ulang unggahan yang sama setelah mengoreksi sebagian baris. | Sistem memperbarui di tempat baris yang koreksinya berubah, melewati baris yang sudah sesuai, dan tidak mengubah kegiatan yang telah diklaim dosen. |
+| **Input Manual Penugasan** |  |  |
+| 12\. | Administrator memilih dosen tujuan dan butir aturan berbasis penugasan, mengisi rincian dan parameter kegiatan, lalu menyimpan. | Sistem membentuk kegiatan pada dokumen BKD laporan periode aktif milik dosen tersebut sebagai portofolio yang belum diklaim, dan menghitung nilai kreditnya melalui kontrak kalkulator. |
+| 13\. | Administrator memilih butir aturan yang pengisiannya merupakan hak dosen, misalnya bahan ajar atau tugas tambahan. | Sistem menolak penyimpanan dan menyatakan bahwa jenis kegiatan tersebut diisi sendiri oleh dosen. |
+| 14\. | Administrator menyimpan kegiatan yang judul dan butir aturannya telah tercatat pada dosen yang sama. | Sistem menolak penyimpanan agar kegiatan tidak tercatat ganda akibat pengiriman formulir berulang. |
+| 15\. | Administrator mengubah atau menghapus kegiatan hasil input administrator yang telah diklaim dosen. | Sistem menolak aksi tersebut dan meminta klaim dibatalkan terlebih dahulu oleh dosen yang bersangkutan. |
+| 16\. | Administrator menyimpan kegiatan bagi dosen yang dokumen BKD-nya telah disimpan permanen. | Sistem menolak penyimpanan karena kegiatan baru tidak akan dapat diklaim dosen tersebut. |
 
 3. #### **Functional Requirement Terkait**
 
@@ -641,6 +667,7 @@ Tabel III.12. *Functional Requirement* EKS
 | 2\. | FR-10 | Sistem harus menampilkan pratinjau pemetaan baris penugasan menjadi kegiatan beserta temuan validasi dan status pencocokan dosen berupa cocok, ambigu, atau tidak cocok. | P6 / PSPEC-06 |
 | 3\. | FR-11 | Sistem harus dapat menerima koreksi atau penandaan lewati pada setiap baris hasil ekstraksi tanpa mengubah hasil ekstraksi asli, serta dapat mengembalikan baris ke nilai aslinya. | P6 / PSPEC-07 |
 | 4\. | FR-12 | Sistem harus dapat menerapkan hasil ekstraksi menjadi kegiatan dosen secara idempoten per baris dan melampirkan berkas sumber sebagai dokumen bukti, tanpa mengubah kegiatan yang telah diklaim dosen. | P6 / PSPEC-07 |
+| 5\. | FR-31 | Sistem harus menyediakan penginputan kegiatan berbasis penugasan atas nama seorang dosen bagi administrator, terbatas pada butir aturan yang dasarnya penugasan institusi, dengan kegiatan terbentuk sebagai portofolio yang belum diklaim dan nilai kreditnya dihitung melalui kontrak kalkulator. | P6 / PSPEC-20 |
 
 7. ### **Pengelolaan Kegiatan dan Dokumen BKD (KEG)** {#pengelolaan-kegiatan-dan-dokumen-bkd-keg}
 
@@ -823,11 +850,57 @@ Tabel III.22. *Functional Requirement* LAP
 | 2\. | FR-26 | Sistem harus menampilkan riwayat penerbitan dan penghapusan token yang dibaca langsung dari *blockchain*, dengan pembacaan berjenjang agar tidak melampaui batas rentang blok penyedia RPC. | P10 / PSPEC-15 |
 | 3\. | FR-27 | Sistem harus menampilkan rekapitulasi kredit BKD per dosen dan per periode. | P10 / PSPEC-15 |
 
+12. ### **Verifikasi Keaslian Dokumen Bukti (VER)** {#verifikasi-keaslian-dokumen-bukti-ver}
+
+Fitur Verifikasi Keaslian Dokumen Bukti memeriksa apakah dokumen bukti yang diunggah dosen benar-benar memuat nama pemilik akun beserta peran yang diklaim pada kegiatan, sehingga bukti pembimbingan tidak dapat dipenuhi dengan dokumen milik dosen lain.
+
+1. #### **Pendahuluan**
+
+Fitur ini menjawab celah yang tersisa setelah parameter kegiatan bersumber dari dokumen penugasan resmi. Parameter memang tidak lagi diketikkan dosen, namun dokumen bukti yang dilampirkan pada kegiatan tetap merupakan berkas yang dipilih sendiri oleh dosen. Tanpa pemeriksaan, satu lembar pengesahan yang sama dapat dilampirkan beberapa dosen, dan seorang dosen yang berperan sebagai pembimbing pendamping dapat melampirkan dokumen yang menuliskan namanya sebagai pembimbing utama. Fitur ini membaca isi dokumen melalui parser artefak universal, kemudian mencocokkan nama dan peran yang terbaca terhadap nama pemilik akun dan peran yang menjadi parameter kegiatan.
+
+Pemeriksaan berjalan pada dua titik pemicu. Titik pertama bersifat otomatis, yaitu segera setelah dosen mengunggah dokumen bukti pada kegiatan yang kode aturannya termasuk rumpun pembimbingan. Titik kedua bersifat atas permintaan asesor, yang diperlukan bagi dokumen yang diunggah sebelum mekanisme otomatis tersedia dan bagi dokumen yang pemeriksaan otomatisnya gagal karena layanan ekstraksi tidak dapat dihubungi. Penguji peran pada titik kedua mencakup pula butir pengujian tugas akhir, sehingga asesor dapat memeriksa dokumen di luar rumpun pembimbingan apabila diperlukan.
+
+Dua sifat fitur ini bersifat mengikat. Pertama, pemeriksaan tidak pernah menggagalkan pengunggahan. Kegagalan layanan ditangkap dan disimpan sebagai status gagal beserta pesan penyebabnya, sedangkan dokumen tetap tersimpan. Kedua, hasil pemeriksaan bersifat temuan bagi asesor, bukan penentu diterima atau ditolaknya bukti. Asesor tetap memegang keputusan akhir dan dapat menyetujui hasil pemeriksaan secara manual tanpa menghapus hasil pembacaan parser. Prioritas fitur ini Sedang karena tidak menghalangi alur utama penilaian, namun menopang keandalan bukti yang menjadi dasar penilaian. Aktor terkait adalah Dosen, Asesor, Layanan Model Bahasa Visual, dan Sistem. Fitur ini merealisasikan proses P11.
+
+2. #### **Urutan Stimulus**
+
+Tabel III.23 menjabarkan urutan interaksi pada fitur Verifikasi Keaslian Dokumen Bukti.
+
+Tabel III.23. Urutan Stimulus dan Respons VER
+
+| No. | Stimulus | Respons |
+| ----- | ----- | ----- |
+| **Pemeriksaan Otomatis** |  |  |
+| 1\. | Dosen mengunggah berkas PDF sebagai bukti pada kegiatan rumpun pembimbingan. | Sistem menyimpan dokumen, mengirimkan berkas ke parser artefak universal, mencocokkan nama dan peran yang terbaca terhadap akun pengunggah, lalu menyimpan hasilnya menyertai dokumen. |
+| 2\. | Nama pemilik akun ditemukan pada dokumen dan perannya tidak bertentangan. | Sistem menetapkan status cocok dan menampilkan keterangan singkat bahwa nama dosen terverifikasi pada dokumen. |
+| 3\. | Nama pemilik akun ditemukan, tetapi peran yang tertulis pada dokumen bertentangan dengan peran yang diklaim kegiatan. | Sistem menetapkan status peran tidak sesuai beserta peran yang diklaim dan peran yang tertulis, lalu menampilkannya sebagai peringatan kepada dosen. |
+| 4\. | Tidak satu pun nama pada dokumen bersesuaian dengan pemilik akun. | Sistem menetapkan status tidak cocok dan menampilkan peringatan bahwa nama dosen tidak ditemukan pada dokumen. |
+| 5\. | Parser tidak menemukan nama orang pada dokumen. | Sistem menetapkan status tanpa nama, yaitu pemeriksaan tidak dapat menyimpulkan apa pun, bukan indikasi ketidaksesuaian. |
+| 6\. | Layanan ekstraksi tidak dapat dihubungi atau melampaui batas waktu. | Sistem tetap menyimpan dokumen, menetapkan status gagal beserta pesan penyebabnya, dan tidak membatalkan pengunggahan. |
+| 7\. | Dosen mengunggah bukti berupa tautan luar, berkas bukan PDF, atau bukti pada kegiatan di luar rumpun pembimbingan. | Sistem menyimpan dokumen tanpa hasil pemeriksaan, karena dokumen tersebut tidak memenuhi syarat pemeriksaan. |
+| **Peninjauan oleh Asesor** |  |  |
+| 8\. | Asesor membuka halaman penilaian suatu dokumen BKD. | Sistem menampilkan kegiatan yang dokumen buktinya berstatus tidak cocok atau peran tidak sesuai sebagai temuan, kecuali dokumen yang telah disetujui manual. |
+| 9\. | Asesor membuka halaman bukti suatu kegiatan. | Sistem menampilkan panel rincian berisi seluruh nama yang terbaca beserta peran menurut dokumen, jenis dokumen menurut parser, dan waktu pemeriksaan. |
+| 10\. | Asesor menekan aksi pemeriksaan pada satu dokumen bukti. | Sistem menjalankan pemeriksaan atas dokumen tersebut dan menimpa hasil sebelumnya dengan hasil yang baru. |
+| 11\. | Asesor menekan aksi pemeriksaan atas dokumen yang tidak memenuhi syarat. | Sistem menolak aksi tersebut dan menyatakan bahwa dokumen bukan berkas PDF unggahan lokal atau layanan parser belum aktif. |
+| 12\. | Asesor menilai pembacaan parser keliru lalu menyetujui hasil pemeriksaan secara manual. | Sistem menambahkan penanda persetujuan berisi identitas asesor dan waktunya ke dalam hasil pemeriksaan, sehingga penanda ketidaksesuaian tidak lagi dihitung sebagai temuan, sedangkan hasil pembacaan parser tetap tersimpan. |
+| 13\. | Asesor mencabut persetujuan manual yang telah diberikan. | Sistem menghapus penanda persetujuan tersebut sehingga penanda ketidaksesuaian berlaku kembali. |
+
+3. #### **Functional Requirement Terkait**
+
+Tabel III.24. *Functional Requirement* VER
+
+| No. | ID | Deskripsi | Sumber |
+| :---: | ----- | ----- | :---: |
+| 1\. | FR-28 | Sistem harus memeriksa dokumen bukti berformat PDF pada kegiatan rumpun pembimbingan dengan membaca nama orang beserta perannya melalui parser artefak universal, mencocokkannya terhadap nama pemilik akun dan peran yang diklaim kegiatan, lalu menyimpan hasilnya menyertai dokumen tanpa menggagalkan pengunggahan ketika layanan tidak tersedia. | P11 / PSPEC-16, PSPEC-17, PSPEC-18 |
+| 2\. | FR-29 | Sistem harus menandai kegiatan yang dokumen buktinya berstatus tidak cocok atau peran tidak sesuai sebagai temuan pada halaman penilaian asesor, dan tidak menandai status yang tidak menyimpulkan apa pun, yaitu tanpa nama dan gagal. | P11 / PSPEC-18 |
+| 3\. | FR-30 | Sistem harus menyediakan pemeriksaan ulang atas satu dokumen bukti bagi asesor, serta persetujuan dan pencabutan persetujuan atas hasil pemeriksaan, tanpa menghapus hasil pemeriksaan asli. | P11 / PSPEC-19 |
+
 3. ## **Performance Requirements** {#performance-requirements}
 
 Persyaratan performa disusun dengan mempertimbangkan bahwa sebagian operasi sistem bergantung pada layanan pihak ketiga yang waktu tanggapannya tidak sepenuhnya berada dalam kendali tim pengembang, yaitu jaringan *blockchain* dan layanan model bahasa visual. Oleh karena itu, ambang waktu dibedakan antara operasi yang sepenuhnya lokal dan operasi yang melibatkan layanan eksternal.
 
-Tabel III.23. *Non-Functional Requirement* — *Performance*
+Tabel III.25. *Non-Functional Requirement* — *Performance*
 
 | ID | Persyaratan | NFR Terkait |
 | :---: | ----- | :---: |
@@ -838,14 +911,15 @@ Tabel III.23. *Non-Functional Requirement* — *Performance*
 | PR-05 | Proses ekstraksi satu berkas dokumen pindaian melalui jalur model bahasa visual diberi batas waktu yang dapat dikonfigurasi, dan kegagalan akibat pelampauan batas waktu harus dikembalikan sebagai pesan galat yang dapat dibedakan penyebabnya, bukan sebagai kegagalan diam. | — |
 | PR-06 | Pembacaan riwayat *event* dari *blockchain* harus dijalankan secara berjenjang dengan batas rentang blok sehingga tidak menghasilkan galat penolakan dari penyedia RPC, berapa pun jarak antara blok penempatan kontrak dan blok terkini. | NFR-12 |
 | PR-07 | Halaman yang berpotensi menampilkan lebih dari dua puluh baris data harus menerapkan paginasi sehingga jumlah baris yang dimuat sekaligus tetap terbatas. | — |
+| PR-08 | Pemeriksaan keaslian satu dokumen bukti tunduk pada batas waktu yang sama dengan jalur ekstraksi model bahasa visual dan dijalankan menyatu dengan aksi pengunggahan, sehingga pelampauan batas waktu dikembalikan sebagai hasil pemeriksaan berstatus gagal tanpa membatalkan penyimpanan dokumen. | NFR-13 |
 
 4. ## **Logical Database Requirements** {#logical-database-requirements}
 
 Sistem harus menggunakan basis data relasional yang mendukung transaksi ACID untuk menjamin konsistensi data. Spesifikasi teknis implementasi basis data ditetapkan pada subbab III.5. Setiap entitas menggunakan kunci primer bertipe UUID yang dibangkitkan basis data, bukan bilangan berurut, agar pengenal baris tidak mengungkapkan jumlah maupun urutan data kepada pihak yang mengaksesnya melalui alamat halaman. Penamaan tabel dan kolom mengikuti gaya *snake_case*.
 
-Entitas utama beserta atribut kuncinya dirangkum pada Tabel III.24. Setiap entitas berkorespondensi dengan satu penyimpanan data pada *Data Flow Diagram* sebagaimana dirujuk pada kolom Kode.
+Entitas utama beserta atribut kuncinya dirangkum pada Tabel III.26. Setiap entitas berkorespondensi dengan satu penyimpanan data pada *Data Flow Diagram* sebagaimana dirujuk pada kolom Kode.
 
-Tabel III.24. Entitas Basis Data Logis
+Tabel III.26. Entitas Basis Data Logis
 
 | Kode | Entitas | Atribut Kunci | Keterangan dan Relasi |
 | :---: | ----- | ----- | ----- |
@@ -856,14 +930,14 @@ Tabel III.24. Entitas Basis Data Logis
 | D5 | referensi\_kegiatan | id\_referensi, kode\_rule, kategori, nama\_kegiatan, fungsi\_contract, skema\_parameter, sks\_maksimal\_x100 | Data acuan butir aturan PO BKD. Atribut kode\_rule wajib unik. Atribut fungsi\_contract bernilai kosong untuk butir yang tidak diotomatisasi. |
 | D6 | unggahan\_dokumen | id\_unggahan, id\_periode, id\_admin, jenis, nama\_file, sha256, nomor\_surat, status, hasil\_parse, ringkasan, koreksi, statistik penerapan | Berkas SK dan ST beserta keluaran utuh parser sebagai bukti audit dan selisih koreksi administrator yang disimpan terpisah. |
 | D7 | kegiatan | id\_kegiatan, id\_lkd, id\_referensi, judul, detail\_kegiatan, parameter, sks\_dihitung\_x100, status\_perhitungan, status, status\_capaian, diklaim, sumber\_data, id\_unggahan | Kegiatan yang dilaporkan dosen. Relasi menuju unggahan dokumen bersifat opsional sebagai jejak asal data. |
-| D8 | dokumen\_kegiatan | id\_dokumen, id\_kegiatan, nama\_dokumen, nama\_file, jenis\_dokumen, file\_url | Metadata dokumen bukti. Satu kegiatan dapat memiliki lebih dari satu dokumen. Berkas fisik disimpan di luar basis data. |
+| D8 | dokumen\_kegiatan | id\_dokumen, id\_kegiatan, nama\_dokumen, nama\_file, jenis\_file, jenis\_dokumen, file\_url, verifikasi | Metadata dokumen bukti. Satu kegiatan dapat memiliki lebih dari satu dokumen. Berkas fisik disimpan di luar basis data. Atribut verifikasi bertipe JSONB menampung hasil pemeriksaan keaslian dokumen beserta penanda persetujuan asesor, dan bernilai kosong bagi dokumen yang tidak memenuhi syarat pemeriksaan. |
 | D9 | hasil\_penilaian | id\_hasil, id\_kegiatan, id\_penugasan, sks\_disetujui\_x100, pertemuan\_keputusan, capaian\_persen, status, catatan | Penilaian satu kegiatan oleh satu asesor. Pasangan kegiatan dan penugasan wajib unik. |
 | D10 | simpulan\_bkd | id\_simpulan, id\_lkd, total per unsur, status\_kewajiban\_khusus, status\_final, hash\_penilaian, tx\_hash | Simpulan satu dokumen BKD. Berelasi satu ke satu terhadap dokumen BKD. |
 | D11 | riwayat\_transaksi | id\_transaksi, id\_hasil, id\_admin, jenis\_transaksi, contract\_address, tx\_hash, jumlah\_token\_x100, alamat\_wallet, reference\_id, alasan, status | Riwayat transaksi *on-chain*. Atribut tx\_hash wajib unik. Dicatat baik ketika transaksi berhasil maupun gagal. |
 
-Nilai berhingga pada atribut status dan jenis harus dimodelkan sebagai tipe enumerasi, bukan sebagai teks bebas, agar tidak dapat terisi di luar himpunan yang dirancang. Daftar tipe enumerasi disajikan pada Tabel III.25.
+Nilai berhingga pada atribut status dan jenis harus dimodelkan sebagai tipe enumerasi, bukan sebagai teks bebas, agar tidak dapat terisi di luar himpunan yang dirancang. Daftar tipe enumerasi disajikan pada Tabel III.27.
 
-Tabel III.25. Tipe Enumerasi Basis Data
+Tabel III.27. Tipe Enumerasi Basis Data
 
 | No. | Nama Enumerasi | Nilai |
 | :---: | ----- | ----- |
@@ -873,13 +947,13 @@ Tabel III.25. Tipe Enumerasi Basis Data
 | 4\. | jenis\_lkd | rencana, laporan |
 | 5\. | status\_lkd | draft, diajukan, dinilai, final |
 | 6\. | status\_kegiatan | draft, diajukan, dihitung, disetujui, ditolak, revisi |
-| 7\. | status\_capaian | selesai, berlanjut, gagal, beban\_lebih |
+| 7\. | status\_capaian | selesai, gagal, beban\_lebih |
 | 8\. | status\_perhitungan | berhasil, gagal, tidak\_diotomatisasi |
 | 9\. | status\_penilaian | disetujui, ditolak, revisi |
 | 10\. | status\_simpulan | M, TM |
 | 11\. | jenis\_transaksi | mint, burn |
 | 12\. | status\_transaksi | pending, success, failed |
-| 13\. | jenis\_unggahan | st\_pengajaran, st\_bimbingan, st\_pengujian, sk\_pembinaan |
+| 13\. | jenis\_unggahan | st\_pengajaran, st\_bimbingan, st\_pengujian, sk\_pembinaan, artefak |
 | 14\. | status\_unggahan | terparse, gagal, diterapkan |
 
 Catatan integritas dan retensi data:
@@ -888,12 +962,13 @@ Catatan integritas dan retensi data:
 2. Penghapusan unggahan dokumen tidak menghapus kegiatan yang telah dibentuk darinya, melainkan hanya mengosongkan jejak asal datanya.
 3. Kata sandi wajib disimpan hanya dalam bentuk *hash*, tidak pernah dalam bentuk asli.
 4. Data yang telah dicatatkan pada *blockchain* tidak dapat dihapus maupun diubah, sehingga koreksi diwujudkan sebagai transaksi baru, bukan sebagai penghapusan catatan lama.
+5. Hasil pemeriksaan keaslian dokumen bukti hanya boleh ditimpa oleh pemeriksaan ulang atas dokumen yang sama. Persetujuan manual asesor ditambahkan sebagai blok tersendiri di dalam muatan yang sama dan tidak boleh menghapus hasil pembacaan parser.
 
 5. ## **Design Constraints** {#design-constraints}
 
 *Design Constraints* merupakan batasan perancangan yang ditetapkan tim pengembang sebagai respons terhadap batasan sisi klien pada subbab II.4 maupun kebutuhan data pada subbab III.4, sehingga keterkaitan antara keputusan eksternal dan keputusan perancangan menjadi eksplisit.
 
-Tabel III.26. *Design Constraints*
+Tabel III.28. *Design Constraints*
 
 | ID | Batasan Desain | Diturunkan dari |
 | :---: | ----- | ----- |
@@ -922,30 +997,32 @@ Subbab ini menetapkan atribut kualitas perangkat lunak beserta kriteria dan cara
 
 Kesesuaian fungsional mengacu pada kemampuan sistem menyediakan fungsi yang memenuhi kebutuhan yang dinyatakan. Pada sistem ini, kesesuaian fungsional bersifat kritis karena keluaran utama sistem berupa nilai kredit yang akan menjadi dasar penilaian kinerja dosen. Berbeda dengan sistem yang keluarannya bersifat perkiraan, nilai kredit BKD memiliki jawaban benar tunggal yang dapat dihitung manual dari rubrik, sehingga penyimpangan sekecil apa pun menandakan cacat logika.
 
-Tabel III.27. *Non-Functional Requirement* — *Functional Suitability*
+Tabel III.29. *Non-Functional Requirement* — *Functional Suitability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
 | SA-FUN-01 | *Functional correctness* | Nilai kredit yang dihasilkan sistem identik dengan hasil perhitungan manual berdasarkan rubrik PO BKD 2021 untuk seluruh butir aturan yang diotomatisasi. | Uji akurasi perhitungan dengan pembandingan terhadap perhitungan manual | NFR-01 |
 | SA-FUN-02 | *Functional completeness* | Seluruh butir aturan pada rubrik unsur pendidikan tersedia pada data referensi, baik yang diotomatisasi maupun yang penilaiannya diserahkan kepada asesor. | Pemeriksaan kelengkapan data referensi terhadap rubrik | — |
+| SA-FUN-03 | *Functional appropriateness* | Hasil pemeriksaan keaslian dokumen bukti tidak menjadi penentu tunggal diterima atau ditolaknya suatu bukti. Sistem tidak menolak unggahan berdasarkan hasil pemeriksaan, dan asesor dapat menyetujui hasil pemeriksaan secara manual dengan hasil pembacaan parser tetap tersimpan. | Uji alur persetujuan manual asesor beserta pemeriksaan muatan hasil pemeriksaan setelahnya | NFR-14 |
 
 2. ### **Reliability** {#reliability}
 
 Keandalan mengacu pada kemampuan sistem beroperasi dengan benar dan konsisten selama periode penggunaan normal. Pada sistem ini, keandalan paling kritis pada dua titik, yaitu konsistensi hasil perhitungan yang menjadi alasan utama pemilihan *smart contract*, dan ketahanan terhadap kegagalan jaringan pada saat penerbitan token.
 
-Tabel III.28. *Non-Functional Requirement* — *Reliability*
+Tabel III.30. *Non-Functional Requirement* — *Reliability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
 | SA-REL-01 | *Maturity* | Hasil perhitungan untuk parameter yang sama konsisten pada pemanggilan berulang dan lintas waktu, tanpa dipengaruhi pengguna yang memanggil. | Pemanggilan berulang fungsi perhitungan dengan parameter identik | NFR-02 |
 | SA-REL-02 | *Fault tolerance* | Kegagalan pemanggilan *blockchain* tidak menghilangkan data operasional yang telah tersimpan; kegagalan dicatat sebagai transaksi berstatus gagal dan operasi dapat diulang. | Uji fungsional dengan titik akhir RPC dinonaktifkan | NFR-03 |
 | SA-REL-03 | *Fault tolerance* | Kegagalan layanan ekstraksi tidak menghentikan operasi sistem lain, dan penyebab kegagalan dikembalikan sebagai pesan yang dapat dibedakan. | Uji fungsional dengan layanan ekstraksi dinonaktifkan | — |
+| SA-REL-04 | *Fault tolerance* | Kegagalan maupun ketidaktersediaan layanan pemeriksaan dokumen bukti tidak menggagalkan pengunggahan dokumen oleh dosen; dokumen tetap tersimpan dengan hasil pemeriksaan berstatus gagal beserta pesan penyebabnya, dan pemeriksaan dapat diulang tanpa mengunggah ulang berkas. | Uji unggah dokumen bukti dengan layanan ekstraksi dinonaktifkan | NFR-13 |
 
 3. ### **Availability** {#availability}
 
 Ketersediaan mengacu pada proporsi waktu sistem dapat digunakan sebagaimana mestinya. Karena sistem ini dioperasikan pada rentang waktu penilaian yang terjadwal dan bukan sepanjang waktu, ketersediaan diukur pada masa periode aktif berjalan, bukan sebagai ketersediaan sepanjang tahun.
 
-Tabel III.29. *Non-Functional Requirement* — *Availability*
+Tabel III.31. *Non-Functional Requirement* — *Availability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
@@ -956,7 +1033,7 @@ Tabel III.29. *Non-Functional Requirement* — *Availability*
 
 Keamanan mencakup perlindungan terhadap akses tidak sah, kerahasiaan data, dan integritas informasi. Sistem ini menangani data pribadi dosen dan hasil penilaian kinerja, serta memegang kunci privat yang berwenang menerbitkan kredit, sehingga keamanan menjadi atribut yang tidak dapat dikompromikan.
 
-Tabel III.30. *Non-Functional Requirement* — *Security*
+Tabel III.32. *Non-Functional Requirement* — *Security*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
@@ -972,7 +1049,7 @@ Tabel III.30. *Non-Functional Requirement* — *Security*
 
 Pemeliharaan mengacu pada kemampuan sistem dimodifikasi, diperbaiki, dan dikembangkan secara efisien. Pada sistem ini, keterpeliharaan memiliki dimensi tambahan yang tidak dimiliki sistem konvensional, yaitu bahwa lapisan *on-chain* tidak dapat dimutakhirkan di tempat, sehingga keterlacakan antara butir aturan dan kode menjadi prasyarat agar penempatan ulang kontrak dapat dilakukan dengan risiko terkendali.
 
-Tabel III.31. *Non-Functional Requirement* — *Maintainability*
+Tabel III.33. *Non-Functional Requirement* — *Maintainability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
@@ -985,7 +1062,7 @@ Tabel III.31. *Non-Functional Requirement* — *Maintainability*
 
 Kegunaan mengacu pada kemudahan pengguna mencapai tujuannya. Karena pengguna utama sistem tidak memiliki latar belakang teknologi *blockchain*, tolok ukur utama kegunaan pada sistem ini adalah sejauh mana kompleksitas teknis berhasil disembunyikan.
 
-Tabel III.32. *Non-Functional Requirement* — *Usability*
+Tabel III.34. *Non-Functional Requirement* — *Usability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
@@ -998,7 +1075,7 @@ Tabel III.32. *Non-Functional Requirement* — *Usability*
 
 Portabilitas mengacu pada kemampuan sistem dipasang dan dioperasikan pada lingkungan yang berbeda.
 
-Tabel III.33. *Non-Functional Requirement* — *Portability*
+Tabel III.35. *Non-Functional Requirement* — *Portability*
 
 | ID | Kriteria Kualitas | Deskripsi | Cara Verifikasi | NFR |
 | ----- | ----- | ----- | ----- | :---: |
@@ -1010,7 +1087,7 @@ Tabel III.33. *Non-Functional Requirement* — *Portability*
 
 *Business Rules* mendefinisikan kebijakan dan batasan domain yang mengatur perilaku sistem, terlepas dari detail implementasinya. Aturan ini menjadi dasar bagi persyaratan fungsional pada subbab III.2 sekaligus jangkar penelusuran, sehingga setiap aturan dirujuk oleh satu atau beberapa fitur yang menegakkannya.
 
-Tabel III.34. Daftar *Business Rules*
+Tabel III.36. Daftar *Business Rules*
 
 | ID | Kategori | Aturan Bisnis | Rujukan |
 | :---: | ----- | ----- | ----- |
@@ -1042,10 +1119,14 @@ Tabel III.34. Daftar *Business Rules*
 | BR-26 | Token dan Wallet | Koreksi kredit diwujudkan sebagai transaksi penghapusan token yang baru disertai alasan, bukan sebagai penghapusan catatan lama pada *blockchain*. | LAP; FR-25 |
 | BR-27 | Jejak dan Audit | Setiap upaya transaksi *on-chain* dicatat pada riwayat transaksi beserta statusnya, baik ketika berhasil maupun gagal. | TOK; LAP; FR-24; FR-25; SA-REL-02 |
 | BR-28 | Jejak dan Audit | Kode sumber kedua kontrak diverifikasi pada penjelajah blok publik agar aturan yang berjalan dapat ditinjau pihak eksternal. | SW-06; DC-01 |
+| BR-29 | Verifikasi Bukti | Dokumen bukti pada kegiatan rumpun pembimbingan diperiksa terhadap nama pemilik akun dan peran yang diklaim kegiatan, dan hasilnya melekat pada dokumen yang bersangkutan. | VER; FR-28 |
+| BR-30 | Verifikasi Bukti | Hasil pemeriksaan bersifat temuan bagi asesor dan tidak pernah menolak unggahan maupun menggugurkan kegiatan secara otomatis. | VER; FR-28; FR-29; SA-FUN-03 |
+| BR-31 | Verifikasi Bukti | Hanya status tidak cocok dan peran tidak sesuai yang dihitung sebagai temuan. Status tanpa nama dan gagal menandakan pemeriksaan tidak menyimpulkan apa pun dan tidak boleh diperlakukan sebagai indikasi ketidaksesuaian. | VER; FR-29 |
+| BR-32 | Verifikasi Bukti | Keputusan asesor yang mengesampingkan hasil pemeriksaan dicatat sebagai persetujuan manual beserta identitas dan waktunya, tanpa menghapus hasil pembacaan parser. | VER; FR-30; SA-FUN-03 |
 
 8. ## **Other Requirements** {#other-requirements}
 
-Tabel III.35. *Other Requirements*
+Tabel III.37. *Other Requirements*
 
 | ID | Deskripsi |
 | :---: | ----- |
@@ -1743,6 +1824,260 @@ PROCEDURE Log_dan_Rekapitulasi
 END PROCEDURE
 ```
 
+### **PSPEC-16 — Penyeleksian dan Pemanggilan Parser Bukti**
+
+| Atribut | Keterangan |
+| :---- | :---- |
+| **Proses DFD** | P11.1 sampai P11.2 |
+| **Masukan** | Dokumen bukti beserta lokasi dan tipe berkasnya, kode aturan kegiatan, pemicu pemeriksaan |
+| **Keluaran** | Keluaran parser artefak berupa daftar orang beserta peran dan jenis dokumen, atau hasil pemeriksaan berstatus gagal |
+| **Penyimpanan Data** | D5 referensi\_kegiatan (baca), D7 kegiatan (baca), D8 dokumen\_kegiatan (baca) |
+| **FR Terkait** | FR-28 |
+
+Logika pemrosesan:
+
+```
+PROCEDURE Seleksi_dan_Pemanggilan_Parser_Bukti
+  RECEIVE dokumen, kodeRule, pemicu
+
+  IF pemicu = "otomatis" DAN kodeRule TIDAK DALAM ("EDU201", "EDU202", "EDU203") THEN
+    RETURN "tanpa pemeriksaan"          -- dokumen disimpan tanpa hasil pemeriksaan
+  ENDIF
+  IF dokumen.lokasi BUKAN berkas unggahan lokal THEN
+    RETURN "tanpa pemeriksaan"          -- tautan luar tidak diunduh sistem
+  ENDIF
+  IF dokumen BUKAN PDF MENURUT ekstensi MAUPUN tipe MIME THEN
+    RETURN "tanpa pemeriksaan"
+  ENDIF
+  IF kunci_API_parser TIDAK terkonfigurasi THEN
+    RETURN "tanpa pemeriksaan"
+  ENDIF
+
+  TRY
+    berkas   = BACA dokumen DARI penyimpanan_peladen
+    keluaran = KIRIM berkas KE titik_akhir_parser_artefak
+  CATCH galat
+    RETURN (status = "gagal", pesan = galat, diperiksaPada = WAKTU_KINI)
+  ENDTRY
+
+  RETURN keluaran                       -- daftar orang, peran, peran asli, jenis dokumen
+END PROCEDURE
+```
+
+### **PSPEC-17 — Penormalan dan Pencocokan Nama Dokumen Bukti**
+
+| Atribut | Keterangan |
+| :---- | :---- |
+| **Proses DFD** | P11.3 |
+| **Masukan** | Daftar nama yang terbaca parser, nama pemilik akun pengunggah |
+| **Keluaran** | Daftar entri dokumen yang bersesuaian dengan pemilik akun |
+| **Penyimpanan Data** | Tidak mengakses penyimpanan data |
+| **FR Terkait** | FR-28 |
+
+Logika pemrosesan:
+
+```
+FUNCTION Kunci_Nama(nama)
+  s = BUANG keterangan dalam tanda kurung DARI nama
+  IF s MEMUAT koma THEN s = POTONG s PADA koma pertama ENDIF
+  REPEAT
+    s = BUANG gelar depan DI AWAL s       -- prof, dr, drs, dra, ir, h, hj, st, se, spd
+  UNTIL s TIDAK BERUBAH                    -- gelar depan dapat bertumpuk
+  token = PECAH s MENJADI token
+  WHILE JUMLAH(token) > 1 DAN token TERAKHIR MEMUAT titik DO
+    BUANG token TERAKHIR                   -- sisa gelar belakang tanpa koma
+  ENDWHILE
+  RETURN token DIGABUNG, tanpa tanda baca, spasi tunggal, huruf kecil
+END FUNCTION
+
+PROCEDURE Pencocokan_Nama_Bukti
+  RECEIVE daftarNamaDokumen, namaAkun
+  kunciAkun = Kunci_Nama(namaAkun)
+  cocok     = KOSONG
+
+  FOR SETIAP namaDokumen DALAM daftarNamaDokumen DO
+    kunciDokumen = Kunci_Nama(namaDokumen)
+
+    IF kunciDokumen = kunciAkun THEN
+      TAMBAHKAN namaDokumen KE cocok
+    ELSE IF RAPATKAN(kunciDokumen) = RAPATKAN(kunciAkun) THEN
+      TAMBAHKAN namaDokumen KE cocok       -- toleransi galat pemenggalan pindaian
+    ELSE
+      dasarDokumen = BUANG token satu huruf DARI kunciDokumen
+      dasarAkun    = BUANG token satu huruf DARI kunciAkun
+      IF JUMLAH_TOKEN(sisi terpendek) >= 2
+         DAN salah satu dasar MERUPAKAN AWALAN dasar lainnya PADA batas token THEN
+        TAMBAHKAN namaDokumen KE cocok     -- marga panjang yang disingkat pada dokumen
+      ENDIF
+    ENDIF
+  ENDFOR
+
+  RETURN cocok
+END PROCEDURE
+```
+
+### **PSPEC-18 — Pemeriksaan Peran dan Penetapan Status Pemeriksaan**
+
+| Atribut | Keterangan |
+| :---- | :---- |
+| **Proses DFD** | P11.4 sampai P11.5 |
+| **Masukan** | Daftar orang beserta peran dari dokumen, daftar entri yang cocok, kode aturan dan parameter kegiatan |
+| **Keluaran** | Hasil pemeriksaan berisi status akhir, nama yang cocok, seluruh nama terdeteksi beserta perannya, peran yang diklaim, dan peran yang tertulis pada dokumen |
+| **Penyimpanan Data** | D8 dokumen\_kegiatan (tulis) |
+| **FR Terkait** | FR-28, FR-29 |
+
+Logika pemrosesan:
+
+```
+PROCEDURE Pemeriksaan_Peran_dan_Status
+  RECEIVE orangDokumen, entriCocok, kodeRule, parameter
+
+  IF orangDokumen KOSONG THEN
+    SIMPAN KE D8 (status = "tanpa_nama")  -- pemeriksaan tidak menyimpulkan apa pun
+    RETURN
+  ENDIF
+  IF entriCocok KOSONG THEN
+    SIMPAN KE D8 (status = "tidak_cocok", namaTerdeteksi, orangTerdeteksi)
+    RETURN
+  ENDIF
+
+  CASE kodeRule = "EDU203" DAN parameter.peran DALAM ("PembimbingUtama", "PembimbingPendamping")
+    ujiPeran = penguji yang membedakan pembimbing utama dari pembimbing pendamping;
+               entri yang tertulis sebagai penguji dinyatakan bertentangan
+  CASE kodeRule = "EDU301" DAN parameter.peranPenguji DALAM ("Ketua", "Anggota")
+    ujiPeran = penguji yang membedakan ketua dari anggota penguji;
+               entri yang tertulis sebagai pembimbing dinyatakan bertentangan
+  CASE kodeRule DALAM ("EDU201", "EDU202")
+    ujiPeran = penguji yang memastikan peran termasuk rumpun pembimbingan
+  CASE LAINNYA
+    ujiPeran = TIDAK ADA
+  ENDCASE
+
+  IF ujiPeran TIDAK ADA THEN
+    SIMPAN KE D8 (status = "cocok", namaCocok, namaTerdeteksi, orangTerdeteksi)
+    RETURN
+  ENDIF
+
+  FOR SETIAP entri DALAM entriCocok DO
+    nilai[entri] = ujiPeran(entri)        -- sesuai | bertentangan | tidak dapat dipastikan
+  ENDFOR
+
+  IF TIDAK ADA nilai bernilai "sesuai" DAN ADA nilai bernilai "bertentangan" THEN
+    SIMPAN KE D8 (status = "peran_tidak_sesuai", peranDiharapkan, peranTerdeteksi)
+  ELSE
+    SIMPAN KE D8 (status = "cocok", peranDiharapkan,
+                  pesan = "peran tidak dapat dipastikan" BILA tidak ada yang bernilai "sesuai")
+  ENDIF
+END PROCEDURE
+```
+
+### **PSPEC-19 — Peninjauan Hasil Pemeriksaan oleh Asesor**
+
+| Atribut | Keterangan |
+| :---- | :---- |
+| **Proses DFD** | P11 |
+| **Masukan** | Perintah pemeriksaan ulang, perintah persetujuan manual, perintah pencabutan persetujuan, identitas asesor |
+| **Keluaran** | Hasil pemeriksaan yang diperbarui, jumlah temuan pada halaman penilaian |
+| **Penyimpanan Data** | D4 penugasan\_asesor (baca), D7 kegiatan (baca), D8 dokumen\_kegiatan (baca, tulis) |
+| **FR Terkait** | FR-29, FR-30 |
+
+Logika pemrosesan:
+
+```
+PROCEDURE Peninjauan_Hasil_Pemeriksaan
+  RECEIVE idPenugasan, idDokumen, aksi, idAsesor
+
+  penugasan = BACA D4 WHERE id_penugasan = idPenugasan
+  IF penugasan.id_asesor <> idAsesor THEN TOLAK "Penugasan tidak ditemukan" ENDIF
+  dokumen = BACA D8 WHERE id_dokumen = idDokumen
+  IF dokumen TIDAK BERADA PADA dokumen BKD penugasan tersebut THEN
+    TOLAK "Dokumen tidak ditemukan pada laporan ini"
+  ENDIF
+
+  CASE aksi = "periksa ulang"
+    IF dokumen TIDAK memenuhi syarat pemeriksaan THEN
+      TOLAK "Dokumen tidak dapat diperiksa"
+    ENDIF
+    hasil = PANGGIL PSPEC-16, PSPEC-17, PSPEC-18 (pemicu = "atas permintaan")
+    TIMPA verifikasi PADA D8 DENGAN hasil
+  ENDCASE
+
+  CASE aksi = "setujui"
+    IF verifikasi PADA D8 KOSONG THEN TOLAK "Belum ada hasil pemeriksaan" ENDIF
+    TAMBAHKAN blok persetujuan (idAsesor, nama, waktu) KE verifikasi
+    -- hasil pembacaan parser tidak dihapus
+  ENDCASE
+
+  CASE aksi = "cabut persetujuan"
+    BUANG blok persetujuan DARI verifikasi
+  ENDCASE
+
+  temuan = JUMLAH kegiatan PADA dokumen BKD YANG MEMILIKI dokumen bukti
+           DENGAN status DALAM ("tidak_cocok", "peran_tidak_sesuai")
+           DAN TANPA blok persetujuan
+  RETURN temuan
+END PROCEDURE
+```
+
+### **PSPEC-20 — Input Kegiatan Berbasis Penugasan oleh Administrator**
+
+| Atribut | Keterangan |
+| :---- | :---- |
+| **Proses DFD** | P6 |
+| **Masukan** | Dosen tujuan, kode aturan, judul dan rincian kegiatan, parameter kegiatan, mode aksi |
+| **Keluaran** | Kegiatan berstatus portofolio pada dokumen BKD laporan dosen tujuan |
+| **Penyimpanan Data** | D1 pengguna (baca), D2 periode\_bkd (baca), D3 lkd (baca, tulis), D5 referensi\_kegiatan (baca), D7 kegiatan (baca, tulis) |
+| **FR Terkait** | FR-31 |
+
+Logika pemrosesan:
+
+```
+PROCEDURE Input_Kegiatan_oleh_Administrator
+  RECEIVE idDosen, kodeRule, judul, rincian, parameter, mode
+
+  periode = BACA D2 WHERE status = "aktif"
+  IF periode TIDAK ADA THEN TOLAK "Belum ada periode BKD aktif" ENDIF
+  IF kodeRule TIDAK DALAM daftar butir berbasis penugasan THEN
+    TOLAK "Jenis kegiatan ini diisi sendiri oleh dosen"
+  ENDIF
+
+  dosen = BACA D1 WHERE id_pengguna = idDosen
+  IF dosen.peran <> "dosen" ATAU dosen TIDAK aktif THEN
+    TOLAK "Dosen tujuan tidak ditemukan atau sudah nonaktif"
+  ENDIF
+  referensi = BACA D5 WHERE kode_rule = kodeRule
+  sksX100   = PANGGIL PSPEC-09 (kodeRule, parameter)
+
+  lkd = BACA D3 WHERE id_pengguna = idDosen AND id_periode = periode AND jenis = "laporan"
+  IF lkd TIDAK ADA THEN BUAT lkd PADA D3 ENDIF
+  IF lkd.simpan_permanen THEN
+    TOLAK "Dokumen BKD sudah disimpan permanen"
+  ENDIF
+
+  CASE mode = "tambah"
+    IF ADA kegiatan PADA D7 DENGAN (lkd, referensi, judul) YANG SAMA THEN
+      TOLAK "Kegiatan sudah tercatat pada dosen tersebut"
+    ENDIF
+    SIMPAN KE D7 (judul, rincian, parameter, sksX100, statusPerhitungan,
+                  status = "diajukan", sumber_data = "admin", diklaim = salah)
+  ENDCASE
+
+  CASE mode = "ubah"
+    lama = BACA D7 WHERE id_kegiatan = idKegiatan
+    IF lama.sumber_data <> "admin" THEN TOLAK "Bukan kegiatan hasil input administrator" ENDIF
+    IF lama.diklaim THEN TOLAK "Kegiatan sudah diklaim dosen" ENDIF
+    PERBARUI D7 (judul, rincian, parameter, sksX100, statusPerhitungan)
+  ENDCASE
+
+  CASE mode = "hapus"
+    IF kegiatan.sumber_data <> "admin" ATAU kegiatan.diklaim THEN
+      TOLAK "Hanya kegiatan input administrator yang belum diklaim yang dapat dihapus"
+    ENDIF
+    HAPUS DARI D7
+  ENDCASE
+END PROCEDURE
+```
+
 ## **Appendix B: Matriks Keterlacakan** {#appendix-b-matriks-keterlacakan}
 
 *Appendix* ini menyajikan keterlacakan dua arah antara persyaratan fungsional, proses pada *Data Flow Diagram*, spesifikasi proses, fitur sistem, modul implementasi, dan jenis pengujian yang memverifikasinya. Kolom Modul Implementasi merujuk pada kode implementasi yang digunakan pada Tabel IV.30 Laporan Tugas Akhir.
@@ -1778,6 +2113,11 @@ Tabel B.1. Matriks Keterlacakan Persyaratan Fungsional
 | FR-25 | LAP | P10 | PSPEC-13, PSPEC-14 | IM-02, IM-03 | *Unit*, *Integration*, *System* |
 | FR-26 | LAP | P10 | PSPEC-15 | IM-03, IM-09 | *Integration*, *System* |
 | FR-27 | LAP | P10 | PSPEC-15 | IM-09 | *Integration*, *System* |
+| FR-28 | VER | P11 | PSPEC-16, PSPEC-17, PSPEC-18 | IM-10 | *Integration*, *System* |
+| FR-29 | VER | P11 | PSPEC-18 | IM-10 | *Integration*, *System* |
+| FR-30 | VER | P11 | PSPEC-19 | IM-10 | *Integration*, *System* |
+| FR-31 | EKS | P6 | PSPEC-20 | IM-11 | *Integration*, *System* |
+| FR-32 | AUT | P1 | PSPEC-01 | IM-11 | *System* |
 
 Tabel B.2. Matriks Keterlacakan Persyaratan Nonfungsional
 
@@ -1795,6 +2135,8 @@ Tabel B.2. Matriks Keterlacakan Persyaratan Nonfungsional
 | NFR-10 | *Usability* — *operability* | SA-USB-02 | Uji alur pengguna dosen dan asesor |
 | NFR-11 | *Portability* — *installability* | SA-PRT-01 | Pemasangan ulang pada lingkungan bersih |
 | NFR-12 | *Performance efficiency* — *time behaviour* | PR-06 | Pembacaan *event* pada rentang blok melebihi batas penyedia |
+| NFR-13 | *Reliability* — *fault tolerance* | SA-REL-04, PR-08 | Unggah dokumen bukti dengan layanan ekstraksi dinonaktifkan |
+| NFR-14 | *Functional suitability* — *functional appropriateness* | SA-FUN-03 | Uji alur persetujuan manual asesor beserta pemeriksaan muatan hasil setelahnya |
 
 
 

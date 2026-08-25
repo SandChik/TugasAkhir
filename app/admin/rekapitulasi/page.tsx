@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
+import TabelData from "../../../components/TabelData";
 import StatusChip from "../../../components/StatusChip";
 
 /** UI-ADM-06 / FR-19, FR-20: rekapitulasi kredit SKS seluruh dosen pada periode aktif. */
@@ -13,7 +13,7 @@ export default async function RekapitulasiPage() {
 
   const dosen = periodeAktif
     ? await prisma.pengguna.findMany({
-        where: { peran: "dosen" },
+        where: { peran: { in: ["dosen", "asesor"] } },
         orderBy: { nama: "asc" },
         include: {
           lkd: {
@@ -88,49 +88,56 @@ export default async function RekapitulasiPage() {
       </div>
 
       <div className="mt-4">
-        <DataTable
-          columns={[
+        <TabelData
+          placeholderCari="Cari nama atau NIDN…"
+          kosong={periodeAktif ? "Belum ada data dosen." : "Aktifkan periode terlebih dahulu."}
+          kolom={[
             { label: "No", width: "50px" },
-            { label: "Nama / NIDN" },
-            { label: "Program Studi", width: "170px" },
-            { label: "Jumlah Kegiatan", width: "130px" },
-            { label: "SKS Diajukan", width: "120px" },
-            { label: "SKS Disahkan", width: "120px" },
-            { label: "Simpulan Final", width: "150px" },
+            { label: "Nama / NIDN", urut: true },
+            { label: "Program Studi", width: "170px", filter: true },
+            { label: "Jumlah Kegiatan", width: "130px", urut: true },
+            { label: "SKS Diajukan", width: "120px", urut: true },
+            { label: "SKS Disahkan", width: "120px", urut: true },
+            { label: "Simpulan Final", width: "150px", filter: true },
           ]}
-        >
-          {rows.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="!text-center !text-crumb">
-                {periodeAktif ? "Belum ada data dosen." : "Aktifkan periode terlebih dahulu."}
-              </td>
-            </tr>
-          ) : (
-            rows.map((r, i) => (
-              <tr key={r.id}>
-                <td>{i + 1}</td>
-                <td>
+          baris={rows.map((r, i) => {
+            const simpulan = r.simpulanFinal
+              ? r.simpulanFinal === "M"
+                ? "Memenuhi"
+                : "Tidak Memenuhi"
+              : "Belum ada simpulan";
+            return {
+              id: r.id,
+              cari: r.nidn ?? "",
+              nilai: [
+                i + 1,
+                r.nama,
+                r.prodi,
+                r.jumlahKegiatan,
+                r.sksDiajukan / 100,
+                r.sksDisahkan / 100,
+                simpulan,
+              ],
+              sel: [
+                i + 1,
+                <>
                   {r.nama}
                   <span className="block text-[10px] text-crumb">{r.nidn ?? "-"}</span>
-                </td>
-                <td>{r.prodi ?? "-"}</td>
-                <td>{r.jumlahKegiatan}</td>
-                <td>{(r.sksDiajukan / 100).toFixed(2)}</td>
-                <td>{(r.sksDisahkan / 100).toFixed(2)}</td>
-                <td>
-                  {r.simpulanFinal ? (
-                    <StatusChip
-                      label={r.simpulanFinal === "M" ? "Memenuhi" : "Tidak Memenuhi"}
-                      variant={r.simpulanFinal === "M" ? "success" : "danger"}
-                    />
-                  ) : (
-                    <StatusChip label="Belum ada simpulan" variant="neutral" />
-                  )}
-                </td>
-              </tr>
-            ))
-          )}
-        </DataTable>
+                </>,
+                r.prodi ?? "-",
+                r.jumlahKegiatan,
+                (r.sksDiajukan / 100).toFixed(2),
+                (r.sksDisahkan / 100).toFixed(2),
+                <StatusChip
+                  label={simpulan}
+                  variant={
+                    r.simpulanFinal ? (r.simpulanFinal === "M" ? "success" : "danger") : "neutral"
+                  }
+                />,
+              ],
+            };
+          })}
+        />
       </div>
     </AppShell>
   );

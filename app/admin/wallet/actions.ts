@@ -18,8 +18,8 @@ export async function tetapkanWallet(formData: FormData) {
   if (!id) redirect(withFlash(DASAR, { err: "Pengguna tidak dikenal" }));
 
   const user = await prisma.pengguna.findUnique({ where: { id_pengguna: id } });
-  if (!user || user.peran !== "dosen")
-    redirect(withFlash(DASAR, { err: "Wallet hanya untuk akun dosen" }));
+  if (!user || (user.peran !== "dosen" && user.peran !== "asesor"))
+    redirect(withFlash(DASAR, { err: "Wallet hanya untuk akun dosen/asesor" }));
   if (user!.wallet_index != null)
     redirect(withFlash(DASAR, { err: `${user!.nama} sudah memiliki wallet` }));
 

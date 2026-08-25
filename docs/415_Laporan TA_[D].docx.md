@@ -1288,7 +1288,8 @@ Tabel IV.10. Ringkasan Persyaratan Fungsional per Modul
 | ----- | :---: | ----- |
 | Autentikasi dan Otorisasi | FR-01 | Sistem menyediakan mekanisme masuk menggunakan surel dan kata sandi. |
 |  | FR-02 | Sistem membatasi akses halaman berdasarkan peran pengguna dan mengarahkan pengguna ke ruang kerja sesuai perannya. |
-| Manajemen Pengguna | FR-03 | Administrator dapat menambah akun pengguna, mengisi kode dosen, serta mengaktifkan dan menonaktifkan akun. |
+|  | FR-32 | Setiap pengguna dapat melihat data profil akunnya sendiri sebagai tampilan baca saja. |
+| Manajemen Pengguna | FR-03 | Administrator dapat menambah akun pengguna, mengisi kode dosen dan nomor induk registrasi asesor, serta mengaktifkan dan menonaktifkan akun. |
 |  | FR-04 | Administrator dapat menetapkan alamat *wallet* kustodian bagi dosen. |
 | Manajemen Periode | FR-05 | Administrator dapat menambah periode BKD beserta rentang fase pengisian, penilaian, dan perbaikan. |
 |  | FR-06 | Sistem menentukan fase yang sedang berjalan dan membatasi aksi pengguna sesuai fase tersebut. |
@@ -1298,6 +1299,7 @@ Tabel IV.10. Ringkasan Persyaratan Fungsional per Modul
 |  | FR-10 | Sistem menampilkan pratinjau pemetaan baris penugasan menjadi kegiatan beserta temuan validasi dan status pencocokan dosen. |
 |  | FR-11 | Administrator dapat mengoreksi atau melewati baris hasil ekstraksi tanpa mengubah hasil ekstraksi asli. |
 |  | FR-12 | Sistem dapat menerapkan hasil ekstraksi menjadi kegiatan dosen secara idempoten dan melampirkan berkas sumber sebagai dokumen bukti. |
+|  | FR-31 | Administrator dapat menginput kegiatan berbasis penugasan atas nama seorang dosen sebagai jalur pengganti ketika dokumen penugasan belum tersedia atau tidak terbaca parser. |
 | Pengelolaan Kegiatan | FR-13 | Dosen dapat menambah, mengubah, dan menghapus kegiatan beserta parameternya. |
 |  | FR-14 | Dosen dapat mengunggah dan menghapus dokumen bukti pada suatu kegiatan. |
 |  | FR-15 | Dosen dapat menarik kegiatan dari portofolio ke dokumen BKD periode berjalan dan membatalkannya kembali. |
@@ -1336,7 +1338,7 @@ Tabel IV.11. Ringkasan Persyaratan Nonfungsional
 | NFR-13 | *Reliability* — *fault tolerance* | Kegagalan atau ketidaktersediaan layanan pemeriksaan dokumen bukti tidak boleh menggagalkan proses unggah dokumen oleh dosen. | Dokumen tetap tersimpan ketika layanan ekstraksi tidak dapat dihubungi, dengan hasil pemeriksaan tercatat berstatus gagal beserta pesan penyebabnya. |
 | NFR-14 | *Functional suitability* — *functional appropriateness* | Hasil pemeriksaan dokumen bukti tidak boleh menjadi penentu tunggal diterima atau ditolaknya suatu bukti. | Sistem tidak menolak unggahan berdasarkan hasil pemeriksaan, dan asesor dapat menyetujui hasil pemeriksaan secara manual dengan hasil asli tetap tersimpan. |
 
- 	Perlu dicatat bahwa kode FR dan NFR pada kedua tabel di atas berfungsi sebagai pengenal tetap, bukan sebagai penanda urutan pelaksanaan. Modul verifikasi keaslian dokumen bukti memperoleh kode FR-28 sampai FR-30 karena ditetapkan setelah dua puluh tujuh persyaratan sebelumnya dirumuskan, meskipun pada alur kerja sistem modul tersebut berjalan di antara pengelolaan kegiatan dan penilaian asesor. Penomoran yang tetap ini dipilih agar seluruh rujukan silang pada dokumen perancangan, implementasi, dan pengujian tidak berubah ketika persyaratan baru ditambahkan.  
+ 	Perlu dicatat bahwa kode FR dan NFR pada kedua tabel di atas berfungsi sebagai pengenal tetap, bukan sebagai penanda urutan pelaksanaan. Modul verifikasi keaslian dokumen bukti memperoleh kode FR-28 sampai FR-30 karena ditetapkan setelah dua puluh tujuh persyaratan sebelumnya dirumuskan, meskipun pada alur kerja sistem modul tersebut berjalan di antara pengelolaan kegiatan dan penilaian asesor. Alasan yang sama berlaku pada FR-31 dan FR-32, yang masing-masing melengkapi modul ekstraksi dokumen dan modul autentikasi meskipun kodenya berada di ujung daftar. Penomoran yang tetap ini dipilih agar seluruh rujukan silang pada dokumen perancangan, implementasi, dan pengujian tidak berubah ketika persyaratan baru ditambahkan.  
  	Dengan ditetapkannya persyaratan fungsional dan nonfungsional di atas, hasil tahap analisis ini menjadi dasar bagi tahap perancangan yang diuraikan pada subbab IV.2, sekaligus menjadi acuan verifikasi pada tahap pengujian di subbab IV.4.
 
 2. ## **Perancangan** {#perancangan-1}
@@ -1419,12 +1421,12 @@ Tabel IV.14. Deskripsi Proses pada Diagram Aliran Data Level 1
 
 | No. Proses | Nama Proses | Deskripsi | FR Terkait |
 | :---: | ----- | ----- | ----- |
-| P1 | Autentikasi dan Otorisasi | Memverifikasi kredensial pengguna, menerbitkan sesi, dan menegakkan pembatasan akses halaman berdasarkan peran | FR-01, FR-02 |
+| P1 | Autentikasi dan Otorisasi | Memverifikasi kredensial pengguna, menerbitkan sesi, menegakkan pembatasan akses halaman berdasarkan peran, dan menyajikan data profil akun yang sedang masuk | FR-01, FR-02, FR-32 |
 | P2 | Pengelolaan Pengguna dan *Wallet* | Mengelola akun pengguna serta menurunkan dan menetapkan alamat *wallet* kustodian bagi dosen | FR-03, FR-04 |
 | P3 | Pengelolaan Periode dan Fase | Mengelola periode BKD beserta rentang fase serta menentukan fase yang sedang berjalan | FR-05, FR-06 |
 | P4 | Penugasan Asesor | Membentuk pasangan penugasan asesor pertama dan kedua pada setiap dokumen BKD | FR-07 |
 | P5 | Pengelolaan Referensi Kegiatan | Menyediakan data acuan butir aturan beserta skema parameter dan pemetaannya ke fungsi kontrak | FR-08 |
-| P6 | Ekstraksi dan Penerapan Dokumen | Mengekstraksi berkas SK dan ST, memetakan barisnya menjadi calon kegiatan, menampung koreksi administrator, dan menerapkannya menjadi kegiatan dosen | FR-09, FR-10, FR-11, FR-12 |
+| P6 | Ekstraksi dan Penerapan Dokumen | Mengekstraksi berkas SK dan ST, memetakan barisnya menjadi calon kegiatan, menampung koreksi administrator, dan menerapkannya menjadi kegiatan dosen, serta menyediakan jalur input manual bagi penugasan yang dokumennya tidak tersedia | FR-09, FR-10, FR-11, FR-12, FR-31 |
 | P7 | Pengelolaan Kegiatan dan Dokumen BKD | Mengelola kegiatan dan dokumen bukti milik dosen, penarikan kegiatan ke dokumen BKD, penetapan capaian, serta penyimpanan sementara dan permanen | FR-13, FR-14, FR-15, FR-16, FR-17 |
 | P8 | Perhitungan Kredit Kegiatan | Memvalidasi parameter terhadap skema dan memanggil fungsi perhitungan pada kontrak kalkulator | FR-18, FR-19 |
 | P9 | Penilaian, Simpulan, dan Penerbitan Token | Menyimpan penilaian per asesor, memproses pengesahan, membentuk simpulan beserta *hash*-nya, dan menerbitkan token kredit | FR-20, FR-21, FR-22, FR-23, FR-24 |
@@ -1598,6 +1600,7 @@ Tabel IV.20. Daftar Spesifikasi Proses
 | PSPEC-17 | P11.3 | Menormalkan setiap nama yang terbaca dengan melucuti gelar depan bertumpuk dan gelar belakang, memotong pada koma pertama, merapikan spasi, dan menyeragamkan huruf; mencocokkan secara berjenjang melalui kunci penuh, kunci rapat tanpa spasi, lalu kunci tanpa inisial sebagai awalan | Modul Pencocokan Nama |
 | PSPEC-18 | P11.4–P11.5 | Memilih penguji peran sesuai kode aturan dan parameter kegiatan, membandingkan peran pada dokumen terhadap peran yang diklaim dengan keluaran sesuai, bertentangan, atau tidak dapat dipastikan; menetapkan status akhir di antara lima nilai dan menyimpannya sebagai JSONB menyertai dokumen | Modul Verifikasi Bukti |
 | PSPEC-19 | P11 | Menjalankan ulang pemeriksaan atas satu dokumen dan menimpa hasil sebelumnya, atau menambahkan penanda persetujuan asesor beserta identitas dan waktunya tanpa menghapus hasil pemeriksaan asli, serta mencabut penanda tersebut apabila diminta | Modul Peninjauan Bukti Asesor |
+| PSPEC-20 | P6 | Menolak butir aturan yang bukan berbasis penugasan, membentuk dokumen BKD laporan dosen tujuan bila belum ada, menghitung kredit melalui kontrak kalkulator, menyimpan kegiatan sebagai portofolio yang belum diklaim, serta melindungi kegiatan yang telah diklaim dosen dari perubahan dan penghapusan | Modul Input Kegiatan Administrator |
 
 3. ### **Perancangan Modul** {#perancangan-modul}
 
@@ -1682,7 +1685,7 @@ Tabel IV.23. CD-002: Modul *Smart Contract* Token SKS
 
 4. ### **Perancangan Basis Data** {#perancangan-basis-data}
 
- 	Perancangan basis data menggunakan pendekatan *schema-first* melalui Prisma ORM. Seluruh struktur data didefinisikan secara terpusat dalam satu berkas skema yang berfungsi sebagai sumber kebenaran tunggal bagi seluruh entitas, tipe enumerasi, dan relasi antartabel. Skema tersebut kemudian dimigrasikan ke PostgreSQL sehingga setiap perubahan struktur data terlacak dan dikelola secara terversi melalui lima berkas migrasi yang tercatat pada repositori.  
+ 	Perancangan basis data menggunakan pendekatan *schema-first* melalui Prisma ORM. Seluruh struktur data didefinisikan secara terpusat dalam satu berkas skema yang berfungsi sebagai sumber kebenaran tunggal bagi seluruh entitas, tipe enumerasi, dan relasi antartabel. Skema tersebut kemudian dimigrasikan ke PostgreSQL sehingga setiap perubahan struktur data terlacak dan dikelola secara terversi melalui delapan berkas migrasi yang tercatat pada repositori.  
  	Basis data sistem terdiri atas 11 entitas dan 14 tipe enumerasi. Pemodelan mengacu pada model *entity-relationship* yang diperkenalkan Chen (1976) dan digambarkan menggunakan notasi *Crow's Foot* sebagaimana dijelaskan pada subbab II.1.12. Rancangan basis data disajikan pada Gambar IV.14. Setiap penyimpanan data yang diidentifikasi pada Tabel IV.15 berkorespondensi dengan satu entitas pada diagram ini.
 
 ![A screenshot of a computer  AI-generated content may be incorrect.][image13]
@@ -1746,7 +1749,7 @@ Tabel IV.25. Daftar Tipe Enumerasi pada Basis Data
 | 4\. | jenis\_lkd | rencana, laporan | lkd |
 | 5\. | status\_lkd | draft, diajukan, dinilai, final | lkd |
 | 6\. | status\_kegiatan | draft, diajukan, dihitung, disetujui, ditolak, revisi | kegiatan |
-| 7\. | status\_capaian | selesai, berlanjut, gagal, beban\_lebih | kegiatan |
+| 7\. | status\_capaian | selesai, gagal, beban\_lebih | kegiatan |
 | 8\. | status\_perhitungan | berhasil, gagal, tidak\_diotomatisasi | kegiatan |
 | 9\. | status\_penilaian | disetujui, ditolak, revisi | hasil\_penilaian |
 | 10\. | status\_simpulan | M, TM | simpulan\_bkd |
@@ -1785,7 +1788,7 @@ Tabel IV.26. Daftar Halaman Sistem per Peran
 | 14\. | Asesor | Form Penilaian | Menilai setiap kegiatan pada satu dokumen BKD, meninjau temuan ketidaksesuaian bukti, dan mengesahkan penilaian |
 | 15\. | Asesor | Bukti Kegiatan | Meninjau dokumen bukti satu kegiatan, menjalankan pemeriksaan ulang keaslian, serta menyetujui atau mencabut persetujuan atas hasil pemeriksaan |
 | 16\. | Asesor | Profil | Menampilkan identitas asesor |
-| 17\. | Administrator | Manajemen Pengguna | Mengelola akun dan mengisi kode dosen |
+| 17\. | Administrator | Manajemen Pengguna | Mengelola akun, mengisi kode dosen, dan mengisi nomor induk registrasi asesor |
 | 18\. | Administrator | Konfigurasi Wallet Dosen | Menetapkan alamat *wallet* kustodian bagi dosen |
 | 19\. | Administrator | Manajemen Periode BKD | Mengelola periode beserta rentang fase |
 | 20\. | Administrator | Penugasan Asesor | Menugaskan asesor pertama dan kedua pada dokumen BKD |
@@ -1889,6 +1892,7 @@ Tabel IV.30. Matriks Implementasi
 | IM-08 | FR-03, FR-05, FR-06, FR-07, FR-08 | Sistem menyediakan pengelolaan pengguna, periode dan fase, penugasan asesor, serta data referensi kegiatan. | PSPEC-02, PSPEC-03, PSPEC-04 | Selesai |
 | IM-09 | FR-26, FR-27 | Sistem menampilkan log transaksi *on-chain* dan rekapitulasi kredit BKD. | PSPEC-15 | Selesai |
 | IM-10 | FR-28, FR-29, FR-30 | Sistem memeriksa keaslian dokumen bukti rumpun pembimbingan melalui pembacaan nama dan peran oleh parser artefak universal, menandai ketidaksesuaian sebagai temuan bagi asesor, serta menyediakan pemeriksaan ulang dan persetujuan manual oleh asesor. | PSPEC-16, PSPEC-17, PSPEC-18, PSPEC-19 | Selesai |
+| IM-11 | FR-03, FR-31, FR-32 | Sistem menyediakan input kegiatan berbasis penugasan oleh administrator sebagai jalur pengganti ekstraksi dokumen, pengelolaan nomor induk registrasi asesor, serta halaman profil akun baca saja pada ketiga ruang kerja. | PSPEC-01, PSPEC-02, PSPEC-20 | Selesai |
 
 3. ### **Implementasi Modul *Smart Contract* Kalkulator BKD Pendidikan** {#implementasi-modul-kalkulator}
 
@@ -2072,7 +2076,15 @@ Aksi pengelolaan periode menegakkan ketentuan bahwa hanya satu periode boleh ber
 
 Modul log *blockchain* membaca *event* penerbitan dan penghapusan langsung dari jaringan melalui modul integrasi, bukan dari basis data. Pemilihan sumber ini disengaja agar tampilan log merupakan cerminan keadaan *on-chain* yang sesungguhnya, sehingga apabila terdapat selisih antara catatan basis data dan catatan *blockchain*, selisih tersebut dapat terlihat alih-alih tersembunyi. Modul rekapitulasi mengagregasi kredit per dosen dan per periode dari basis data, dan pada halaman koreksi token menampilkan saldo *on-chain* setiap dosen berdampingan dengan data basis data.
 
-Aksi koreksi token mencatat riwayat transaksi baik ketika penghapusan berhasil maupun ketika gagal, mengikuti pola yang sama dengan penerbitan token. Implementasi ini merealisasikan FR-03 sampai FR-08 serta FR-25 sampai FR-27.
+Aksi koreksi token mencatat riwayat transaksi baik ketika penghapusan berhasil maupun ketika gagal, mengikuti pola yang sama dengan penerbitan token.
+
+Modul ini juga memuat jalur input kegiatan oleh administrator sebagai realisasi PSPEC-20 dan FR-31. Jalur tersebut diperlukan karena tidak seluruh penugasan tersedia dalam bentuk berkas yang dapat diekstraksi. Sebagian penugasan diberikan sebelum surat resminya terbit, sebagian lagi tersedia dalam bentuk yang tidak terbaca kedua parser. Tanpa jalur ini, satu-satunya cara memasukkan kegiatan tersebut adalah membuka kembali pengisian mandiri oleh dosen, yang justru mengembalikan permasalahan yang hendak dihilangkan sistem. Jalur input administrator menghasilkan kegiatan yang identik dengan hasil penerapan dokumen, yaitu kegiatan berstatus portofolio yang belum diklaim dengan nilai kredit dihitung kontrak kalkulator, dan dibedakan dari kegiatan hasil ekstraksi hanya melalui penanda sumber datanya.
+
+Empat pembatasan ditegakkan pada aksi peladen jalur ini, bukan hanya pada tampilan. Pertama, butir aturan yang boleh diinput dibatasi pada daftar butir berbasis penugasan, sehingga butir yang menjadi hak pengisian dosen tetap tidak dapat diisikan administrator. Kedua, kegiatan yang telah diklaim dosen tidak dapat diubah maupun dihapus administrator, karena kegiatan tersebut telah menjadi isi dokumen BKD yang menjadi tanggung jawab dosen. Ketiga, penyimpanan ditolak apabila judul dan butir aturan yang sama telah tercatat pada dosen tersebut, sehingga pengiriman formulir berulang tidak menghasilkan kegiatan ganda. Keempat, alamat kembali yang dikirim formulir divalidasi agar hanya menunjuk ke halaman tersebut, sehingga tidak dapat dimanfaatkan sebagai pengalihan ke alamat luar.
+
+Halaman profil pada ketiga ruang kerja merupakan realisasi FR-32 dan diimplementasikan sebagai satu komponen peladen yang dipakai bersama. Komponen tersebut membaca data akun berdasarkan pengenal pada sesi, kemudian menyajikannya sebagai daftar baca saja tanpa aksi penyuntingan. Penyuntingan sengaja tidak disediakan karena identitas akademik, kode dosen, nomor induk registrasi asesor, dan alamat *wallet* merupakan data yang menjadi acuan pencocokan dokumen dan penerbitan kredit, sehingga perubahannya berada pada kewenangan administrator. Alamat *wallet* ditampilkan sebagai keterangan identitas baca saja, yaitu pada halaman ini dan pada tab biodata halaman dokumen BKD, sebagai keterbukaan atas alamat tujuan kredit. Alamat tersebut tidak pernah muncul sebagai elemen yang menuntut tindakan pengguna, dan dosen maupun asesor tidak pernah dihadapkan pada biaya *gas* maupun permintaan penandatanganan transaksi, sesuai ketentuan UI-05 pada dokumen SRS dan NFR-10.
+
+Implementasi pada subbab ini merealisasikan FR-03 sampai FR-08, FR-25 sampai FR-27, serta FR-31 dan FR-32.
 
 4. ## **Pengujian** {#pengujian-bab-iv}
 
@@ -2134,6 +2146,7 @@ Tabel IV.38. Objek Pengujian dan Keterkaitan dengan Persyaratan Fungsional
 | FR-20 – FR-24 | Penilaian oleh dua asesor, pengesahan berjenjang, pembentukan simpulan, dan penerbitan token | *Unit testing*, *system testing* |
 | FR-25 – FR-27 | Koreksi token, pembacaan log *on-chain*, dan penyajian rekapitulasi | *Integration testing*, *system testing* |
 | FR-28 – FR-30 | Unggah dokumen bukti milik dosen sendiri dan milik dosen lain, unggah dokumen dengan peran berbeda dari yang diklaim, pengamatan penanda temuan pada halaman penilaian, pemeriksaan ulang, serta persetujuan manual dan pencabutannya | *Unit testing*, *integration testing*, *system testing* |
+| FR-31, FR-32 | Input kegiatan berbasis penugasan oleh administrator beserta percobaan butir aturan yang tidak diizinkan, kegiatan ganda, dan kegiatan yang telah diklaim dosen, serta peninjauan halaman profil pada ketiga peran | *Integration testing*, *system testing* |
 
 5. #### **Lingkungan Pengujian** {#lingkungan-pengujian}
 
@@ -2276,6 +2289,7 @@ Tabel IV.44. Skenario Pengujian Sistem Berbasis Alur Pengguna
 | ST-07 | Deteksi bukti yang bukan milik dosen bersangkutan | Dosen mengunggah lembar pengesahan yang memuat nama dosen lain sebagai bukti kegiatan pembimbingan, kemudian asesor membuka halaman penilaian dan halaman bukti | Dosen menerima peringatan bahwa namanya tidak ditemukan pada dokumen, kegiatan tersebut tampil sebagai temuan pada halaman penilaian asesor, dan panel rincian menampilkan seluruh nama yang terbaca beserta perannya | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | ST-08 | Deteksi klaim peran yang tidak sesuai dokumen | Dosen mengklaim kegiatan sebagai Pembimbing Utama, lalu mengunggah lembar pengesahan yang menuliskan namanya sebagai Pembimbing Pendamping | Sistem menandai status peran tidak sesuai disertai peran yang diklaim dan peran yang tertulis pada dokumen, dan kegiatan tampil sebagai temuan bagi asesor | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 | ST-09 | Persetujuan manual asesor atas hasil pemeriksaan | Asesor meninjau dokumen yang ditandai tidak sesuai, menilai pembacaan parser keliru, lalu menyetujuinya secara manual dan kemudian mencabut persetujuan tersebut | Setelah disetujui, penanda temuan hilang dari halaman penilaian sedangkan hasil pembacaan parser tetap tersaji; setelah dicabut, penanda temuan berlaku kembali | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
+| ST-10 | Input kegiatan penugasan oleh administrator sebagai jalur pengganti ekstraksi | Administrator menginput kegiatan pembimbingan bagi seorang dosen, mencoba menginput kegiatan yang sama dua kali, mencoba menginput butir aturan yang menjadi hak dosen, lalu dosen menarik kegiatan tersebut ke dokumen BKD dan administrator mencoba mengubahnya kembali | Kegiatan pertama terbentuk sebagai portofolio yang belum diklaim beserta nilai kredit hasil perhitungan kontrak, kedua percobaan berikutnya ditolak disertai alasan, dan perubahan atas kegiatan yang telah diklaim ditolak | **\[LENGKAPI\]** | **\[LENGKAPI\]** |
 
 5. ### **Uji Akurasi Perhitungan Kredit** {#uji-akurasi-perhitungan-kredit}
 

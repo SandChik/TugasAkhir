@@ -24,7 +24,12 @@ export default function FlashBanner() {
 
   useEffect(() => {
     const pesan = ok ?? err;
-    if (!pesan) return;
+    // Query sudah bersih: lepaskan kuncinya supaya aksi berikutnya dengan pesan
+    // yang sama persis tetap memunculkan toast.
+    if (!pesan) {
+      terakhir.current = null;
+      return;
+    }
     // Render ulang (mis. setelah router.replace) tidak boleh memunculkan
     // toast yang sama dua kali.
     const kunci = `${ok ? "ok" : "err"}:${pesan}`;

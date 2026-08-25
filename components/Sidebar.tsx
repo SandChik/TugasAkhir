@@ -27,12 +27,25 @@ const MENUS: Record<Peran, MenuSection[]> = {
       items: [{ label: "Rekap kegiatan", href: "/dosen/rekap-kegiatan" }],
     },
   ],
+  // Asesor adalah dosen yang juga melaporkan BKD-nya sendiri (PO BKD; alur
+  // SISTER): menu dosen dipakai bersama, ditambah submenu Asesor BKD.
   asesor: [
     { items: [{ label: "Profil", href: "/asesor/profil" }] },
     {
+      title: "Pelaksanaan pendidikan",
+      items: [
+        { label: "Pengajaran", href: "/dosen/pengajaran" },
+        { label: "Bimbingan mahasiswa", href: "/dosen/bimbingan-mahasiswa" },
+        { label: "Pengujian mahasiswa", href: "/dosen/pengujian-mahasiswa" },
+        { label: "Bahan ajar", href: "/dosen/bahan-ajar" },
+        { label: "Pembinaan mahasiswa", href: "/dosen/pembinaan-mahasiswa" },
+        { label: "Tugas tambahan", href: "/dosen/tugas-tambahan" },
+      ],
+    },
+    {
       title: "Layanan BKD",
       items: [
-        { label: "Rekap kegiatan", href: "/asesor/rekap-kegiatan" },
+        { label: "Rekap kegiatan", href: "/dosen/rekap-kegiatan" },
         { label: "Asesor BKD", href: "/asesor/asesor-bkd" },
       ],
     },

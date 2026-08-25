@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
-import DataTable from "../../../components/DataTable";
-import StatusChip from "../../../components/StatusChip";
+import TabelData from "../../../components/TabelData";
+import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
+import { IconClipboardCheck, IconLock } from "../../../components/Icons";
 
 /** Dashboard Asesor - daftar LKD yang ditugaskan ke asesor ini. */
 export default async function AsesorBkdPage() {
@@ -26,59 +27,69 @@ export default async function AsesorBkdPage() {
       title="Penilaian Asesor BKD"
       subtitle="Daftar LKD dosen yang ditugaskan kepada Anda"
     >
-      <DataTable
-        columns={[
+      <TabelData
+        placeholderCari="Cari nama atau NIDN dosen…"
+        kosong="Belum ada penugasan penilaian."
+        kolom={[
           { label: "No", width: "50px" },
-          { label: "Nama/NIDN" },
-          { label: "Periode", width: "150px" },
-          { label: "Jenis", width: "100px" },
-          { label: "Sebagai", width: "120px" },
-          { label: "Status LKD", width: "130px" },
-          { label: "Aksi", width: "150px" },
+          { label: "Nama/NIDN", urut: true },
+          { label: "Periode", width: "150px", filter: true },
+          { label: "Jenis", width: "100px", filter: true },
+          { label: "Sebagai", width: "120px", filter: true },
+          { label: "Status LKD", width: "155px", filter: true },
+          { label: "Aksi", width: "70px" },
         ]}
-      >
-        {penugasan.length === 0 ? (
-          <tr>
-            <td colSpan={7} className="!text-center !text-crumb">
-              Belum ada penugasan penilaian.
-            </td>
-          </tr>
-        ) : (
-          penugasan.map((p: any, i: number) => (
-            <tr key={p.id_penugasan}>
-              <td>{i + 1}</td>
-              <td>
+        baris={penugasan.map((p: any, i: number) => {
+          const statusLkd = p.lkd.simpan_permanen ? p.lkd.status : "Belum simpan permanen";
+          return {
+            id: p.id_penugasan,
+            cari: p.lkd.pengguna.nidn ?? "",
+            nilai: [
+              i + 1,
+              p.lkd.pengguna.nama,
+              p.lkd.periode_bkd.nama_periode,
+              p.lkd.jenis,
+              `Asesor ke-${p.urutan}`,
+              statusLkd,
+              null,
+            ],
+            sel: [
+              i + 1,
+              <>
                 {p.lkd.pengguna.nama}
                 <span className="block text-[10px] text-crumb">{p.lkd.pengguna.nidn}</span>
-              </td>
-              <td>{p.lkd.periode_bkd.nama_periode}</td>
-              <td className="capitalize">{p.lkd.jenis}</td>
-              <td>Asesor ke-{p.urutan}</td>
-              <td>
-                {p.lkd.simpan_permanen ? (
-                  <StatusChip label={p.lkd.status} variant="success" />
-                ) : (
-                  <StatusChip label="Belum simpan permanen" variant="dangerSoft" />
-                )}
-              </td>
-              <td>
-                {p.lkd.simpan_permanen ? (
-                  <a
-                    href={`/asesor/penilaian/${p.id_penugasan}`}
-                    className="inline-block rounded-md bg-primary px-3 py-1.5 text-[10.5px] font-medium text-white"
-                  >
-                    Lakukan penilaian
-                  </a>
-                ) : (
-                  <span className="inline-block rounded-md bg-danger-soft px-3 py-1.5 text-[10.5px] font-medium text-[#a03a52]">
-                    Dosen belum simpan permanen
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))
-        )}
-      </DataTable>
+              </>,
+              p.lkd.periode_bkd.nama_periode,
+              <span className="capitalize">{p.lkd.jenis}</span>,
+              `Asesor ke-${p.urutan}`,
+              p.lkd.simpan_permanen ? (
+                <StatusChip
+                  label={p.lkd.status}
+                  variant={STATUS_VARIAN[p.lkd.status] ?? "neutral"}
+                />
+              ) : (
+                <StatusChip label="Belum simpan permanen" variant="neutralSoft" />
+              ),
+              p.lkd.simpan_permanen ? (
+                <a
+                  href={`/asesor/penilaian/${p.id_penugasan}`}
+                  title="Lakukan penilaian"
+                  className="inline-block rounded-md bg-primary p-2 text-white hover:bg-[#255cc2]"
+                >
+                  <IconClipboardCheck size={13} />
+                </a>
+              ) : (
+                <span
+                  title="Belum bisa dinilai"
+                  className="inline-block rounded-md border border-line bg-head-bg p-2 text-crumb"
+                >
+                  <IconLock size={13} />
+                </span>
+              ),
+            ],
+          };
+        })}
+      />
     </AppShell>
   );
 }
