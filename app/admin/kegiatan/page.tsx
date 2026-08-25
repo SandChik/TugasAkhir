@@ -53,7 +53,7 @@ export default async function InputKegiatanPage({
   const [periode, dosenAktif, referensi] = await Promise.all([
     prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
     prisma.pengguna.findMany({
-      where: { peran: "dosen", aktif: true },
+      where: { peran: { in: ["dosen", "asesor"] }, aktif: true },
       select: { id_pengguna: true, nama: true, program_studi: true },
       orderBy: { nama: "asc" },
     }),

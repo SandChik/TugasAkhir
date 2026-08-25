@@ -10,7 +10,7 @@ import { tetapkanWallet } from "./actions";
 export default async function WalletPage() {
   const session = await getServerSession(authOptions);
   const dosen = await prisma.pengguna.findMany({
-    where: { peran: "dosen" },
+    where: { peran: { in: ["dosen", "asesor"] } },
     orderBy: { created_at: "asc" },
   });
 

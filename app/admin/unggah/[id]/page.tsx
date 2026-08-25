@@ -70,7 +70,7 @@ export default async function PratinjauUnggahanPage({
 
   const [dosenSistem, periodeAktif, referensi] = await Promise.all([
     prisma.pengguna.findMany({
-      where: { peran: "dosen", aktif: true },
+      where: { peran: { in: ["dosen", "asesor"] }, aktif: true },
       orderBy: { nama: "asc" },
       select: { id_pengguna: true, nama: true, nip: true, nidn: true, kode_dosen: true },
     }),

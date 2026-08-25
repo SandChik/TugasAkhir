@@ -13,7 +13,7 @@ export default async function RekapitulasiPage() {
 
   const dosen = periodeAktif
     ? await prisma.pengguna.findMany({
-        where: { peran: "dosen" },
+        where: { peran: { in: ["dosen", "asesor"] } },
         orderBy: { nama: "asc" },
         include: {
           lkd: {

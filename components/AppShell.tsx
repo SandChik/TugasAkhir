@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../lib/auth";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import FlashBanner from "./FlashBanner";
@@ -7,7 +9,7 @@ import FlashBanner from "./FlashBanner";
  * Kerangka halaman ber-sidebar sesuai mockup:
  * sidebar navy 240px + topbar 56px + area konten.
  */
-export default function AppShell({
+export default async function AppShell({
   peran,
   nama,
   deskripsi,
@@ -26,9 +28,19 @@ export default function AppShell({
   actions?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  // Peran sidebar mengikuti sesi login, bukan halaman: asesor yang membuka
+  // halaman /dosen/* (mengisi LKD-nya sendiri) tetap melihat menu asesor.
+  const session = await getServerSession(authOptions);
+  const peranSesi = (session?.user as any)?.peran as typeof peran | undefined;
+  const peranAktif = peranSesi ?? peran;
+  const deskripsiAktif =
+    peranAktif === "asesor" && peran === "dosen"
+      ? deskripsi.replace(/^Dosen\b/, "Asesor")
+      : deskripsi;
+
   return (
     <div className="min-h-screen bg-white">
-      <Sidebar peran={peran} nama={nama} deskripsi={deskripsi} />
+      <Sidebar peran={peranAktif} nama={nama} deskripsi={deskripsiAktif} />
       <div className="ml-60">
         <Topbar />
         <main className="px-6 py-5">

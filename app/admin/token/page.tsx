@@ -41,7 +41,7 @@ export default async function TokenPage() {
       },
     }),
     prisma.pengguna.findMany({
-      where: { peran: "dosen", alamat_wallet: { not: null } },
+      where: { peran: { in: ["dosen", "asesor"] }, alamat_wallet: { not: null } },
       orderBy: { nama: "asc" },
     }),
     prisma.pengguna.findMany({

@@ -5,7 +5,8 @@ import { NextResponse } from "next/server";
  * Pembatasan akses per peran (FR-02):
  *  /admin/*  -> admin
  *  /asesor/* -> asesor
- *  /dosen/*  -> dosen
+ *  /dosen/*  -> dosen & asesor (asesor adalah dosen yang juga melaporkan BKD
+ *               miliknya sendiri — sesuai PO BKD & alur SISTER)
  */
 export default withAuth(
   function middleware(req) {
@@ -15,7 +16,7 @@ export default withAuth(
     const wrongRole =
       (path.startsWith("/admin") && peran !== "admin") ||
       (path.startsWith("/asesor") && peran !== "asesor") ||
-      (path.startsWith("/dosen") && peran !== "dosen");
+      (path.startsWith("/dosen") && peran !== "dosen" && peran !== "asesor");
 
     if (wrongRole) {
       const home = peran === "admin" ? "/admin" : peran === "asesor" ? "/asesor" : "/dosen";

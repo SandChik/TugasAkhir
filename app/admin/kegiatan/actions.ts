@@ -93,7 +93,7 @@ export async function simpanKegiatanDosen(formData: FormData) {
     prisma.pengguna.findUnique({ where: { id_pengguna: idDosen } }),
     prisma.referensi_kegiatan.findUnique({ where: { kode_rule: kodeRule } }),
   ]);
-  if (!dosen || dosen.peran !== "dosen" || !dosen.aktif)
+  if (!dosen || (dosen.peran !== "dosen" && dosen.peran !== "asesor") || !dosen.aktif)
     redirect(withFlash(kembali, { err: "Dosen tujuan tidak ditemukan atau sudah nonaktif" }));
   if (!referensi) redirect(withFlash(kembali, { err: "Referensi kegiatan tidak ditemukan" }));
 
