@@ -2,7 +2,7 @@
 
 # Panduan Penulisan Laporan Tugas Akhir — Proyek LEDGERDIK
 
-Dokumen ini adalah acuan tunggal penulisan Laporan Tugas Akhir *"Pengembangan Sistem Penilaian Beban Kinerja Dosen Bidang Pendidikan Berbasis Smart Contract untuk Otomatisasi Perhitungan Kredit Kegiatan"*.
+Dokumen ini adalah acuan tunggal penulisan Laporan Tugas Akhir *"Pengembangan Sistem Penilaian Beban Kerja Dosen Bidang Pendidikan Berbasis Smart Contract untuk Otomatisasi Perhitungan Kredit Kegiatan"*.
 
 Panduan disusun dari dua sumber:
 
@@ -950,7 +950,7 @@ Jalankan sebelum menyerahkan laporan ke Pemeriksa 1 dan Pemeriksa 2.
 
 ## Catatan Khusus Proyek LEDGERDIK
 
-**Judul.** *"Pengembangan Sistem Penilaian Beban Kinerja Dosen Bidang Pendidikan Berbasis Smart Contract untuk Otomatisasi Perhitungan Kredit Kegiatan"* — 16 kata, memenuhi rentang 12–20 kata. Judul Bahasa Inggris masih perlu disusun (12–20 kata, Title Case, *italic*).
+**Judul.** *"Pengembangan Sistem Penilaian Beban Kerja Dosen Bidang Pendidikan Berbasis Smart Contract untuk Otomatisasi Perhitungan Kredit Kegiatan"* — 16 kata, memenuhi rentang 12–20 kata. Judul Bahasa Inggris masih perlu disusun (12–20 kata, Title Case, *italic*).
 
 **Yang perlu dikonfirmasi sebelum finalisasi halaman sampul:**
 
