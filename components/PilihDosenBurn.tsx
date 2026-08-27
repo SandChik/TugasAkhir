@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AlamatSalin from "./AlamatSalin";
 
 export type OpsiDosenBurn = {
   id: string;
@@ -43,8 +44,12 @@ export default function PilihDosenBurn({ dosen }: { dosen: OpsiDosenBurn[] }) {
             </option>
           ))}
         </select>
-        <p className="mt-1 truncate font-mono text-[10px] text-crumb" title={dipilih?.wallet}>
-          {dipilih ? `${dipilih.wallet.slice(0, 10)}…${dipilih.wallet.slice(-6)}` : "-"}
+        <p className="mt-1 truncate">
+          {dipilih ? (
+            <AlamatSalin nilai={dipilih.wallet} className="text-[10px] text-crumb" />
+          ) : (
+            "-"
+          )}
         </p>
       </div>
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import StatusChip from "./StatusChip";
 import SubmitButton from "./SubmitButton";
+import AlamatSalin from "./AlamatSalin";
 import { IconPower, IconSave } from "./Icons";
 import { simpanIdentitas, setAktifPengguna } from "../app/admin/pengguna/actions";
 
@@ -90,7 +91,11 @@ export default function BarisPengguna({
       <td>{kolomInput("nira", "NIRA")}</td>
       <td>{kolomInput("program_studi", "Program studi")}</td>
       <td className="!text-[10px] !text-muted">
-        {u.alamat_wallet ? `${u.alamat_wallet.slice(0, 6)}…${u.alamat_wallet.slice(-4)}` : "-"}
+        {u.alamat_wallet ? (
+          <AlamatSalin nilai={u.alamat_wallet} awal={6} akhir={4} className="text-[10px] text-muted" />
+        ) : (
+          "-"
+        )}
       </td>
       <td>
         <StatusChip label={u.aktif ? "Aktif" : "Nonaktif"} variant={u.aktif ? "success" : "danger"} />

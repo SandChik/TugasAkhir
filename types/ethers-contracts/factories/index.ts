@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as bkdSol from './BKD.sol/index.js';
+export * as registriSol from './registri.sol/index.js';
 export * as tokenSol from './token.sol/index.js';

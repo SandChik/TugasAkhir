@@ -11,6 +11,11 @@ import { prisma } from "../../../lib/prisma";
 import { bolehUbahBukti } from "../../../lib/fase";
 import { withFlash } from "../../../lib/flash";
 import { bisaDiverifikasi, verifikasiNamaBukti } from "../../../lib/verifikasiBukti";
+import {
+  catatDokumenDenganRiwayat,
+  hashBerkasBukti,
+  hashIsiBerkas,
+} from "../../../lib/registriDokumen";
 
 /** Rubrik bimbingan: bukti (lembar pengesahan, dsb.) diverifikasi otomatis. */
 const RULE_VERIFIKASI = ["EDU201", "EDU202", "EDU203"];
@@ -65,6 +70,7 @@ export async function uploadBukti(formData: FormData) {
   let fileUrl: string | null = null;
   let namaFile: string | null = null;
   let jenisFile: string | null = null;
+  let hashDok: string | null = null;
 
   if (file && file.size > 0) {
     if (file.size > MAX_FILE_BYTES) redirect(withFlash(returnTo, { err: "Ukuran file melebihi 10 MB" }));
@@ -77,10 +83,12 @@ export async function uploadBukti(formData: FormData) {
     fileUrl = `/uploads/${unik}`;
     namaFile = file.name;
     jenisFile = file.type || null;
+    hashDok = hashIsiBerkas(bytes);
   } else if (tautan) {
     if (!/^https?:\/\//i.test(tautan)) redirect(withFlash(returnTo, { err: "Tautan harus diawali http(s)://" }));
     fileUrl = tautan;
     jenisFile = "tautan";
+    hashDok = await hashBerkasBukti(tautan);
   } else {
     redirect(withFlash(returnTo, { err: "Pilih file atau isi tautan dokumen" }));
   }
@@ -104,7 +112,7 @@ export async function uploadBukti(formData: FormData) {
     );
   }
 
-  await prisma.dokumen_kegiatan.create({
+  const dokBaru = await prisma.dokumen_kegiatan.create({
     data: {
       id_kegiatan: idKegiatan,
       nama_dokumen: nama,
@@ -116,6 +124,16 @@ export async function uploadBukti(formData: FormData) {
       verifikasi,
     } as any,
   });
+
+  if (hashDok) {
+    await catatDokumenDenganRiwayat({
+      hashHex: hashDok,
+      aksi: "unggah",
+      referensi: `bukti:${dokBaru.id_dokumen}`,
+      keterangan: nama,
+      idPengguna: session.user.id,
+    });
+  }
 
   const pesanVerifikasi =
     verifikasi?.status === "cocok"
@@ -163,7 +181,21 @@ export async function hapusBukti(formData: FormData) {
       err: "Bukti kegiatan ini sedang terkunci",
     }));
 
+  // Hash dihitung sebelum baris dihapus; berkas fisiknya masih ada di disk.
+  const hashDok = dok!.file_url ? await hashBerkasBukti(dok!.file_url) : null;
+
   await prisma.dokumen_kegiatan.delete({ where: { id_dokumen: idDokumen } });
+
+  if (hashDok) {
+    await catatDokumenDenganRiwayat({
+      hashHex: hashDok,
+      aksi: "hapus",
+      referensi: `bukti:${idDokumen}`,
+      keterangan: dok!.nama_dokumen ?? dok!.nama_file ?? "dokumen bukti",
+      idPengguna: session.user.id,
+    });
+  }
+
   revalidatePath(returnTo);
-  redirect(withFlash(returnTo, { ok: "Dokumen bukti dihapus" }));
+  redirect(withFlash(returnTo, { ok: "Dokumen bukti berhasil dihapus" }));
 }

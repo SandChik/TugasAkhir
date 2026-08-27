@@ -1,10 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
-import { bacaEventToken } from "../../../lib/blockchain";
+import { bacaEventDokumen, bacaEventToken } from "../../../lib/blockchain";
 import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
 import TabelData from "../../../components/TabelData";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
+import AlamatSalin from "../../../components/AlamatSalin";
 
 const inputCls =
   "mt-1 rounded-md border border-line px-2.5 py-1.5 text-[11px] outline-none focus:border-primary";
@@ -32,8 +33,17 @@ export default async function LogBlockchainPage({
     error = e?.message ?? "Gagal membaca event on-chain";
   }
 
+  // Event registri dokumen (unggah/terapkan/hapus) dibaca terpisah supaya
+  // kegagalan salah satu kontrak tidak mengosongkan keduanya.
+  let dokBaris: Awaited<ReturnType<typeof bacaEventDokumen>>["baris"] = [];
+  let dokError: string | null = null;
+  try {
+    dokBaris = (await bacaEventDokumen(300)).baris;
+  } catch (e: any) {
+    dokError = e?.message ?? "Gagal membaca event registri dokumen";
+  }
+
   const semua = Array.isArray(data) ? [] : data.baris;
-  const desimal = Array.isArray(data) ? 18 : data.desimal;
   const kontrak = process.env.NEXT_PUBLIC_SKS_TOKEN_ADDRESS;
 
   // Pemilik wallet: cocokkan alamat on-chain -> akun pengguna (alamat disimpan
@@ -59,6 +69,92 @@ export default async function LogBlockchainPage({
     },
   });
   const perTx = new Map(riwayat.map((r: any) => [r.tx_hash, r]));
+
+  // Konteks event registri: nama dokumen dari baris sistem yang masih ada,
+  // atau dari riwayat transaksi bila barisnya sudah dihapus.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const idUnggahan = [
+    ...new Set(
+      dokBaris
+        .filter((e) => e.referensi.startsWith("unggahan:"))
+        .map((e) => e.referensi.slice("unggahan:".length))
+        .filter((id) => UUID_RE.test(id))
+    ),
+  ];
+  const idBukti = [
+    ...new Set(
+      dokBaris
+        .filter((e) => e.referensi.startsWith("bukti:"))
+        .map((e) => e.referensi.slice("bukti:".length))
+        .filter((id) => UUID_RE.test(id))
+    ),
+  ];
+  const [unggahanRows, buktiRows, riwayatDok] = await Promise.all([
+    idUnggahan.length
+      ? prisma.unggahan_dokumen.findMany({
+          where: { id_unggahan: { in: idUnggahan } },
+          select: { id_unggahan: true, nama_file: true, nomor_surat: true },
+        })
+      : [],
+    idBukti.length
+      ? prisma.dokumen_kegiatan.findMany({
+          where: { id_dokumen: { in: idBukti } },
+          select: {
+            id_dokumen: true,
+            nama_dokumen: true,
+            kegiatan: {
+              select: {
+                judul: true,
+                lkd: { select: { pengguna: { select: { nama: true } } } },
+              },
+            },
+          },
+        })
+      : [],
+    dokBaris.length
+      ? prisma.riwayat_transaksi.findMany({
+          where: { tx_hash: { in: dokBaris.map((e) => e.txHash).filter(Boolean) } },
+          select: { tx_hash: true, alasan: true, admin: { select: { nama: true, peran: true } } },
+        })
+      : [],
+  ]);
+  const perUnggahan = new Map<string, any>(
+    unggahanRows.map((u: any) => [u.id_unggahan, u] as [string, any])
+  );
+  const perBukti = new Map<string, any>(
+    buktiRows.map((b: any) => [b.id_dokumen, b] as [string, any])
+  );
+  const perTxDok = new Map<string, any>(
+    riwayatDok.map((r: any) => [r.tx_hash, r] as [string, any])
+  );
+
+  /** Baris konteks untuk satu event registri dokumen. */
+  function konteksDokumen(e: (typeof dokBaris)[number]) {
+    if (e.referensi.startsWith("unggahan:")) {
+      const u: any = perUnggahan.get(e.referensi.slice("unggahan:".length));
+      if (u)
+        return {
+          nama: u.nama_file,
+          rincian: u.nomor_surat ? `SK/ST ${u.nomor_surat}` : "unggahan admin",
+        };
+    }
+    if (e.referensi.startsWith("bukti:")) {
+      const b: any = perBukti.get(e.referensi.slice("bukti:".length));
+      if (b)
+        return {
+          nama: b.nama_dokumen ?? "bukti kegiatan",
+          rincian: [b.kegiatan?.judul, b.kegiatan?.lkd?.pengguna?.nama]
+            .filter(Boolean)
+            .join(" · "),
+        };
+    }
+    const r: any = perTxDok.get(e.txHash);
+    if (r?.alasan) {
+      const [, nama = r.alasan] = String(r.alasan).split(": ", 2);
+      return { nama, rincian: "baris sudah dihapus dari sistem" };
+    }
+    return { nama: e.referensi, rincian: null };
+  }
 
   /** Nama manusia untuk sebuah event: akun wallet -> riwayat transaksi -> null. */
   function pemilikEvent(e: any) {
@@ -87,7 +183,6 @@ export default async function LogBlockchainPage({
 
   const totalMint = baris.filter((e) => e.jenis === "mint").reduce((a, e) => a + e.jumlah.sks, 0);
   const totalBurn = baris.filter((e) => e.jenis === "burn").reduce((a, e) => a + e.jumlah.sks, 0);
-  const adaSkalaLama = semua.some((e) => e.jumlah.skalaLama);
   const takDikenal = baris.filter((e) => !pemilikEvent(e)).length;
 
   return (
@@ -112,16 +207,6 @@ export default async function LogBlockchainPage({
       {error && (
         <div className="rounded-lg bg-danger-soft px-4 py-3 text-xs text-danger">
           Tidak dapat membaca on-chain: {error}. Pastikan node RPC berjalan dan alamat kontrak terisi.
-        </div>
-      )}
-
-      {adaSkalaLama && (
-        <div className="mt-3 rounded-lg bg-head-bg px-4 py-3 text-[11px] text-muted">
-          <b>Riwayat memuat transaksi berskala lama.</b> Mint/burn sekarang selalu mengikuti{" "}
-          <code>decimals() = {desimal}</code> kontrak (SKS × 10<sup>{desimal}</sup>), tetapi
-          sebagian transaksi lama terlanjur terkirim memakai satuan x100 (2 SKS = 200 satuan).
-          Log on-chain bersifat permanen, jadi baris tersebut ditandai{" "}
-          <b>transaksi skala lama</b> dan tetap ditampilkan dalam SKS agar tidak menyesatkan.
         </div>
       )}
 
@@ -218,11 +303,12 @@ export default async function LogBlockchainPage({
                     ) : (
                       <span className="text-crumb">Wallet tanpa akun terdaftar</span>
                     )}
-                    <span
-                      className="mt-0.5 block font-mono text-[10px] text-crumb"
-                      title={e.akun}
-                    >
-                      {e.akun ? `${e.akun.slice(0, 10)}…${e.akun.slice(-6)}` : "-"}
+                    <span className="mt-0.5 block">
+                      {e.akun ? (
+                        <AlamatSalin nilai={e.akun} className="text-[10px] text-crumb" />
+                      ) : (
+                        "-"
+                      )}
                     </span>
                 </>,
                 <span title={`${e.jumlah.mentah} satuan on-chain`}>
@@ -235,13 +321,9 @@ export default async function LogBlockchainPage({
                     {e.jenis === "burn" ? (
                       e.referensi || <span className="text-crumb">tanpa alasan</span>
                     ) : e.referensi ? (
-                      <span title={e.referensi}>
+                      <span>
                         Hash penilaian{" "}
-                        <span className="font-mono text-[10px]">
-                          {e.referensi.length > 14
-                            ? `${e.referensi.slice(0, 10)}…${e.referensi.slice(-4)}`
-                            : e.referensi}
-                        </span>
+                        <AlamatSalin nilai={e.referensi} akhir={4} className="text-[10px]" />
                       </span>
                     ) : (
                       "-"
@@ -250,9 +332,73 @@ export default async function LogBlockchainPage({
                       <span className="block text-[10px] text-crumb">oleh {operator}</span>
                     )}
                 </span>,
-                <span className="font-mono text-[10px] text-primary" title={e.txHash}>
-                  {e.txHash ? `${e.txHash.slice(0, 10)}…${e.txHash.slice(-8)}` : "-"}
-                </span>,
+                e.txHash ? (
+                  <AlamatSalin nilai={e.txHash} akhir={8} className="text-[10px] text-primary" />
+                ) : (
+                  "-"
+                ),
+              ],
+            };
+          })}
+        />
+      </div>
+
+      <h2 className="mt-8 text-[13px] font-semibold text-navy">Registri Dokumen</h2>
+      <p className="mt-1 text-[11px] text-muted">
+        Jejak unggah, terapkan, dan hapus dokumen ({dokBaris.length} event on-chain)
+      </p>
+      {dokError && (
+        <div className="mt-2 rounded-lg bg-danger-soft px-4 py-3 text-xs text-danger">
+          Tidak dapat membaca registri dokumen: {dokError}
+        </div>
+      )}
+      <div className="mt-2">
+        <TabelData
+          kosong={dokError ? "—" : "Belum ada peristiwa dokumen tercatat di blockchain."}
+          kolom={[
+            { label: "Block", width: "80px", urut: true },
+            { label: "Aksi", width: "95px", filter: true },
+            { label: "Dokumen" },
+            { label: "Pelaku", width: "180px" },
+            { label: "Hash Dokumen", width: "160px" },
+            { label: "Tx Hash", width: "160px" },
+          ]}
+          baris={dokBaris.map((e, i) => {
+            const ctx = konteksDokumen(e);
+            const pelaku: any = perTxDok.get(e.txHash)?.admin;
+            const varian =
+              e.aksi === "hapus" ? "danger" : e.aksi === "terapkan" ? "success" : "info";
+            return {
+              id: `${e.txHash}-${i}`,
+              nilai: [e.block, e.aksi, ctx.nama, pelaku?.nama ?? "-", e.hash, e.txHash],
+              cari: [ctx.rincian, e.referensi].filter(Boolean).join(" "),
+              sel: [
+                `#${e.block}`,
+                <StatusChip label={e.aksi} variant={varian as any} />,
+                <>
+                  <span className="font-medium text-navy">{ctx.nama}</span>
+                  {ctx.rincian && (
+                    <span className="block text-[10.5px] text-muted">{ctx.rincian}</span>
+                  )}
+                </>,
+                pelaku ? (
+                  <>
+                    <span className="text-navy">{pelaku.nama}</span>
+                    <span className="block text-[10.5px] text-muted">{pelaku.peran}</span>
+                  </>
+                ) : (
+                  <span className="text-crumb">-</span>
+                ),
+                e.hash ? (
+                  <AlamatSalin nilai={e.hash} className="text-[10px] text-muted" />
+                ) : (
+                  "-"
+                ),
+                e.txHash ? (
+                  <AlamatSalin nilai={e.txHash} akhir={8} className="text-[10px] text-primary" />
+                ) : (
+                  "-"
+                ),
               ],
             };
           })}
