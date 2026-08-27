@@ -29,3 +29,5 @@ pnpm-debug.log*
 
 # file upload dev
 /public/uploads/
+
+/dokumen_demo
