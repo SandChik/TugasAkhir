@@ -1,0 +1,31 @@
+# Rahasia & konfigurasi lokal, jangan pernah masuk image
+.env
+.env*.local
+
+# Layanan parser punya build context sendiri (backend-extract/Dockerfile)
+backend-extract/
+
+# Dependency & output build
+node_modules/
+.next/
+out/
+artifacts/
+cache/
+coverage/
+typechain-types/
+
+# Unggahan dev, jangan terbawa ke image (runtime pakai volume)
+public/uploads/
+
+# VCS / editor / dokumentasi
+.git/
+.gitignore
+.vscode/
+.idea/
+docs/
+*.md
+
+# Docker sendiri
+Dockerfile
+.dockerignore
+docker-compose.yml
