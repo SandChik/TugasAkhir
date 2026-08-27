@@ -130,18 +130,9 @@ contract, jalankan `npm run test:contracts`.
 
 ## Cache build
 
-Setiap selesai mengubah file yang masuk build Next.js (`app/`, `components/`,
-`lib/`, `middleware.ts`, config), hapus cache build sebelum melapor selesai.
-Tanpa ini dev server sering menyajikan chunk lama dan halaman terlihat tidak
-berubah.
-
-```
-Remove-Item -Recurse -Force .next
-```
-
-Kalau `npm run dev` sedang jalan, sebagian file `.next` terkunci dan
-penghapusan gagal sebagian. Sebutkan itu supaya dev server di-restart.
-Konsekuensinya build berikutnya jadi full compile, bukan incremental.
+Jangan hapus cache `.next` kecuali diminta. Kalau halaman terlihat menyajikan
+chunk lama setelah perubahan, sebutkan saja supaya pengguna yang memutuskan
+restart dev server atau hapus cache.
 
 Jangan jalankan `prettier` atau `eslint --fix` massal. Repo ini tidak punya
 konfigurasi prettier, jadi hasilnya menulis ulang seluruh file dan menutupi
