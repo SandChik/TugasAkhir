@@ -37,8 +37,8 @@ export const KATEGORI_DOSEN: Record<string, KategoriDosen> = {
   },
   "tugas-tambahan": {
     label: "Tugas Tambahan",
-    subtitle: "Jabatan pimpinan PT, pendidikan formal, dan pengembangan diri",
-    kodeRules: ["EDU701", "EDU001", "EDU902"],
+    subtitle: "Jabatan pimpinan PT dan pendidikan formal",
+    kodeRules: ["EDU701", "EDU001"],
   },
 };
 

@@ -14,6 +14,5 @@ export const educationRules: ActivityRule[] = [
   { id: "EDU202", category: "Bimbingan", name: "Membimbing KKN/PKL/magang/praktik kerja", parameters: ["jumlahSemester"], formula: "2 x jumlahSemester" },
   { id: "EDU203-210", category: "Bimbingan TA", name: "Pembimbing utama/pendamping disertasi/tesis/skripsi/laporan akhir", parameters: ["role", "jumlahMahasiswa"], formula: "rate role x jumlahMahasiswa" },
   { id: "EDU301-302", category: "Penguji", name: "Ketua/anggota penguji ujian akhir/profesi", parameters: ["role", "jumlahMahasiswa"], formula: "0.5 atau 0.25 x jumlahMahasiswa" },
-  { id: "EDU502", category: "Bahan Ajar", name: "Menulis buku ajar", parameters: ["jumlahNaskah", "role", "jumlahAnggota"], formula: "Ketua 5 x naskah x 60%; anggota 5 x naskah x 40% / anggota" },
-  { id: "EDU901-902", category: "Pendampingan MBKM", name: "Pendampingan mahasiswa di luar institusi", parameters: ["lectorOrAbove", "jumlahSemester"], formula: "12 atau 5 x jumlahSemester" }
+  { id: "EDU501-502", category: "Bahan Ajar", name: "Pengembangan program kuliah & bahan ajar", parameters: [], formula: "Manual - dinilai langsung oleh asesor (tidak diotomatisasi)" }
 ];
