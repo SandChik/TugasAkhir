@@ -31,3 +31,4 @@ pnpm-debug.log*
 /public/uploads/
 
 /dokumen_demo
+/.vscode
