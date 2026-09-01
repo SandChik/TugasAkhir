@@ -26,18 +26,26 @@ import {
 import { buatPencocokDosen } from "../../../lib/namaDosen";
 import { fieldFormulir } from "../../../lib/parameterKegiatan";
 import { withFlash } from "../../../lib/flash";
+import {
+  catatDokumenDenganRiwayat,
+  hashBerkasBukti,
+  hashIsiBerkas,
+} from "../../../lib/registriDokumen";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25 MB — SK hasil pindai bisa besar
 const DASAR = "/admin/unggah";
 
 /**
- * URL kembali yang dikirim formulir pratinjau. Divalidasi agar hanya menunjuk
- * ke halaman pratinjau unggahan tersebut (mencegah open redirect).
+ * URL kembali yang dikirim formulir pratinjau maupun daftar unggahan.
+ * Divalidasi agar hanya menunjuk ke halaman unggah atau pratinjau unggahan
+ * tersebut (mencegah open redirect).
  */
 function kembaliAman(raw: unknown, id: string) {
   const dasar = `${DASAR}/${id}`;
   const s = String(raw ?? "");
-  return s === dasar || s.startsWith(`${dasar}?`) || s.startsWith(`${dasar}#`) ? s : dasar;
+  const cocok = (awalan: string) =>
+    s === awalan || s.startsWith(`${awalan}?`) || s.startsWith(`${awalan}#`);
+  return cocok(dasar) || cocok(DASAR) ? s : dasar;
 }
 
 async function pastikanAdmin() {
@@ -94,7 +102,6 @@ export async function unggahDokumen(formData: FormData) {
   let berhasil = 0;
   let gagal = 0;
   const catatan: string[] = [];
-  let idTerakhir: string | null = null;
 
   for (const file of berkas) {
     const jenis: JenisUnggahan | null =
@@ -120,6 +127,7 @@ export async function unggahDokumen(formData: FormData) {
 
     const bytes = Buffer.from(await file.arrayBuffer());
     const fileUrl = await simpanBerkas(file, bytes);
+    const sha = hashIsiBerkas(bytes);
 
     try {
       const hasil = await parseDokumen(jenis, file, opsiSk);
@@ -133,7 +141,7 @@ export async function unggahDokumen(formData: FormData) {
         if (h.status === "cocok") idCocok.add(h.dosen.id_pengguna);
       }
 
-      const rec = await prisma.unggahan_dokumen.create({
+      const baru = await prisma.unggahan_dokumen.create({
         data: {
           id_periode: periode?.id_periode ?? null,
           id_admin: (session.user as any).id,
@@ -141,7 +149,7 @@ export async function unggahDokumen(formData: FormData) {
           nama_file: file.name,
           file_url: fileUrl,
           ukuran_byte: file.size,
-          sha256: peta.sha256,
+          sha256: peta.sha256 ?? sha,
           nomor_surat: peta.nomorSurat,
           status: "terparse",
           hasil_parse: hasil,
@@ -150,10 +158,16 @@ export async function unggahDokumen(formData: FormData) {
           jumlah_dosen_cocok: idCocok.size,
         } as any,
       });
-      idTerakhir = rec.id_unggahan;
       berhasil++;
+      await catatDokumenDenganRiwayat({
+        hashHex: sha,
+        aksi: "unggah",
+        referensi: `unggahan:${(baru as any).id_unggahan}`,
+        keterangan: file.name,
+        idPengguna: (session.user as any).id,
+      });
     } catch (e: any) {
-      await prisma.unggahan_dokumen.create({
+      const baru = await prisma.unggahan_dokumen.create({
         data: {
           id_periode: periode?.id_periode ?? null,
           id_admin: (session.user as any).id,
@@ -161,25 +175,27 @@ export async function unggahDokumen(formData: FormData) {
           nama_file: file.name,
           file_url: fileUrl,
           ukuran_byte: file.size,
+          sha256: sha,
           status: "gagal",
           pesan_galat: String(e?.message ?? e),
         } as any,
       });
       gagal++;
       catatan.push(`${file.name}: ${String(e?.message ?? e)}`);
+      await catatDokumenDenganRiwayat({
+        hashHex: sha,
+        aksi: "unggah",
+        referensi: `unggahan:${(baru as any).id_unggahan}`,
+        keterangan: file.name,
+        idPengguna: (session.user as any).id,
+      });
     }
   }
 
   revalidatePath(DASAR);
 
-  // Satu berkas sukses -> langsung ke pratinjau; sisanya kembali ke daftar.
-  if (berhasil === 1 && gagal === 0 && idTerakhir) {
-    redirect(
-      withFlash(`${DASAR}/${idTerakhir}`, {
-        ok: "Dokumen berhasil diekstrak. Periksa pratinjau lalu terapkan.",
-      })
-    );
-  }
+  // Selalu kembali ke halaman unggah supaya admin bisa langsung unggah batch
+  // berikutnya; pratinjau dibuka sendiri dari riwayat unggahan.
   if (berhasil > 0) {
     redirect(
       withFlash(DASAR, {
@@ -269,7 +285,7 @@ function pembungkusHitung() {
  * dilampirkan sebagai dokumen bukti.
  */
 export async function terapkanUnggahan(formData: FormData) {
-  await pastikanAdmin();
+  const session = await pastikanAdmin();
   const id = String(formData.get("id_unggahan") ?? "");
   const jalur = `${DASAR}/${id}`;
   const kembali = kembaliAman(formData.get("kembali"), id);
@@ -375,11 +391,21 @@ export async function terapkanUnggahan(formData: FormData) {
         detail_kegiatan: { path: ["tanda_baris"], equals: p.tanda },
       } as any,
     });
-    // Unggahan lama (sebelum ada tanda_baris) tetap dikenali lewat judul.
+    // Unggahan lain (dokumen sama diunggah ulang / baris lama tanpa tanda_baris)
+    // dikenali lewat judul PLUS nomor surat. Judul bimbingan generik (mis.
+    // "Pembimbing Utama Tugas Akhir") identik lintas SK berbeda; tanpa syarat
+    // no_sk, dua surat berbeda akan digabung ke satu kegiatan dan saling timpa.
     const seragam =
       adaSebelumnya ??
       (await prisma.kegiatan.findFirst({
-        where: { id_lkd: idLkd, id_referensi: ref.id_referensi, judul: p.judulAsli },
+        where: {
+          id_lkd: idLkd,
+          id_referensi: ref.id_referensi,
+          judul: p.judulAsli,
+          ...(p.detail?.no_sk
+            ? { detail_kegiatan: { path: ["no_sk"], equals: p.detail.no_sk } }
+            : {}),
+        } as any,
       }));
 
     let idKegiatan: string;
@@ -389,19 +415,38 @@ export async function terapkanUnggahan(formData: FormData) {
         terkunci++;
         continue;
       }
+      // Kegiatan berpindah ke unggahan ini (dokumen sama diunggah ulang):
+      // relasi unggahan ikut dipindah dan lampiran surat lama diganti.
+      const pindahUnggahan = (seragam as any).id_unggahan !== rec!.id_unggahan;
       const berubah =
+        pindahUnggahan ||
         seragam.judul !== isi.judul ||
         JSON.stringify(seragam.parameter) !== JSON.stringify(isi.parameter) ||
         seragam.sks_dihitung_x100 !== isi.sks_dihitung_x100;
       if (berubah) {
         await prisma.kegiatan.update({
           where: { id_kegiatan: seragam.id_kegiatan },
-          data: isi as any,
+          data: { ...isi, ...(pindahUnggahan ? { id_unggahan: rec!.id_unggahan } : {}) } as any,
         });
         diperbarui++;
         dosenTersentuh.add(cocok.dosen.id_pengguna);
       } else {
         dilewati++;
+      }
+      if (pindahUnggahan && (seragam as any).id_unggahan) {
+        const lama = await prisma.unggahan_dokumen.findUnique({
+          where: { id_unggahan: (seragam as any).id_unggahan },
+          select: { file_url: true },
+        });
+        if (lama?.file_url && lama.file_url !== rec!.file_url) {
+          await prisma.dokumen_kegiatan.deleteMany({
+            where: {
+              id_kegiatan: seragam.id_kegiatan,
+              file_url: lama.file_url,
+              jenis_dokumen: "SK Penugasan",
+            },
+          });
+        }
       }
       idKegiatan = seragam.id_kegiatan;
     } else {
@@ -434,8 +479,19 @@ export async function terapkanUnggahan(formData: FormData) {
     } as any,
   });
 
+  await catatDokumenDenganRiwayat({
+    hashHex:
+      (rec as any).sha256 ??
+      (rec!.file_url ? await hashBerkasBukti(rec!.file_url) : ""),
+    aksi: "terapkan",
+    referensi: `unggahan:${rec!.id_unggahan}`,
+    keterangan: rec!.nama_file,
+    idPengguna: (session.user as any).id,
+  });
+
   revalidatePath(DASAR);
   revalidatePath(jalur);
+  revalidatePath(DASAR);
 
   const bagian = [`${dibuat} kegiatan dibuat untuk ${dosenTersentuh.size} dosen`];
   if (diperbarui) bagian.push(`${diperbarui} diperbarui sesuai koreksi`);
@@ -587,7 +643,7 @@ export async function simpanKoreksiSurat(formData: FormData) {
 
 /** Hapus unggahan yang belum diterapkan (berkas fisik dibiarkan sebagai arsip). */
 export async function hapusUnggahan(formData: FormData) {
-  await pastikanAdmin();
+  const session = await pastikanAdmin();
   const id = String(formData.get("id_unggahan") ?? "");
 
   const rec = await prisma.unggahan_dokumen.findUnique({ where: { id_unggahan: id } });
@@ -599,7 +655,22 @@ export async function hapusUnggahan(formData: FormData) {
       })
     );
 
+  // Hash dihitung sebelum baris dihapus; berkas fisiknya sendiri tidak dihapus.
+  const hashDok =
+    (rec as any).sha256 ?? (rec!.file_url ? await hashBerkasBukti(rec!.file_url) : null);
+
   await prisma.unggahan_dokumen.delete({ where: { id_unggahan: id } });
+
+  if (hashDok) {
+    await catatDokumenDenganRiwayat({
+      hashHex: hashDok,
+      aksi: "hapus",
+      referensi: `unggahan:${id}`,
+      keterangan: rec!.nama_file,
+      idPengguna: (session.user as any).id,
+    });
+  }
+
   revalidatePath(DASAR);
-  redirect(withFlash(DASAR, { ok: "Unggahan dihapus" }));
+  redirect(withFlash(DASAR, { ok: "Unggahan berhasil dihapus" }));
 }

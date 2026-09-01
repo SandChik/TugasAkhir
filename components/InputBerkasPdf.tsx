@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 const MAKS_BYTE = 25 * 1024 * 1024;
 
@@ -25,6 +26,19 @@ export default function InputBerkasPdf({
   className?: string;
 }) {
   const [items, setItems] = useState<Item[]>([]);
+  const input = useRef<HTMLInputElement>(null);
+  const { pending } = useFormStatus();
+  const tadinyaSibuk = useRef(false);
+
+  // Begitu unggahan selesai, pilihan berkas dikosongkan supaya batch berikutnya
+  // tidak mengirim ulang berkas yang sama.
+  useEffect(() => {
+    if (tadinyaSibuk.current && !pending) {
+      if (input.current) input.current.value = "";
+      setItems([]);
+    }
+    tadinyaSibuk.current = pending;
+  }, [pending]);
 
   const total = items.reduce((a, i) => a + i.ukuran, 0);
   const bermasalah = items.filter((i) => i.masalah);
@@ -33,6 +47,7 @@ export default function InputBerkasPdf({
   return (
     <>
       <input
+        ref={input}
         id={id}
         type="file"
         name={name}

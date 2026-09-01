@@ -6,6 +6,7 @@ import TabelData from "../../../components/TabelData";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
 import SubmitButton from "../../../components/SubmitButton";
 import PilihDosenBurn from "../../../components/PilihDosenBurn";
+import AlamatSalin from "../../../components/AlamatSalin";
 import { saldoTokenBanyak } from "../../../lib/blockchain";
 import { burnToken } from "./actions";
 
@@ -92,7 +93,14 @@ export default async function TokenPage() {
       {/* Kartu ringkas */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[
-          ["Kontrak Token (BKDSKSToken)", kontrak ? `${kontrak.slice(0, 6)}…${kontrak.slice(-4)}` : "-"],
+          [
+            "Kontrak Token (BKDSKSToken)",
+            kontrak ? (
+              <AlamatSalin nilai={kontrak} awal={6} akhir={4} className="text-[17px] font-semibold text-navy" />
+            ) : (
+              "-"
+            ),
+          ],
           ["Total Token Diterbitkan", `${(totalMint / 100).toFixed(2)} SKS`],
           ["Total Token di Burn", `${(totalBurn / 100).toFixed(2)} SKS`],
         ].map(([label, value]) => (
@@ -188,13 +196,12 @@ export default async function TokenPage() {
                   ) : (
                     <span className="text-crumb">Wallet tanpa akun terdaftar</span>
                   )}
-                  <span
-                    className="mt-0.5 block font-mono text-[10px] text-crumb"
-                    title={r.alamat_wallet ?? ""}
-                  >
-                    {r.alamat_wallet
-                      ? `${r.alamat_wallet.slice(0, 10)}…${r.alamat_wallet.slice(-6)}`
-                      : "-"}
+                  <span className="mt-0.5 block">
+                    {r.alamat_wallet ? (
+                      <AlamatSalin nilai={r.alamat_wallet} className="text-[10px] text-crumb" />
+                    ) : (
+                      "-"
+                    )}
                   </span>
                 </>,
                 r.jumlah_token_x100 != null ? (r.jumlah_token_x100 / 100).toFixed(2) : "-",
@@ -202,13 +209,9 @@ export default async function TokenPage() {
                   {r.jenis_transaksi === "burn" ? (
                     r.alasan || <span className="text-crumb">tanpa alasan</span>
                   ) : r.reference_id ? (
-                    <span title={r.reference_id}>
+                    <span>
                       Hash penilaian{" "}
-                      <span className="font-mono text-[10px]">
-                        {r.reference_id.length > 14
-                          ? `${r.reference_id.slice(0, 10)}…${r.reference_id.slice(-4)}`
-                          : r.reference_id}
-                      </span>
+                      <AlamatSalin nilai={r.reference_id} akhir={4} className="text-[10px]" />
                     </span>
                   ) : (
                     "-"
@@ -217,9 +220,11 @@ export default async function TokenPage() {
                     <span className="block text-[10px] text-crumb">oleh {r.admin.nama}</span>
                   )}
                 </span>,
-                <span className="font-mono text-[10px] text-primary">
-                  {r.tx_hash ? `${r.tx_hash.slice(0, 8)}…${r.tx_hash.slice(-6)}` : "-"}
-                </span>,
+                r.tx_hash ? (
+                  <AlamatSalin nilai={r.tx_hash} awal={8} className="text-[10px] text-primary" />
+                ) : (
+                  "-"
+                ),
                 <StatusChip label={r.status} variant={STATUS_VARIAN[r.status] ?? "neutral"} />,
               ],
             };

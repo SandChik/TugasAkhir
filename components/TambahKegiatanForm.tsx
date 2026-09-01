@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { tambahKegiatan, ubahKegiatan } from "../app/dosen/_shared/kegiatanActions";
 import { DETAIL_FIELDS } from "../lib/kolomKategori";
 import { fieldFormulir } from "../lib/parameterKegiatan";
+import { labelOpsi } from "../lib/tampilNilai";
 import { IconCalc, IconBack, IconSave } from "./Icons";
 
 const inputCls =
@@ -182,7 +183,7 @@ function FieldInput({ f, nilai }: { f: any; nilai?: any }) {
         >
           {(f.options ?? []).map((o: string) => (
             <option key={o} value={o}>
-              {o.replace(/_/g, " / ")}
+              {labelOpsi(o)}
             </option>
           ))}
         </select>

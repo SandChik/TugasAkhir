@@ -4,9 +4,11 @@ Parser Surat Tugas / SK Pembimbing POLBAN JTK -> JSON.
 
 Melayani DUA jenis surat bimbingan sekaligus; jenisnya dideteksi dari halaman 1:
 
-  1. ST Pembimbing PKL      "PEMBIMBING PRAKTIK KERJA LAPANGAN"
-     Tabel 6 kolom: No | NIM | Nama | Instansi | Judul | Pembimbing
-     Satu baris = satu mahasiswa; instansi & pembimbing berupa sel tergabung.
+  1. ST Pembimbing PKL / KP   "PEMBIMBING PRAKTIK KERJA LAPANGAN" atau
+     "PEMBIMBING KERJA PRAKTIK" (Sarjana Terapan & D3)
+     Tabel 6 kolom: No | NIM | Nama | Tempat | Judul | Pembimbing
+     Satu baris = satu mahasiswa; pembimbing berupa sel tergabung lintas
+     beberapa mahasiswa.
 
   2. SK Pembimbing Tugas Akhir  "PEMBIMBING TUGAS AKHIR"  (D3 & Sarjana Terapan)
      Tabel 6 kolom: No Kelompok | NIM | NAMA | TOPIK | PEMBIMBING 1 | PEMBIMBING 2
@@ -15,34 +17,17 @@ Melayani DUA jenis surat bimbingan sekaligus; jenisnya dideteksi dari halaman 1:
 
 Ekstraksi saja. Output dikelompokkan PER DOSEN (pembimbing) untuk dashboard BKD.
 
-Jalur PKL memakai kalibrasi kolom tetap (COLS). Jalur TA membaca posisi kolom
-dari garis bingkai tabel, sebab lampiran D3 dan Sarjana Terapan berbeda lebar
-kolom — parser tidak boleh terikat satu layout.
-
-Struktur tabel PKL (bordered, 6 kolom): No | NIM | Nama | Instansi | Judul | Pembimbing.
-- Batas baris diambil dari GARIS PEMISAH horizontal kolom "No" (rect tipis h<2).
-- NIM/Nama/Judul: per-mahasiswa, satu baris, dibaca dalam rentang baris.
-- Instansi/Pembimbing: SEL TERGABUNG lintas mahasiswa satu instansi (kolom ini
-  tak punya garis pemisah sendiri). Tiap teks-blok ditetapkan ke mahasiswa yang
-  pusat-baris-nya terdekat (nearest-center), sama seperti penguji di Pengujian.
-
-Kalibrasi COLS terkunci ke layout lampiran ini; bila format berubah, parser
-melempar error, bukan diam menghasilkan sampah.
+Kedua jalur membaca posisi kolom dari garis bingkai tabel dan mengenali peran
+kolom dari teks kepala tabel, sebab tiap lampiran (PKL Sarjana Terapan, KP D3,
+TA D3/D4) memakai lebar kolom berbeda. Parser tidak boleh terikat satu
+kalibrasi layout; bila kepala tabel tak dikenali, parser melempar error, bukan
+diam menghasilkan sampah.
 """
 import argparse, hashlib, json, re, sys
 from dataclasses import dataclass, field, asdict
 
 import pdfplumber
 
-COLS = {
-    "no":       (47, 73),
-    "nim":      (79, 129),
-    "nama":     (135, 254),
-    "instansi": (260, 367),
-    "judul":    (373, 666),
-    "pemb":     (671, 808),
-}
-TOL = 2.0
 NIM_RE = re.compile(r"^\d{9}$")
 
 # --- metadata surat (halaman 1), format SK POLBAN standar ---
@@ -64,10 +49,11 @@ def _cari(pat, teks, g=1):
 def parse_metadata(pdf):
     t = pdf.pages[0].extract_text() or ""
     ta = _cari(r"Tahun\s*Akademik\s*(\d{4}\s*/\s*\d{4})", t)
+    prodi = _cari(r"PROGRAM\s+STUDI\s+([A-Z0-9][^\n]+)", t)
     return {
         "nomor":               _cari(r"Nomor\s*:?\s*([0-9A-Za-z./_-]+)", t),
         "tentang":             _cari(r"Tentang\s*\n\s*(.+)", t),
-        "program_studi":       "Sarjana Terapan Teknik Informatika",
+        "program_studi":       prodi.title() if prodi else None,
         "tahun_akademik":      re.sub(r"\s*/\s*", "/", ta) if ta else None,
         "angkatan":            _cari(r"angkatan\s*(\d{4})", t),
         "berlaku_sejak":       (a := _cari(r"berlaku sejak tanggal\s+(" + _DTE + ")", t)),
@@ -82,12 +68,6 @@ def parse_metadata(pdf):
         "jabatan_penandatangan": "Ketua Jurusan Teknik Komputer dan Informatika" if re.search(r"Ketua", t, re.I) else None,
     }
 
-
-def _col_of(x):
-    for name, (a, b) in COLS.items():
-        if a - TOL <= x < b + TOL:
-            return name
-    return None
 
 def _fix_split(t: str) -> str:
     """Gabungkan huruf tunggal yang terpisah spasi akibat artefak render:
@@ -104,41 +84,6 @@ def _clean_pemb(t: str) -> str:
     return re.sub(r"\s+,", ",", t).strip().strip(",").strip()
 
 
-def _text_in(words, col, y0, y1):
-    ws = [w for w in words
-          if _col_of((w["x0"]+w["x1"])/2) == col and y0 <= w["top"] < y1]
-    ws.sort(key=lambda w: (round(w["top"]), w["x0"]))
-    return _fix_split(re.sub(r"\s+", " ", " ".join(w["text"] for w in ws)).strip())
-
-def _lines_in(words, col, y0, y1):
-    ws = [w for w in words
-          if _col_of((w["x0"]+w["x1"])/2) == col and y0 <= w["top"] < y1]
-    ws.sort(key=lambda w: (round(w["top"]), w["x0"]))
-    lines = []
-    for w in ws:
-        if lines and abs(w["top"] - lines[-1]["y"]) <= 4:
-            lines[-1]["t"] += " " + w["text"]
-        else:
-            lines.append({"y": w["top"], "t": w["text"]})
-    return lines
-
-def _blocks(words, col, y0, y1, gap=15):
-    """Kelompokkan baris kolom sel-tergabung menjadi blok (nama/instansi)."""
-    blocks = []
-    for ln in _lines_in(words, col, y0, y1):
-        if blocks and ln["y"] - blocks[-1]["y_last"] <= gap:
-            blocks[-1]["t"] += " " + ln["t"]; blocks[-1]["y_last"] = ln["y"]
-        else:
-            blocks.append({"y0": ln["y"], "y_last": ln["y"], "t": ln["t"]})
-    for b in blocks:
-        b["yc"] = (b["y0"] + b["y_last"]) / 2
-    return blocks
-
-def _nearest(blocks, yc):
-    if not blocks: return ""
-    return min(blocks, key=lambda b: abs(b["yc"] - yc))["t"]
-
-
 @dataclass
 class Bimbingan:
     halaman: int
@@ -153,50 +98,74 @@ class Bimbingan:
 
 
 def parse_page(page, pageno):
+    """Jalur PKL/KP. Kolom dibaca dari garis bingkai tabel dan peran kolom
+    dikenali dari teks sel kepala (helper tabel dinamis di bagian bawah file,
+    dipakai bersama jalur TA)."""
     words = page.extract_words()
-    # garis pemisah baris dari kolom No (rect tipis horizontal)
-    seps = sorted({round(r["top"], 1) for r in page.rects
-                   if abs(r["x0"] - COLS["no"][0] + 5) < 4  # ~x0 42
-                   and (r["bottom"] - r["top"]) < 2
-                   and (r["x1"] - r["x0"]) > 15})
-    if len(seps) < 3:
-        return []
-    rows = list(zip(seps, seps[1:]))          # (y0,y1) tiap sel baris
-    # region tabel utk baca kolom tergabung
-    # pembimbing = SEL MERGED lintas beberapa mahasiswa; kolom ini punya
-    # garis pemisah sendiri (lebih sedikit dari kolom No). Tiap sel merged
-    # dibaca utuh, lalu mahasiswa ditetapkan ke sel yg memuat pusat barisnya.
-    pseps = sorted({round(r["top"], 1) for r in page.rects
-                    if abs(r["x0"] - COLS["pemb"][0] + 5) < 7   # ~x0 665-671
-                    and (r["bottom"] - r["top"]) < 2
-                    and (r["x1"] - r["x0"]) > 25})
-    pcells = []                               # (y0, y1, teks_pembimbing)
-    if len(pseps) >= 2:
-        for a_, b_ in zip(pseps, pseps[1:]):
-            pcells.append((a_, b_, _clean_pemb(_text_in(words, "pemb", a_, b_))))
+    xs = _batas_kolom(page)
+    if len(xs) < 5:
+        return []                                   # halaman tanpa tabel lampiran
+    kolom = list(zip(xs, xs[1:]))
+    y_atas = min(r["top"] for r in page.rects)
+    y_bawah = max(r["bottom"] for r in page.rects)
 
-    def _pemb_for(yc):
-        for a_, b_, txt in pcells:
-            if a_ <= yc < b_:
-                return txt
-        return ""
+    # Kolom NIM dikenali dari isinya (paling banyak memuat NIM), sama seperti
+    # jalur TA; kepala tabel baru bisa dibaca setelah batas data diketahui.
+    per_kolom = [_baris_di(words, a, b, y_atas, y_bawah) for a, b in kolom]
+    skor = [sum(1 for l in br if NIM_RE.match(l["t"])) for br in per_kolom]
+    if max(skor, default=0) == 0:
+        return []
+    i_nim = skor.index(max(skor))
+    nim_baris = [l for l in per_kolom[i_nim] if NIM_RE.match(l["t"])]
+    y_kepala = nim_baris[0]["y"]
+
+    # Peran kolom dari teks sel kepala. Sel pertama dipakai bila memang berada
+    # di atas baris NIM pertama; selain itu fallback ke seluruh teks di atasnya
+    # (menghindari kontaminasi teks baris data pertama).
+    sel_kolom = [_batas_sel(page, a, b) for a, b in kolom]
+    peran = {}
+    for i, (a, b) in enumerate(kolom):
+        y0, y1 = (sel_kolom[i][0]
+                  if sel_kolom[i] and sel_kolom[i][0][1] <= y_kepala + 2
+                  else (y_atas, y_kepala))
+        p = _peran_kolom(_teks_di(words, a, b, y0, y1))
+        if p and p not in peran:
+            peran[p] = i
+    peran["nim"] = i_nim
+    if "nama" not in peran or "pemb" not in peran:
+        raise RuntimeError(f"kepala tabel lampiran tak dikenali (halaman {pageno}); "
+                           f"kolom terbaca: {sorted(peran)}")
+    sel = {p: sel_kolom[i] for p, i in peran.items()}
+
+    # Rentang milik tiap mahasiswa = sel kolom NIM yang memuat baris NIM-nya,
+    # dipotong di tengah antar-NIM bila satu sel memuat beberapa NIM.
+    def _rentang(k):
+        y = nim_baris[k]["y"]
+        a, b = next(((a, b) for a, b in sel["nim"] if a <= y < b), (y - 2, y_bawah))
+        if k > 0 and a <= nim_baris[k - 1]["y"] < b:
+            a = (nim_baris[k - 1]["y"] + y) / 2
+        if k + 1 < len(nim_baris) and a <= nim_baris[k + 1]["y"] < b:
+            b = (y + nim_baris[k + 1]["y"]) / 2
+        return a, b
 
     out = []
-    for y0, y1 in rows:
-        nim = _text_in(words, "nim", y0, y1)
-        if not NIM_RE.match(nim):
-            continue                          # baris header/kosong
-        b = Bimbingan(halaman=pageno, nim=nim)
-        b.nama       = _text_in(words, "nama", y0, y1)
-        b.judul      = _text_in(words, "judul", y0, y1)
-        b.instansi   = _text_in(words, "instansi", y0, y1)
-        b.pembimbing = _pemb_for((y0 + y1) / 2)
-        out.append(b)
+    for k, ln in enumerate(nim_baris):
+        y0, y1 = _rentang(k)
+        m = Bimbingan(halaman=pageno, nim=ln["t"])
+        m.nama = _teks_di(words, *kolom[peran["nama"]], y0, y1)
+        if "judul" in peran:
+            m.judul = _teks_di(words, *kolom[peran["judul"]], y0, y1)
+        # Instansi & pembimbing bisa berupa sel tergabung lintas mahasiswa:
+        # baca sel yang memuat ordinat NIM, bukan rentang baris.
+        if "instansi" in peran:
+            m.instansi = _sel_pada(sel["instansi"], words, *kolom[peran["instansi"]], ln["y"] + 1)
+        m.pembimbing = _clean_pemb(_sel_pada(sel["pemb"], words, *kolom[peran["pemb"]], ln["y"] + 1))
+        out.append(m)
     return out
 
 
 # ===========================================================================
-# Jalur SK Pembimbing Tugas Akhir
+# Helper tabel dinamis (dipakai jalur PKL/KP dan TA) + jalur SK Pembimbing TA
 # ===========================================================================
 
 def _gabung_dekat(nilai, jarak=4.0):
@@ -258,9 +227,11 @@ def _peran_kolom(judul: str):
     j = judul.lower()
     if "nim" in j: return "nim"
     if "nama" in j: return "nama"
+    if "tempat" in j or "perusahaan" in j or "instansi" in j: return "instansi"
     if "topik" in j or "judul" in j: return "judul"
     if "pembimbing 1" in j or "pembimbing1" in j: return "pemb1"
     if "pembimbing 2" in j or "pembimbing2" in j: return "pemb2"
+    if "pembimbing" in j: return "pemb"
     if "kelompok" in j: return "kelompok"
     return None
 

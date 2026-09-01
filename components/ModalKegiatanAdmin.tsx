@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { DETAIL_FIELDS } from "../lib/kolomKategori";
 import { KATEGORI_INPUT_ADMIN } from "../lib/kategoriDosen";
 import { fieldFormulir } from "../lib/parameterKegiatan";
+import { labelOpsi } from "../lib/tampilNilai";
 import { simpanKegiatanDosen } from "../app/admin/kegiatan/actions";
 import SubmitButton from "./SubmitButton";
 import { IconCalc, IconPencil, IconPlus, IconSave } from "./Icons";
@@ -384,7 +385,7 @@ function IsianParameter({ f, nilai }: { f: FieldSkema; nilai?: any }) {
         >
           {(f.options ?? []).map((o) => (
             <option key={o} value={o}>
-              {o.replace(/_/g, " / ")}
+              {labelOpsi(o)}
             </option>
           ))}
         </select>

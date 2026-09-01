@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Logomark LedgerDik: huruf L putih dalam kotak navy membulat,
+       konsisten dengan mark di sidebar dan halaman login. -->
+  <rect width="64" height="64" rx="14" fill="#14315e"/>
+  <path d="M22 14h9v27h13v9H22z" fill="#ffffff"/>
+</svg>

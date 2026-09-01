@@ -10,6 +10,7 @@ import {
 import {
   KalkulatorBKDPendidikan__factory,
   BKDSKSToken__factory,
+  BKDDokumenRegistri__factory,
 } from "../types/ethers-contracts";
 
 /**
@@ -52,6 +53,63 @@ export function getTokenContract() {
   if (!address) throw new Error("NEXT_PUBLIC_SKS_TOKEN_ADDRESS belum diset");
   // Mint/burn butuh signer dengan MINTER_ROLE / DEFAULT_ADMIN_ROLE
   return BKDSKSToken__factory.connect(address, getAdminSigner());
+}
+
+export function getRegistriContract() {
+  const address = process.env.NEXT_PUBLIC_DOKUMEN_REGISTRI_ADDRESS;
+  if (!address) throw new Error("NEXT_PUBLIC_DOKUMEN_REGISTRI_ADDRESS belum diset");
+  // catat() butuh signer dengan PENCATAT_ROLE
+  return BKDDokumenRegistri__factory.connect(address, getAdminSigner());
+}
+
+export type AksiDokumen = "unggah" | "terapkan" | "hapus";
+
+/**
+ * Catat peristiwa dokumen (unggah/terapkan/hapus) ke registri on-chain.
+ * `hashHex` = hex 32 byte identitas berkas (sha256 isi, atau keccak256 URL
+ * untuk bukti berupa tautan), dengan atau tanpa awalan 0x.
+ */
+export async function catatDokumen(hashHex: string, aksi: AksiDokumen, referensi: string) {
+  const registri = getRegistriContract();
+  const hash = hashHex.startsWith("0x") ? hashHex : `0x${hashHex}`;
+  const tx = await registri.catat(hash, aksi, referensi);
+  const receipt = await tx.wait();
+  return {
+    txHash: tx.hash,
+    blockNumber: receipt?.blockNumber ?? null,
+    contractAddress: await registri.getAddress(),
+  };
+}
+
+/**
+ * Baca event DokumenTercatat langsung dari registri on-chain (halaman Log
+ * Blockchain admin). Rentang block dipecah kecil, alasan sama dengan
+ * queryFilterChunked token.
+ */
+export async function bacaEventDokumen(maksimal = 200) {
+  const address = process.env.NEXT_PUBLIC_DOKUMEN_REGISTRI_ADDRESS;
+  if (!address) return { kontrak: null, baris: [], total: 0 };
+  const registri = BKDDokumenRegistri__factory.connect(address, getProvider());
+
+  const fromBlock = Number(process.env.NEXT_PUBLIC_DOKUMEN_REGISTRI_DEPLOY_BLOCK || 0);
+  const toBlock = await getProvider().getBlockNumber();
+
+  const events = [];
+  for (let start = fromBlock; start <= toBlock; start += MAX_BLOCK_RANGE) {
+    const end = Math.min(start + MAX_BLOCK_RANGE - 1, toBlock);
+    events.push(...(await registri.queryFilter(registri.filters.DokumenTercatat(), start, end)));
+  }
+
+  const baris = events.map((e: any) => ({
+    operator: e.args?.operator as string,
+    hash: e.args?.hashDokumen as string,
+    aksi: e.args?.aksi as string,
+    referensi: e.args?.referensi as string,
+    txHash: e.transactionHash as string,
+    block: e.blockNumber as number,
+  }));
+  baris.sort((a, b) => b.block - a.block);
+  return { kontrak: address, baris: baris.slice(0, maksimal), total: baris.length };
 }
 
 // Mnemonic default yang dipakai semua node/tutorial Hardhat di dunia - siapa pun

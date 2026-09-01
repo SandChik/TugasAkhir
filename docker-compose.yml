@@ -1,0 +1,100 @@
+# Menjalankan seluruh stack: PostgreSQL, layanan parser (backend-extract),
+# migration Prisma, dan aplikasi Next.js.
+#
+#   docker compose up -d --build
+#
+# Konfigurasi web dimuat dari .env (root). DATABASE_URL dan PARSER_API_URL
+# di-override di sini agar menunjuk service dalam network compose, bukan
+# localhost host. Konfigurasi parser dimuat dari backend-extract/.env.
+name: bkd
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: bkd-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bkd_smart_contract
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    # Port sengaja tidak dipublikasikan agar tak bentrok dengan PostgreSQL
+    # lokal di host. Buka bila perlu akses dari host, mis. "5433:5432".
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bkd_smart_contract"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build: ./backend-extract
+    image: bkd-api
+    container_name: bkd-api
+    ports:
+      - "8000:8000"
+    # Muat API_KEY, ROUTER_API_KEY, ALLOWED_ORIGINS, BASE_URL, MODEL
+    env_file:
+      - backend-extract/.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Jalankan migration sekali tiap up, memakai stage builder yang masih
+  # membawa Prisma CLI. Seed manual bila perlu:
+  #   docker compose run --rm migrate npx prisma db seed
+  migrate:
+    build:
+      context: .
+      target: builder
+    image: bkd-web-builder
+    command: npx prisma migrate deploy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/bkd_smart_contract?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    build:
+      context: .
+    image: bkd-web
+    container_name: bkd-web
+    ports:
+      - "3000:3000"
+    # Muat NEXTAUTH_SECRET, NEXTAUTH_URL, PARSER_API_KEY, RPC_URL,
+    # ADMIN_PRIVATE_KEY, WALLET_MNEMONIC, NEXT_PUBLIC_* dari .env
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/bkd_smart_contract?schema=public
+      PARSER_API_URL: http://api:8000
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e",
+             "fetch('http://localhost:3000/api/rules').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  db-data:
+  uploads:

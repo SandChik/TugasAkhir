@@ -11,15 +11,19 @@ import * as Contracts from "./index.js";
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
   getContractFactory(name: 'KalkulatorBKDPendidikan', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.KalkulatorBKDPendidikan__factory>
+getContractFactory(name: 'BKDDokumenRegistri', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BKDDokumenRegistri__factory>
 getContractFactory(name: 'BKDSKSToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BKDSKSToken__factory>
 
   getContractAt(name: 'KalkulatorBKDPendidikan', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.KalkulatorBKDPendidikan>
+getContractAt(name: 'BKDDokumenRegistri', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BKDDokumenRegistri>
 getContractAt(name: 'BKDSKSToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BKDSKSToken>
 
   deployContract(name: 'KalkulatorBKDPendidikan', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.KalkulatorBKDPendidikan>
+deployContract(name: 'BKDDokumenRegistri', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BKDDokumenRegistri>
 deployContract(name: 'BKDSKSToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BKDSKSToken>
 
   deployContract(name: 'KalkulatorBKDPendidikan', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.KalkulatorBKDPendidikan>
+deployContract(name: 'BKDDokumenRegistri', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BKDDokumenRegistri>
 deployContract(name: 'BKDSKSToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BKDSKSToken>
 
     // default types

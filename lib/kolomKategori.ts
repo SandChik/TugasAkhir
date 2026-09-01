@@ -71,6 +71,32 @@ export const KOLOM_KATEGORI: Record<string, Kolom[]> = {
   ],
 };
 
+/**
+ * Kunci `detail_kegiatan` yang boleh diralat dosen dari halaman detail kegiatan.
+ * Dipakai bersama oleh kartu rincian dan server action penyimpanannya, jadi
+ * field yang tidak terdaftar di sini tidak akan tersimpan meski ikut terkirim.
+ * `komunal` disimpan sebagai boolean, sisanya teks.
+ */
+export const RINCIAN_DAPAT_DIUBAH: Record<string, string[]> = {
+  "bimbingan-mahasiswa": [
+    "lokasi",
+    "no_sk",
+    "tgl_sk",
+    "keterangan",
+    "komunal",
+    "program_studi",
+  ],
+  "pengujian-mahasiswa": [
+    "lokasi",
+    "no_sk",
+    "tgl_sk",
+    "keterangan",
+    "jenis_pengujian",
+    "bidang_keilmuan",
+    "program_studi",
+  ],
+};
+
 /** Field detail tambahan (opsional) per kategori pada form tambah/edit. */
 export type DetailField = { name: string; label: string; type: "text" | "date" | "number" };
 

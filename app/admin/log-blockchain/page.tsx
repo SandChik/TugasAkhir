@@ -5,6 +5,7 @@ import { prisma } from "../../../lib/prisma";
 import AppShell from "../../../components/AppShell";
 import TabelData from "../../../components/TabelData";
 import StatusChip, { STATUS_VARIAN } from "../../../components/StatusChip";
+import AlamatSalin from "../../../components/AlamatSalin";
 
 const inputCls =
   "mt-1 rounded-md border border-line px-2.5 py-1.5 text-[11px] outline-none focus:border-primary";
@@ -33,7 +34,6 @@ export default async function LogBlockchainPage({
   }
 
   const semua = Array.isArray(data) ? [] : data.baris;
-  const desimal = Array.isArray(data) ? 18 : data.desimal;
   const kontrak = process.env.NEXT_PUBLIC_SKS_TOKEN_ADDRESS;
 
   // Pemilik wallet: cocokkan alamat on-chain -> akun pengguna (alamat disimpan
@@ -87,7 +87,6 @@ export default async function LogBlockchainPage({
 
   const totalMint = baris.filter((e) => e.jenis === "mint").reduce((a, e) => a + e.jumlah.sks, 0);
   const totalBurn = baris.filter((e) => e.jenis === "burn").reduce((a, e) => a + e.jumlah.sks, 0);
-  const adaSkalaLama = semua.some((e) => e.jumlah.skalaLama);
   const takDikenal = baris.filter((e) => !pemilikEvent(e)).length;
 
   return (
@@ -97,7 +96,7 @@ export default async function LogBlockchainPage({
       deskripsi="Admin, Sistem"
       breadcrumb={["Beranda", "Blockchain", "Log Blockchain"]}
       title="Log Blockchain"
-      subtitle="Seluruh aksi yang tercatat permanen di jaringan (dibaca langsung on-chain)"
+      subtitle="Penerbitan (mint) dan pembakaran (burn) token SKS yang tercatat permanen di jaringan (dibaca langsung on-chain)"
       actions={
         <div className="flex items-center gap-3 text-[10.5px]">
           <span className="rounded-lg border border-line px-3 py-2 text-navy">
@@ -112,16 +111,6 @@ export default async function LogBlockchainPage({
       {error && (
         <div className="rounded-lg bg-danger-soft px-4 py-3 text-xs text-danger">
           Tidak dapat membaca on-chain: {error}. Pastikan node RPC berjalan dan alamat kontrak terisi.
-        </div>
-      )}
-
-      {adaSkalaLama && (
-        <div className="mt-3 rounded-lg bg-head-bg px-4 py-3 text-[11px] text-muted">
-          <b>Riwayat memuat transaksi berskala lama.</b> Mint/burn sekarang selalu mengikuti{" "}
-          <code>decimals() = {desimal}</code> kontrak (SKS × 10<sup>{desimal}</sup>), tetapi
-          sebagian transaksi lama terlanjur terkirim memakai satuan x100 (2 SKS = 200 satuan).
-          Log on-chain bersifat permanen, jadi baris tersebut ditandai{" "}
-          <b>transaksi skala lama</b> dan tetap ditampilkan dalam SKS agar tidak menyesatkan.
         </div>
       )}
 
@@ -218,11 +207,12 @@ export default async function LogBlockchainPage({
                     ) : (
                       <span className="text-crumb">Wallet tanpa akun terdaftar</span>
                     )}
-                    <span
-                      className="mt-0.5 block font-mono text-[10px] text-crumb"
-                      title={e.akun}
-                    >
-                      {e.akun ? `${e.akun.slice(0, 10)}…${e.akun.slice(-6)}` : "-"}
+                    <span className="mt-0.5 block">
+                      {e.akun ? (
+                        <AlamatSalin nilai={e.akun} className="text-[10px] text-crumb" />
+                      ) : (
+                        "-"
+                      )}
                     </span>
                 </>,
                 <span title={`${e.jumlah.mentah} satuan on-chain`}>
@@ -235,13 +225,9 @@ export default async function LogBlockchainPage({
                     {e.jenis === "burn" ? (
                       e.referensi || <span className="text-crumb">tanpa alasan</span>
                     ) : e.referensi ? (
-                      <span title={e.referensi}>
+                      <span>
                         Hash penilaian{" "}
-                        <span className="font-mono text-[10px]">
-                          {e.referensi.length > 14
-                            ? `${e.referensi.slice(0, 10)}…${e.referensi.slice(-4)}`
-                            : e.referensi}
-                        </span>
+                        <AlamatSalin nilai={e.referensi} akhir={4} className="text-[10px]" />
                       </span>
                     ) : (
                       "-"
@@ -250,9 +236,11 @@ export default async function LogBlockchainPage({
                       <span className="block text-[10px] text-crumb">oleh {operator}</span>
                     )}
                 </span>,
-                <span className="font-mono text-[10px] text-primary" title={e.txHash}>
-                  {e.txHash ? `${e.txHash.slice(0, 10)}…${e.txHash.slice(-8)}` : "-"}
-                </span>,
+                e.txHash ? (
+                  <AlamatSalin nilai={e.txHash} akhir={8} className="text-[10px] text-primary" />
+                ) : (
+                  "-"
+                ),
               ],
             };
           })}

@@ -12,6 +12,20 @@ const inputCls =
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(d);
 
+function TombolLihat({ dok }: { dok: any }) {
+  if (!dok.file_url) return null;
+  const cls = "rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]";
+  return adalahPdf(dok) ? (
+    <PratinjauPdf url={dok.file_url} judul={dok.nama_dokumen} className={cls}>
+      <IconEye size={13} />
+    </PratinjauPdf>
+  ) : (
+    <a href={dok.file_url} target="_blank" title="Lihat dokumen" className={cls}>
+      <IconEye size={13} />
+    </a>
+  );
+}
+
 /**
  * Detail kegiatan + daftar bukti + form upload.
  * @param returnTo path untuk balik + revalidate + flash (mis. halaman LKD)
@@ -34,9 +48,23 @@ export default function BuktiKegiatanDetail({
   const p: any = kegiatan.parameter ?? {};
   const d: any = kegiatan.detail_kegiatan ?? {};
   // PDF surat tugas/SK yang dilampirkan otomatis saat admin menerapkan unggahan
-  // bukan artefak dosen — dikenali dari berkas sumber unggahannya (aturan yang
-  // sama dipakai saat melampirkan), lalu tidak ikut didaftar di sini.
+  // bukan artefak dosen (dikenali dari berkas sumber unggahannya, aturan yang
+  // sama dipakai saat melampirkan). Surat tampil sebagai baris tersendiri yang
+  // hanya bisa dilihat: tanpa tombol hapus dan di luar penomoran artefak.
+  // Kegiatan lama bisa punya unggahan sumber tanpa baris lampiran; surat tetap
+  // ditampilkan dari file_url unggahannya.
   const suratSumber: string | null = kegiatan.unggahan_dokumen?.file_url ?? null;
+  const suratDok: any = suratSumber
+    ? (kegiatan.dokumen_kegiatan.find((dok: any) => dok.file_url === suratSumber) ?? {
+        id_dokumen: "surat-penugasan",
+        nama_dokumen: "Surat penugasan",
+        nama_file: null,
+        jenis_file: "application/pdf",
+        keterangan: "Lampiran unggahan admin",
+        tanggal_upload: null,
+        file_url: suratSumber,
+      })
+    : null;
   const dokumen = kegiatan.dokumen_kegiatan.filter(
     (dok: any) => !suratSumber || dok.file_url !== suratSumber
   );
@@ -75,11 +103,12 @@ export default function BuktiKegiatanDetail({
         ))}
       </div>
 
-      {dokumen.length === 0 ? (
+      {dokumen.length === 0 && (
         <div className="mt-5 rounded-lg bg-danger-soft px-4 py-4 text-xs font-medium text-danger">
           Tidak ada bukti dokumen
         </div>
-      ) : (
+      )}
+      {(suratDok || dokumen.length > 0) && (
         <div className="mt-5">
           <DataTable
             columns={[
@@ -91,6 +120,29 @@ export default function BuktiKegiatanDetail({
               { label: "Aksi", width: "90px" },
             ]}
           >
+            {suratDok && (
+              <tr key={suratDok.id_dokumen} className="bg-zebra">
+                <td>-</td>
+                <td>
+                  {suratDok.nama_dokumen}
+                  {suratDok.nama_file && (
+                    <span className="block text-[10px] text-crumb">{suratDok.nama_file}</span>
+                  )}
+                </td>
+                <td>
+                  <span className="rounded bg-head-bg px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                    Surat penugasan
+                  </span>
+                </td>
+                <td>{suratDok.keterangan ?? "-"}</td>
+                <td>{suratDok.tanggal_upload ? fmt(suratDok.tanggal_upload) : "-"}</td>
+                <td>
+                  <div className="flex gap-2">
+                    <TombolLihat dok={suratDok} />
+                  </div>
+                </td>
+              </tr>
+            )}
             {dokumen.map((dok: any, i: number) => (
               <tr key={dok.id_dokumen}>
                 <td>{i + 1}</td>
@@ -103,25 +155,7 @@ export default function BuktiKegiatanDetail({
                 <td>{fmt(dok.tanggal_upload)}</td>
                 <td>
                   <div className="flex gap-2">
-                    {dok.file_url &&
-                      (adalahPdf(dok) ? (
-                        <PratinjauPdf
-                          url={dok.file_url}
-                          judul={dok.nama_dokumen}
-                          className="rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]"
-                        >
-                          <IconEye size={13} />
-                        </PratinjauPdf>
-                      ) : (
-                        <a
-                          href={dok.file_url}
-                          target="_blank"
-                          title="Lihat dokumen"
-                          className="rounded-md bg-primary-soft p-2 text-primary hover:bg-[#dde9fb]"
-                        >
-                          <IconEye size={13} />
-                        </a>
-                      ))}
+                    <TombolLihat dok={dok} />
                     {canUpload && (
                       <form action={hapusBukti}>
                         <input type="hidden" name="id_dokumen" value={dok.id_dokumen} />

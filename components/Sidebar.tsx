@@ -69,6 +69,7 @@ const MENUS: Record<Peran, MenuSection[]> = {
       items: [
         { label: "Operasi Token", href: "/admin/token" },
         { label: "Log Blockchain", href: "/admin/log-blockchain" },
+        { label: "Registri Dokumen", href: "/admin/registri-dokumen" },
       ],
     },
     {

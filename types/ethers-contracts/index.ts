@@ -3,10 +3,14 @@
 /* eslint-disable */
 import type * as bkdSol from './BKD.sol/index.js';
 export type { bkdSol };
+import type * as registriSol from './registri.sol/index.js';
+export type { registriSol };
 import type * as tokenSol from './token.sol/index.js';
 export type { tokenSol };
 export * as factories from './factories/index.js';
 export type { KalkulatorBKDPendidikan } from './BKD.sol/KalkulatorBKDPendidikan.js';
 export { KalkulatorBKDPendidikan__factory } from './factories/BKD.sol/KalkulatorBKDPendidikan__factory.js';
+export type { BKDDokumenRegistri } from './registri.sol/BKDDokumenRegistri.js';
+export { BKDDokumenRegistri__factory } from './factories/registri.sol/BKDDokumenRegistri__factory.js';
 export type { BKDSKSToken } from './token.sol/BKDSKSToken.js';
 export { BKDSKSToken__factory } from './factories/token.sol/BKDSKSToken__factory.js';

@@ -38,16 +38,14 @@ cp .env.example .env        # isi API_KEY (klien) dan ROUTER_API_KEY (VLM)
 uvicorn api:app --port 8000
 #    lalu di .env aplikasi: PARSER_API_URL + PARSER_API_KEY (= API_KEY di atas)
 
-# 6. Akun dosen JTK sebenarnya (opsional, idempoten)
-npm run db:seed:jtk
-
-# 7. Jalankan web
+# 6. Jalankan web
 npm run dev
 ```
 
 ## Seed dosen JTK
 
-[`prisma/seed_dosen_jtk.mjs`](prisma/seed_dosen_jtk.mjs) mengisi **38 akun dosen JTK**
+Bagian `DOSEN_JTK` pada [`prisma/seed.mjs`](prisma/seed.mjs) — ikut dijalankan
+otomatis oleh `npm run db:seed` — mengisi **38 akun dosen JTK**
 dari dokumen resmi di `backend-extract` (ST Pengajaran 408/KO/AK.04.01/2025, ST PKL
 410/KO/AK.04.07/2025, ST Penguji 285/KO/AK.18.06/2025; sha256 tiap surat dicatat di
 header berkasnya) — bukan data dummy. **33 di antaranya membawa kode dosen** (kolom
@@ -185,8 +183,8 @@ dan `scripts/deploy.js` mendukung dijalankan ke jaringan mana pun lewat flag `--
 
 > Password demo hanya untuk pengembangan. Ganti sebelum demo/produksi.
 
-Setelah `npm run db:seed:jtk`, tersedia juga 38 akun dosen JTK nyata dengan pola
-`<kode>@jtk.test` / `dosen123` (lihat bagian **Seed dosen JTK**).
+Seed yang sama juga mengisi 38 akun dosen JTK nyata dengan pola
+`<nama.depan>@polban.ac.id` / `dosen123` (lihat bagian **Seed dosen JTK**).
 
 ## Catatan arsitektur
 

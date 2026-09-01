@@ -7,7 +7,7 @@ import { authOptions } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
 import { faseAktif, bolehDosenInput } from "../../../lib/fase";
-import { DETAIL_FIELDS } from "../../../lib/kolomKategori";
+import { DETAIL_FIELDS, RINCIAN_DAPAT_DIUBAH } from "../../../lib/kolomKategori";
 import { bacaParameterForm } from "../../../lib/parameterKegiatan";
 
 /** Kumpulkan field detail (d_*) sesuai DETAIL_FIELDS kategori → objek detail_kegiatan. */
@@ -171,18 +171,21 @@ export async function ubahKegiatan(formData: FormData) {
 }
 
 /**
- * Edit inline rincian bimbingan dari halaman detail. Berbeda dengan
- * ubahKegiatan, aksi ini SENGAJA menerima kegiatan hasil ekstraksi/PDDikti:
- * dosen boleh melengkapi/meralat rincian dokumennya (parameter perhitungan SKS
- * tidak ikut diubah di sini). Kunci tetap berlaku: pemilik, LKD belum permanen,
- * dan fase pengisian.
+ * Edit inline rincian kegiatan dari halaman detail (bimbingan & pengujian).
+ * Berbeda dengan ubahKegiatan, aksi ini SENGAJA menerima kegiatan hasil
+ * ekstraksi/PDDikti: dosen boleh melengkapi/meralat rincian dokumennya
+ * (parameter perhitungan SKS tidak ikut diubah di sini). Kunci tetap berlaku:
+ * pemilik, LKD belum permanen, dan fase pengisian.
  */
-export async function simpanDetailBimbingan(formData: FormData) {
+export async function simpanRincianKegiatan(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session) return;
   const id = String(formData.get("id_kegiatan") ?? "");
   const slug = String(formData.get("slug") ?? "bimbingan-mahasiswa");
   const jalur = `/dosen/${slug}/${id}`;
+  const dapatDiubah = RINCIAN_DAPAT_DIUBAH[slug];
+  if (!dapatDiubah)
+    redirect(`/dosen/${slug}?err=${encodeURIComponent("Kategori tidak dikenal")}`);
 
   const kegiatan = await prisma.kegiatan.findUnique({
     where: { id_kegiatan: id },
@@ -196,27 +199,22 @@ export async function simpanDetailBimbingan(formData: FormData) {
   const judul = String(formData.get("judul") ?? "").trim();
   if (!judul) redirect(`${jalur}?err=${encodeURIComponent("Judul aktivitas wajib diisi")}`);
 
-  const teks = (nama: string) => String(formData.get(nama) ?? "").trim() || null;
   const lama = (kegiatan!.detail_kegiatan as any) ?? {};
+  const detail: Record<string, unknown> = { ...lama, diedit_dosen: true };
+  for (const nama of dapatDiubah!) {
+    detail[nama] =
+      nama === "komunal"
+        ? String(formData.get("komunal")) === "ya"
+        : String(formData.get(nama) ?? "").trim() || null;
+  }
+
   await prisma.kegiatan.update({
     where: { id_kegiatan: id },
-    data: {
-      judul,
-      detail_kegiatan: {
-        ...lama,
-        lokasi: teks("lokasi"),
-        no_sk: teks("no_sk"),
-        tgl_sk: teks("tgl_sk"),
-        keterangan: teks("keterangan"),
-        komunal: String(formData.get("komunal")) === "ya",
-        program_studi: teks("program_studi"),
-        diedit_dosen: true,
-      },
-    } as any,
+    data: { judul, detail_kegiatan: detail } as any,
   });
 
   revalidatePath(jalur);
-  redirect(`${jalur}?ok=${encodeURIComponent("Rincian bimbingan disimpan")}`);
+  redirect(`${jalur}?ok=${encodeURIComponent("Rincian kegiatan disimpan")}`);
 }
 
 /** Hapus kegiatan manual (fase pengisian). */
