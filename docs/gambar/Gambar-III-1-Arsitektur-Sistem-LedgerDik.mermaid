@@ -1,0 +1,80 @@
+---
+title: Gambar III.1. Arsitektur Lapisan Sistem LedgerDik
+---
+flowchart TB
+
+    subgraph AKTOR["PENGGUNA SISTEM"]
+        direction LR
+        ADM["Administrator"]
+        DSN["Dosen"]
+        ASR["Asesor 1 dan Asesor 2"]
+    end
+
+    subgraph WEB["LAPISAN APLIKASI WEB - Next.js"]
+        direction TB
+        MW["middleware.ts<br/>pembatasan akses per peran"]
+        HAL["Halaman antarmuka per peran<br/>admin, asesor, dosen"]
+        ACT["Server action<br/>actions.ts per rute"]
+        ORK["Modul orkestrasi<br/>parserDokumen, pemetaanPenugasan,<br/>verifikasiBukti, namaDosen, blockchain"]
+        MW --> HAL --> ACT --> ORK
+    end
+
+    subgraph EKS["LAPISAN EKSTRAKSI DOKUMEN - FastAPI"]
+        direction TB
+        GATE["api.py<br/>autentikasi header X-API-Key"]
+        DET["Jalur deterministik - pdfplumber<br/>/parse/pengajaran<br/>/parse/bimbingan<br/>/parse/pengujian"]
+        VLMJ["Jalur model bahasa visual<br/>pypdfium2 dan Pillow<br/>/parse/sk-pembinaan 200 dpi<br/>/parse/artefak 150 dpi"]
+        GATE --> DET
+        GATE --> VLMJ
+    end
+
+    subgraph CHAIN["LAPISAN ON-CHAIN - Base Sepolia, chainId 84532"]
+        direction TB
+        KAL["KalkulatorBKDPendidikan<br/>fungsi pure per butir Rubrik BKD<br/>keluaran skala SKS x100"]
+        TOK["BKDSKSToken<br/>ERC-20 non-transferable<br/>MINTER_ROLE via AccessControl"]
+    end
+
+    subgraph DATA["LAPISAN PENYIMPANAN OPERASIONAL"]
+        direction TB
+        ORM["Prisma ORM<br/>schema.prisma dan migrasi terversi"]
+        DB[("PostgreSQL<br/>pengguna, periode_bkd, lkd,<br/>referensi_kegiatan, kegiatan,<br/>unggahan_dokumen, hasil_penilaian,<br/>simpulan_bkd, riwayat_transaksi")]
+        ORM --> DB
+    end
+
+    VLM["Layanan Model Bahasa Visual<br/>HTTPS dengan kunci API peladen"]
+    EXP["Basescan<br/>penjelajah blok publik"]
+
+    ADM -->|"unggah SK dan ST"| MW
+    DSN -->|"klaim kegiatan dan<br/>unggah dokumen bukti"| MW
+    ASR -->|"verifikasi, penilaian,<br/>dan pengesahan"| MW
+
+    ACT <==>|"data operasional"| ORM
+
+    ORK <==>|"berkas PDF melalui HTTP<br/>hasil ekstraksi JSON"| GATE
+    VLMJ <-->|"citra halaman base64<br/>JSON terstruktur"| VLM
+
+    ORK <==>|"Ethers.js JsonRpcProvider<br/>parameter kegiatan, nilai SKS x100"| KAL
+    ORK <==>|"Ethers.js Wallet peladen<br/>mint jumlah token dan referenceId<br/>berupa hash keccak-256 simpulan,<br/>transaction hash dan event SKSMinted"| TOK
+
+    KAL -.->|"verifikasi kode sumber"| EXP
+    TOK -.->|"penelusuran publik tanpa<br/>akses basis data institusi"| EXP
+
+    classDef aktor fill:#eaf1fc,stroke:#2d6cdf,stroke-width:1px,color:#14315e
+    classDef web fill:#f4f7fc,stroke:#2d6cdf,stroke-width:1px,color:#14315e
+    classDef data fill:#eef1f5,stroke:#5b6b82,stroke-width:1px,color:#33465c
+    classDef eks fill:#fdf6e8,stroke:#e0a53a,stroke-width:1px,color:#5b4a1f
+    classDef chain fill:#eaf7f0,stroke:#3a9d6b,stroke-width:1px,color:#1f4a34
+    classDef luar fill:#ffffff,stroke:#98a3b8,stroke-width:1px,color:#5b6b82
+
+    class ADM,DSN,ASR aktor
+    class MW,HAL,ACT,ORK web
+    class ORM,DB data
+    class GATE,DET,VLMJ eks
+    class KAL,TOK chain
+    class VLM,EXP luar
+
+    style AKTOR fill:#ffffff,stroke:#d7deea,color:#14315e
+    style WEB fill:#ffffff,stroke:#2d6cdf,color:#14315e
+    style EKS fill:#ffffff,stroke:#e0a53a,color:#5b4a1f
+    style CHAIN fill:#ffffff,stroke:#3a9d6b,color:#1f4a34
+    style DATA fill:#ffffff,stroke:#5b6b82,color:#33465c

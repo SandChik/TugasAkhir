@@ -1,0 +1,78 @@
+---
+title: Gambar III.2. Metodologi Pengembangan Sistem LedgerDik
+---
+flowchart TB
+
+    %% ============ KETERANGAN ============
+    subgraph KET["Keterangan"]
+        direction LR
+        K1["Proses"]
+        K2(["Luaran"])
+    end
+
+    %% ============ TAHAP PRA-PENGEMBANGAN ============
+    P1["Identifikasi Masalah"]
+    L1(["Latar Belakang dan<br/>Rumusan Masalah"])
+    P2["Analisis Domain Masalah"]
+    L2(["Tujuan, Manfaat, Ruang Lingkup,<br/>dan Potensi Produk"])
+    P3["Studi Pustaka"]
+    L3(["Dasar Teori, Peninjauan Karya Ilmiah Sejenis,<br/>Keunikan Produk, dan Teknologi<br/>untuk Pengembangan Sistem"])
+
+    P1 --> L1
+    L1 --> P2
+    P2 --> L2
+    L2 --> P3
+    P3 --> L3
+
+    %% ============ MODEL WATERFALL ============
+    subgraph WF["Waterfall Model (Sommerville, 2016)"]
+        direction TB
+        W1["Analisis dan Penetapan<br/>Spesifikasi Persyaratan<br/>Perangkat Lunak"]
+        LW1(["Dokumen Software Requirements<br/>Specification (SRS)"])
+        W2["Perancangan"]
+        LW2(["Cetak Biru (Blueprint) Sistem"])
+        W3["Implementasi"]
+        LW3(["Source code sistem LedgerDik"])
+        W4["Pengujian"]
+        LW4(["Dokumentasi hasil pengujian"])
+        W5["Operation &<br/>Maintenance"]
+        LW5(["Sistem LedgerDik beroperasi dan<br/>smart contract ter-deploy<br/>di Base Sepolia"])
+
+        W1 --> LW1
+        LW1 --> W2
+        W2 --> LW2
+        LW2 --> W3
+        W3 --> LW3
+        LW3 --> W4
+        W4 --> LW4
+        LW4 --> W5
+        W5 --> LW5
+
+        W5 -.-> W1
+        W5 -.-> W2
+        W5 -.-> W3
+        W5 -.-> W4
+    end
+
+    L3 --> W1
+
+    %% ============ PELAPORAN ============
+    P6["Penyusunan Laporan<br/>Tugas Akhir"]
+    L6(["Laporan Tugas Akhir"])
+
+    LW5 --> P6
+    P6 --> L6
+
+    L1 -.-> P6
+    L2 -.-> P6
+    L3 -.-> P6
+
+    %% ============ GAYA ============
+    classDef proses fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000
+    classDef luaran fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000
+
+    class P1,P2,P3,P6,W1,W2,W3,W4,W5,K1 proses
+    class L1,L2,L3,L6,LW1,LW2,LW3,LW4,LW5,K2 luaran
+
+    style KET fill:#ffffff,stroke:#000000,color:#000000
+    style WF fill:#ffffff,stroke:#000000,color:#000000

@@ -613,7 +613,7 @@ Bedakan tegas dua hal ini di Bab V.4:
 | Kualitas produk              | ISO/IEC 25010 —*Product Quality*           | IV.4.6                                                            |
 | Kualitas penggunaan          | ISO/IEC 25010 —*Quality in Use*            | V.2.7                                                             |
 | Pemodelan proses terstruktur | DeMarco / Yourdon (DFD), Pressman (2001)    | II.1, IV.2.2                                                      |
-| Pemodelan data               | *Entity-Relationship*, notasi *Crow's Foot* | II.1, IV.2.4                                                      |
+| Pemodelan data               | *Entity-Relationship*, notasi *Chen*        | II.1, IV.2.4                                                      |
 
 > **Catatan LEDGERDIK.** Laporan ini memakai pendekatan **SASD** (DFD, Kamus Data, Spesifikasi Proses, *Structure Chart*) — bukan OOSE/UML seperti contoh TA acuan. Pilihan ini **sah dan tepat** karena objek pengembangannya *smart contract* dan aplikasi web yang bersifat prosedural. Yang penting: **konsisten** — jangan mencampur notasi UML ke dalam bab yang sudah memakai notasi terstruktur, kecuali diberi penjelasan alasannya (contoh TA acuan melakukan ini saat mencampur UML dan Crow's Foot, dan alasannya dijelaskan eksplisit).
 

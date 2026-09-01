@@ -20,12 +20,14 @@ Kolom **Verifikasi** menandai apakah isi berkas PDF sudah dicocokkan dengan klai
 | Kategori | Jumlah |
 | ----- | :---: |
 | § A.1 — Sudah disitasi (Bab I) | 9 |
-| § A.2 — Sudah disitasi (Bab II) | 25 |
-| § B — Tersedia, belum disitasi | 10 |
+| § A.2 — Sudah disitasi (Bab II) | 26 |
+| § A.3 — Sudah disitasi (Bab III) | 24 |
+| § B — Tersedia, belum disitasi | 9 |
 | § C — Masih dicari | 0 |
-| **Total sumber terkelola** | **44** |
+| **Total sumber terkelola** | **68** |
 
-Bab II menyitasi **33** sumber: 8 di antaranya sudah dipakai Bab I (§ A.1), 25 sisanya baru (§ A.2).
+Bab II menyitasi **34** sumber: 8 di antaranya sudah dipakai Bab I (§ A.1), 26 sisanya baru (§ A.2).
+Bab III menyitasi **31** sumber: 7 di antaranya sudah dipakai Bab I atau Bab II, 24 sisanya baru (§ A.3).
 
 ---
 
@@ -133,7 +135,7 @@ mencakup pemakaian pada Bab II bila sumbernya dipakai ulang.
 
 ## § A.2 Entri Bab II
 
-Entri yang mulai disitasi pada Bab II. Sembilan di antaranya dipindahkan dari § B,
+Entri yang mulai disitasi pada Bab II. Sepuluh di antaranya dipindahkan dari § B,
 enam belas sisanya sumber baru. Urut abjad.
 
 Kolom **Verifikasi**: ✅ berkas ada di repo dan isinya sudah dicocokkan · 📄 dokumen
@@ -145,13 +147,14 @@ web/spesifikasi resmi, tanpa PDF · ⚠️ detail bibliografis berasal dari
 | Androulaki, E. et al. (2018) 'Hyperledger Fabric: a distributed operating system for permissioned blockchains', dalam *Proceedings of the Thirteenth EuroSys Conference*. New York: ACM, hlm. 1–15. https://doi.org/10.1145/3190508.3190538 | arXiv:1801.10228v2 (15 hlm.) | ⚠️ | **II.1.3** — arsitektur *order-execute* menuntut transaksi deterministik |
 | Base (2026) *Base Documentation*. Tersedia di: https://docs.base.org (Diakses: 26 Agustus 2026) | — | 📄 | **II.1.5** — Base sebagai *Layer-2* OP Stack; Base Sepolia sebagai jaringan uji |
 | Bilenko, M. et al. (2003) 'Adaptive name matching in information integration', *IEEE Intelligent Systems*, 18(5), hlm. 16–23. https://doi.org/10.1109/MIS.2003.1234765 | `bilenko2003.pdf` (8 hlm.) | ✅ | **II.1.12** — variasi nama akibat format simpan, galat tipografis, galat OCR, dan singkatan (Tabel II.2) |
-| Chen, P.P.-S. (1976) 'The entity-relationship model: toward a unified view of data', *ACM Transactions on Database Systems*, 1(1), hlm. 9–36. https://doi.org/10.1145/320434.320440 | — | ⚠️ | **II.1.16** — perumusan awal model *entity-relationship* |
+| Chen, P.P.-S. (1976) 'The entity-relationship model: toward a unified view of data', *ACM Transactions on Database Systems*, 1(1), hlm. 9–36. https://doi.org/10.1145/320434.320440 | — | ⚠️ | **II.1.16** — perumusan awal model *entity-relationship*; asal notasi Chen yang dipakai menggambar ERD. Rincian bibliografis (vol. 1(1), hlm. 9–36, 1976) terkonfirmasi dari daftar rujukan Mylopoulos dkk. (2025), tetapi berkasnya sendiri belum ada |
 | Christen, P. (2006) 'A comparison of personal name matching: techniques and practical issues', dalam *Sixth IEEE International Conference on Data Mining Workshops (ICDMW'06)*. Los Alamitos, CA: IEEE, hlm. 290–294. https://doi.org/10.1109/ICDMW.2006.2 | Laporan teknis ANU TR-CS-06-02 (14 hlm.) | ⚠️ | **II.1.12** — taksonomi variasi nama; tiadanya teknik terbaik tunggal; ambang batas sebagai persoalan utama |
 | Colakoglu, G., Solmaz, G. and Fürst, J. (2026) *Problem solved? Information extraction design space for layout-rich documents using LLMs*. arXiv:2502.18179 | `Literatur Pendukung/LLM/Problem Solved…pdf` | ✅ | **II.1.11** — tiga tantangan inti ekstraksi informasi; penghalusan keluaran |
 | Di Angelo, M. and Salzer, G. (2023) 'Identification of token contracts on Ethereum: standard compliance and beyond', *International Journal of Data Science and Analytics*, 16(3), hlm. 333–352. https://doi.org/10.1007/s41060-021-00281-1 | Springer, akses terbuka (20 hlm.) | ⚠️ | **II.1.7** — ERC-20 sebagai standar terluas; enam fungsi wajib, tiga opsional, dua *event* |
 | Gangwal, A., Gangavalli, H.R. and Thirupathi, A. (2023) 'A survey of Layer-two blockchain protocols', *Journal of Network and Computer Applications*, 209, 103539. https://doi.org/10.1016/j.jnca.2022.103539 | arXiv:2204.08032v3 (21 hlm.) | ⚠️ | **II.1.5** — protokol *Layer-2* sebagai jawaban atas keterbatasan laju transaksi dan latensi |
 | Grishchenko, I., Maffei, M. and Schneidewind, C. (2018) 'A semantic framework for the security analysis of Ethereum smart contracts', dalam *Principles of Security and Trust (POST 2018)*. LNCS. Cham: Springer, hlm. 243–269. https://doi.org/10.1007/978-3-319-89722-6_10 | Springer, akses terbuka (27 hlm.) | ⚠️ | **II.1.4** — semantik *small-step* formal EVM; pembatasan eksekusi oleh *gas* |
 | Moreau, E., Yvon, F. and Cappé, O. (2008) 'Robust similarity measures for named entities matching', dalam *Proceedings of Coling 2008*. Manchester, hlm. 593–600. https://aclanthology.org/C08-1075 | ACL Anthology (8 hlm.) | ⚠️ | **II.1.12** — gelar dan singkatan sebagai sumber variasi; risiko salah pilih ambang |
+| Mylopoulos, J., Guizzardi, G. and Guarino, N. (2025) 'Conceptual modeling: foundations, a historical perspective, and a vision for the future', *Data & Knowledge Engineering*, 160, 102483 | `contoh-TA/contoh-paper…/Mylopoulos…pdf` (15 hlm.) | ✅ | **II.1.16** — gagasan Chen sebagai tonggak pemodelan konseptual dan fondasi basis data relasional |
 | Ohlhaver, P., Weyl, E.G. and Buterin, V. (2022) *Decentralized society: finding Web3's soul*. SSRN Working Paper. https://doi.org/10.2139/ssrn.4105763 | `ssrn-4105763.pdf` (37 hlm.) | ✅ | **II.1.8** — asal konsep *soulbound token*; contoh institusi menerbitkan kredensial · **II.1.9** — risiko kehilangan akses dompet |
 | OpenZeppelin (2026) *OpenZeppelin Contracts Documentation*. Tersedia di: https://docs.openzeppelin.com/contracts (Diakses: 26 Agustus 2026) | — | 📄 | **II.1.7** — pustaka teraudit; kontrak `AccessControl` |
 | Palatinus, M. and Rusnak, P. (2014) *BIP-44: multi-account hierarchy for deterministic wallets*. Bitcoin Improvement Proposals | — | 📄 | **II.1.9** — struktur jalur turunan baku dompet kustodian |
@@ -167,6 +170,55 @@ web/spesifikasi resmi, tanpa PDF · ⚠️ detail bibliografis berasal dari
 | Wuille, P. (2012) *BIP-32: hierarchical deterministic wallets*. Bitcoin Improvement Proposals | — | 📄 | **II.1.9** — penurunan pohon kunci dari satu benih induk |
 | Yang, W., Cao, F. and Zhao, X. (2024) 'Extraction of PDF table data based on the pdfplumber method', dalam *JCRAI 2024*. New York: ACM. https://doi.org/10.1145/3696474.3696731 | `Literatur Pendukung/Extraction of PDF Table Data…pdf` | ✅ | **II.1.10** — cara kerja pdfplumber; tingkat pengenalan rata-rata 96% |
 | Zheng, Z. et al. (2020) 'An overview on smart contracts: challenges, advances and platforms', *Future Generation Computer Systems*, 105, hlm. 475–491. https://doi.org/10.1016/j.future.2019.12.019 | arXiv:1912.10370v1 (19 hlm.) | ⚠️ | **II.1.3** — definisi *smart contract*; imutabilitas setelah terbit; sitasi sekunder Szabo |
+
+---
+
+## § A.3 Entri Bab III
+
+Entri yang mulai disitasi pada Bab III, sebagian besar berupa dokumentasi resmi
+perangkat pendukung sebagaimana disyaratkan pola penulisan subbab III.4 (tiap
+perangkat wajib bersitasi pada paragraf definisinya). Urut abjad.
+
+Kolom **Verifikasi**: ✅ berkas ada di repo dan isinya sudah dicocokkan · 📄 dokumentasi
+resmi daring atau spesifikasi, tanpa PDF · ⚠️ rincian bibliografis belum diverifikasi
+terhadap sumber aslinya.
+
+> **Tanggal akses.** Seluruh entri berjenis dokumentasi daring di bawah ini masih memakai
+> tanggal akses sementara 26 Agustus 2026, mengikuti § A.2. Samakan ulang saat laporan
+> difinalisasi.
+
+| Entri Harvard | Verifikasi | Dipakai di |
+| ----- | :---: | ----- |
+| Chacon, S. and Straub, B. (2014) *Pro Git*. Edisi ke-2. New York: Apress. Tersedia di: https://git-scm.com/book (Diakses: 26 Agustus 2026) | ⚠️ | **III.4.22** — Git sebagai sistem kontrol versi terdistribusi berbasis *snapshot* |
+| Clark, A. (2026) *Pillow (PIL Fork) Documentation*. Tersedia di: https://pillow.readthedocs.io (Diakses: 26 Agustus 2026) | 📄 | **III.4.17** — pengolahan, konversi, dan penyandian citra |
+| Docker Inc. (2026) *Docker Documentation*. Tersedia di: https://docs.docker.com (Diakses: 26 Agustus 2026) | 📄 | **III.4.20** — pengemasan layanan beserta dependensinya ke dalam *container* |
+| Encode (2026) *Uvicorn: an ASGI Web Server for Python*. Tersedia di: https://www.uvicorn.org (Diakses: 26 Agustus 2026) | 📄 | **III.4.15** — Uvicorn sebagai implementasi peladen ASGI |
+| Etherscan (2026) *Etherscan API V2 Documentation*. Tersedia di: https://docs.etherscan.io (Diakses: 26 Agustus 2026) | 📄 | **III.4.6** — akses terindeks lintas rantai; verifikasi kode sumber kontrak |
+| Figma (2026) *Figma Help Center*. Tersedia di: https://help.figma.com (Diakses: 26 Agustus 2026) | 📄 | **III.4.23** — perancangan antarmuka kolaboratif berbasis peramban |
+| GitHub (2026) *GitHub Documentation*. Tersedia di: https://docs.github.com (Diakses: 26 Agustus 2026) | 📄 | **III.4.22** — repositori terpusat; *pull request* dan *issue* |
+| IEEE (1998) *IEEE Std 830-1998: IEEE Recommended Practice for Software Requirements Specifications*. New York: Institute of Electrical and Electronics Engineers | ⚠️ | **III.5.1** — kerangka penyusunan dokumen SRS |
+| ISO/IEC (2023) *ISO/IEC 25010:2023 Systems and Software Engineering — Systems and Software Quality Requirements and Evaluation (SQuaRE) — Product Quality Model*. Jenewa: International Organization for Standardization | ⚠️ | **III.5.1** — model kualitas produk sebagai acuan perumusan persyaratan nonfungsional · **III.5.4** — kriteria penerimaan pengujian nonfungsional |
+| Microsoft (2026a) *TypeScript Documentation*. Tersedia di: https://www.typescriptlang.org/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.8** — sistem tipe statis; deteksi kesalahan pada tahap kompilasi |
+| Microsoft (2026b) *Visual Studio Code Documentation*. Tersedia di: https://code.visualstudio.com/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.21** — editor kode lintas bahasa berbasis ekstensi |
+| Moore, R. (2026) *Ethers Documentation v6*. Tersedia di: https://docs.ethers.org/v6 (Diakses: 26 Agustus 2026) | 📄 | **III.4.4** — pemisahan *provider* dan *signer*; pembentukan objek kontrak dari ABI |
+| NextAuth.js (2026) *NextAuth.js Documentation*. Tersedia di: https://next-auth.js.org (Diakses: 26 Agustus 2026) | 📄 | **III.4.11** — pengelolaan sesi; *credentials provider* |
+| Nomic Foundation (2026) *Hardhat 3 Documentation*. Tersedia di: https://hardhat.org/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.2** — alur kompilasi, pengujian, dan penempatan; simulasi OP Stack |
+| OpenJS Foundation (2026) *Node.js Documentation*. Tersedia di: https://nodejs.org/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.7** — model masukan-keluaran non-pemblokiran berbasis kejadian |
+| PostgreSQL Global Development Group (2026) *PostgreSQL Documentation*. Tersedia di: https://www.postgresql.org/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.13** — kepatuhan ACID; ekstensibilitas; tipe data semi-terstruktur |
+| Prisma Data (2026) *Prisma ORM Documentation*. Tersedia di: https://www.prisma.io/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.12** — akses basis data *type-safe*; *Prisma Client*, *Migrate*, dan *Studio* |
+| pypdfium2 (2026) *pypdfium2 Documentation*. Tersedia di: https://pypdfium2.readthedocs.io (Diakses: 26 Agustus 2026) | 📄 | **III.4.17** — rasterisasi halaman PDF melalui PDFium |
+| Python Software Foundation (2026) *Python Documentation*. Tersedia di: https://docs.python.org/3 (Diakses: 26 Agustus 2026) | 📄 | **III.4.14** — pustaka standar; anotasi tipe opsional |
+| Ramírez, S. (2026) *FastAPI Documentation*. Tersedia di: https://fastapi.tiangolo.com (Diakses: 26 Agustus 2026) | 📄 | **III.4.15** — validasi berbasis anotasi tipe; OpenAPI dan JSON Schema |
+| Singer-Vine, J. (2026) *pdfplumber*. Tersedia di: https://github.com/jsvine/pdfplumber (Diakses: 26 Agustus 2026) | 📄 | **III.4.16** — pelestarian informasi posisi karakter; rekonstruksi struktur tabel |
+| Solidity (2026) *Solidity Documentation*. Tersedia di: https://docs.soliditylang.org (Diakses: 26 Agustus 2026) | 📄 | **III.4.1** — bahasa berorientasi kontrak bertipe statis; *modifier* dan *custom error* |
+| Tailwind Labs (2026) *Tailwind CSS Documentation*. Tersedia di: https://tailwindcss.com/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.10** — pendekatan *utility-first*; token desain terkonfigurasi |
+| Vercel (2026) *Next.js Documentation*. Tersedia di: https://nextjs.org/docs (Diakses: 26 Agustus 2026) | 📄 | **III.4.9** — perenderan sisi peladen; perutean berbasis direktori |
+
+Entri berikut sudah tercatat pada § A.1 atau § A.2 dan **dipakai ulang** pada Bab III,
+sehingga tidak diulang di atas: Base (2026) pada III.4.5, Bayan dkk. (2024) pada III.4.5,
+Kepdirjendikti (2021) pada III.2, Nurjannah (2026) pada III.3, OpenZeppelin (2026) pada
+III.4.3, Sommerville (2016) pada III.1.3 dan III.5, serta Yang, Cao dan Zhao (2024) pada
+III.4.16.
 
 ---
 
@@ -195,7 +247,6 @@ Berkas sudah ada dan terverifikasi. **Jangan masukkan ke Daftar Pustaka final se
 | Entri Harvard | Berkas | Rencana pemakaian |
 | ----- | ----- | ----- |
 | Grandini, M., Bagli, E. and Visani, G. (2020) 'Metrics for Multi-Class Classification: An Overview', arXiv:2008.05756v1. | `refrensi-TA/2008.05756v1.pdf` | IV.4 — metrik evaluasi hasil pemeriksaan dokumen bukti |
-| Mylopoulos, J., Guizzardi, G. and Guarino, N. (2025) 'Conceptual modeling: Foundations, a historical perspective, and a vision for the future', *Data & Knowledge Engineering*, 160, 102483. | `contoh-TA/contoh-paper.../Mylopoulos...pdf` | II.1 — landasan pemodelan konseptual dan ERD |
 | Royce, W.W. (1970) 'Managing the Development of Large Software Systems'. ⚠️ Lengkapi venue: umumnya disitasi sebagai *Proceedings of IEEE WESCON*, pp. 1–9 | `contoh-TA/contoh-paper.../Managing the Development...pdf` | II.1 — sumber asli model *waterfall* |
 | Senarath, U.S. (2021) 'Waterfall Methodology, Prototyping and Agile Development'. ⚠️ Venue belum terverifikasi | `contoh-TA/contoh-paper.../WaterfallMethodology...pdf` | II.1, III.5 — justifikasi pemilihan *waterfall* |
 
@@ -224,6 +275,10 @@ Bagian ini dipertahankan sebagai catatan penyelesaian.
 
 Berisi § A.1 dan § A.2, urut abjad, tanpa penomoran. **34 entri.** Perbarui setiap
 kali ada entri baru yang benar-benar disitasi.
+
+> ⚠️ **Blok ini belum memuat § A.3.** Dua puluh empat entri Bab III pada § A.3 wajib
+> disisipkan ke dalam blok di bawah, urut abjad, sebelum laporan difinalisasi.
+> Setelah disisipkan, jumlah entri menjadi **58**.
 
 ```
 Androulaki, E. et al. (2018) 'Hyperledger Fabric: a distributed operating system for
@@ -276,6 +331,10 @@ Moreau, E., Yvon, F. and Cappé, O. (2008) 'Robust similarity measures for named
 entities matching', dalam Proceedings of the 22nd International Conference on
 Computational Linguistics (Coling 2008). Manchester, hlm. 593-600. Tersedia di:
 https://aclanthology.org/C08-1075 (Diakses: 26 Agustus 2026).
+
+Mylopoulos, J., Guizzardi, G. and Guarino, N. (2025) 'Conceptual modeling: foundations,
+a historical perspective, and a vision for the future', Data & Knowledge Engineering,
+160, 102483.
 
 Nakamoto, S. (2008) Bitcoin: A Peer-to-Peer Electronic Cash System. Tersedia di:
 https://bitcoin.org/bitcoin.pdf (Diakses: 26 Agustus 2026).
@@ -388,5 +447,7 @@ https://doi.org/10.1016/j.future.2019.12.019.
 5. **Tanggal akses.** Sumber daring wajib mencantumkan tanggal akses. Perbarui bila laporan difinalisasi jauh setelah tanggal yang tertulis.
 6. **Disarankan memakai reference manager** (Mendeley/Zotero) dengan gaya Cite Them Right Harvard, agar penomoran dan urutan abjad terjaga otomatis.
 7. **Pekerjaan tersisa dari Bab II.** Sebelas entri pada § A.2 bertanda ⚠️, artinya sudah disitasi di badan laporan tetapi berkasnya belum ada di `refrensi-TA/`. Turunkan berkasnya lalu jalankan pemeriksaan pada butir 2, dan ubah tandanya menjadi ✅. Urutan prioritas mengikuti bobot klaimnya: Zheng dkk. (2020), Wood (2025), Grishchenko dkk. (2018), Di Angelo dan Salzer (2023), Christen (2006), Ohlhaver dkk. sudah ✅.
-8. **Chen (1976) belum terverifikasi sama sekali** dan tidak tercatat di `literatur_bab2_ledgerdik.md`. Turunkan berkasnya, atau alihkan rujukan ERD pada II.1.16 sepenuhnya ke Pressman (2001) yang sudah tersedia.
-9. **Bentuk sitasi PO BKD.** Bab I dan Bab II sama-sama memakai `(Kepdirjendikti, 2021)`, dan entri Daftar Pustaka memakai `Kepdirjendikti (2021)`. Bentuk ini sudah konsisten; jangan diganti menjadi `Republik Indonesia (2021)` di salah satu bab saja.
+8. **Chen (1976) belum ada berkasnya.** Sejak ERD beralih ke notasi Chen, sumber ini menopang dua klaim sekaligus, yaitu perumusan awal model *entity-relationship* dan asal notasinya. Klaim isi untuk sementara ditopang Mylopoulos dkk. (2025) yang berkasnya sudah terverifikasi, mengikuti pola contoh-TA. Turunkan berkas Chen bila laporan hendak mengutip rincian notasinya langsung dari sumber asli.
+9. **Pekerjaan tersisa dari Bab III.** Dua puluh satu entri pada § A.3 berjenis dokumentasi resmi daring (📄). Dokumentasi semacam ini sah dipakai sebagai rujukan karakteristik teknis perangkat, tetapi tanggal aksesnya wajib diperbarui saat finalisasi karena isinya dapat berubah sewaktu-waktu. Tiga entri bertanda ⚠️, yaitu Chacon dan Straub (2014), IEEE (1998), dan ISO/IEC (2023), rincian bibliografisnya perlu diverifikasi terhadap sumber aslinya; khusus ISO/IEC 25010, pastikan edisi yang disitasi sama dengan edisi yang dipakai menyusun tabel persyaratan nonfungsional pada Bab IV.
+10. **Penanda a/b pada Microsoft (2026).** TypeScript dan Visual Studio Code sama-sama diterbitkan Microsoft pada tahun yang sama, sehingga dibedakan sebagai `Microsoft (2026a)` dan `Microsoft (2026b)`. Urutan huruf mengikuti urutan abjad judul dokumennya dan harus konsisten antara badan laporan dan Daftar Pustaka.
+11. **Bentuk sitasi PO BKD.** Bab I dan Bab II sama-sama memakai `(Kepdirjendikti, 2021)`, dan entri Daftar Pustaka memakai `Kepdirjendikti (2021)`. Bentuk ini sudah konsisten; jangan diganti menjadi `Republik Indonesia (2021)` di salah satu bab saja.
