@@ -52,7 +52,7 @@ export default async function InputKegiatanPage({
     }),
   ]);
 
-  const fase = periode ? faseAktif(periode) : "selesai";
+  const fase = periode ? faseAktif(periode) : null;
   const dasar: any = periode
     ? { sumber_data: "admin", lkd: { id_periode: periode.id_periode } }
     : null;
@@ -103,7 +103,7 @@ export default async function InputKegiatanPage({
       subtitle="Kegiatan berbasis penugasan: perkuliahan, bimbingan, pengujian, dan pembinaan mahasiswa"
       actions={
         <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
-          {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
+          {periode && fase ? `${periode.nama_periode} · ${FASE_LABEL[fase]}` : "Belum ada periode aktif"}
         </span>
       }
     >

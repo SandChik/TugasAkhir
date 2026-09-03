@@ -44,6 +44,7 @@ export default async function RekapKegiatanPage() {
             const laporan = byPeriode(p.id_periode, "laporan");
             const s = laporan?.simpulan;
             const aktif = p.status === "aktif";
+            const labelFase = aktif ? FASE_LABEL[faseAktif(p)] : "Periode nonaktif";
             const simpulan =
               s?.status_final === "M"
                 ? "Memenuhi"
@@ -52,10 +53,10 @@ export default async function RekapKegiatanPage() {
                   : "-";
             return {
               id: p.id_periode,
-              nilai: [p.nama_periode, FASE_LABEL[faseAktif(p)], simpulan, null, null],
+              nilai: [p.nama_periode, labelFase, simpulan, null, null],
               sel: [
                 p.nama_periode,
-                <span className="text-[10.5px] text-muted">{FASE_LABEL[faseAktif(p)]}</span>,
+                <span className="text-[10.5px] text-muted">{labelFase}</span>,
                 <span className={s?.status_final ? "text-success-tx" : "text-crumb"}>
                   {simpulan}
                 </span>,

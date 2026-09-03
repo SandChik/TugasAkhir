@@ -101,8 +101,8 @@ template:
 - `components/` - komponen shared. Server component kecuali ada `"use client"`.
 - `lib/bkdRules.ts` - referensi rubrik BKD 2021.
 - `lib/blockchain.ts` - jembatan ke contract kalkulator dan token.
-- `lib/fase.ts` - fase periode (`pengisian`, `penilaian`, `perbaikan`,
-  `selesai`) dan gate aksi. Semua aksi yang bergantung fase harus lewat helper
+- `lib/fase.ts` - fase periode (`pengisian`, `pemeriksaan`, `penilaian`)
+  dan gate aksi. Semua aksi yang bergantung fase harus lewat helper
   di sini, jangan cek tanggal manual.
 - `lib/parserDokumen.ts`, `lib/pemetaanPenugasan.ts`, `lib/namaDosen.ts` -
   ekstraksi SK/ST dan pencocokan nama dosen ke akun.

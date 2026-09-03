@@ -83,9 +83,8 @@ export default function BarisPeriode({ p }: { p: PeriodeBaris }) {
               >
                 <option value="">(auto tanggal)</option>
                 <option value="pengisian">Pengisian</option>
+                <option value="pemeriksaan">Pemeriksaan</option>
                 <option value="penilaian">Penilaian</option>
-                <option value="perbaikan">Perbaikan</option>
-                <option value="selesai">Selesai</option>
               </select>
               <button
                 title="Terapkan fase"

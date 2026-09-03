@@ -13,10 +13,10 @@ const KUNCI_TANGGAL = [
   "tanggal_selesai",
   "pengisian_mulai",
   "pengisian_selesai",
+  "pemeriksaan_mulai",
+  "pemeriksaan_selesai",
   "penilaian_mulai",
   "penilaian_selesai",
-  "perbaikan_mulai",
-  "perbaikan_selesai",
 ] as const;
 
 type Tanggal = Record<(typeof KUNCI_TANGGAL)[number], Date | null>;
@@ -35,8 +35,8 @@ function cekRentang(t: Tanggal): string | null {
   const pasangan: [keyof Tanggal, keyof Tanggal, string][] = [
     ["tanggal_mulai", "tanggal_selesai", "periode"],
     ["pengisian_mulai", "pengisian_selesai", "pengisian"],
+    ["pemeriksaan_mulai", "pemeriksaan_selesai", "pemeriksaan"],
     ["penilaian_mulai", "penilaian_selesai", "penilaian"],
-    ["perbaikan_mulai", "perbaikan_selesai", "perbaikan"],
   ];
   for (const [a, b, label] of pasangan) {
     const mulai = t[a];
@@ -133,7 +133,7 @@ export async function setFaseOverride(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const fase = String(formData.get("fase") ?? "");
   if (!id) redirect(withFlash(DASAR, { err: "Periode tidak dikenal" }));
-  const val = ["pengisian", "penilaian", "perbaikan", "selesai"].includes(fase) ? fase : null;
+  const val = ["pengisian", "pemeriksaan", "penilaian"].includes(fase) ? fase : null;
   const p = await prisma.periode_bkd.update({
     where: { id_periode: id },
     data: { fase_override: val } as any,

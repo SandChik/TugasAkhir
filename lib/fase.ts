@@ -1,14 +1,14 @@
 /**
  * R3: menentukan fase aktif suatu periode.
  * Prioritas: fase_override (manual admin) > perhitungan dari rentang tanggal.
+ * Tiga fase berurutan: pengisian -> pemeriksaan -> penilaian.
  */
-export type Fase = "pengisian" | "penilaian" | "perbaikan" | "selesai";
+export type Fase = "pengisian" | "pemeriksaan" | "penilaian";
 
 export const FASE_LABEL: Record<Fase, string> = {
   pengisian: "Masa Pengisian & Upload Bukti",
+  pemeriksaan: "Masa Pemeriksaan Bukti",
   penilaian: "Masa Penilaian Asesor",
-  perbaikan: "Masa Perbaikan Penilaian",
-  selesai: "Selesai Dinilai",
 };
 
 function inRange(now: Date, a?: Date | null, b?: Date | null): boolean {
@@ -19,17 +19,29 @@ function inRange(now: Date, a?: Date | null, b?: Date | null): boolean {
 export function faseAktif(periode: any, now: Date = new Date()): Fase {
   if (periode?.fase_override) return periode.fase_override as Fase;
   if (inRange(now, periode?.pengisian_mulai, periode?.pengisian_selesai)) return "pengisian";
+  if (inRange(now, periode?.pemeriksaan_mulai, periode?.pemeriksaan_selesai)) return "pemeriksaan";
   if (inRange(now, periode?.penilaian_mulai, periode?.penilaian_selesai)) return "penilaian";
-  if (inRange(now, periode?.perbaikan_mulai, periode?.perbaikan_selesai)) return "perbaikan";
-  // sebelum pengisian dimulai -> anggap pengisian; setelah semua lewat -> selesai
+  // Di luar semua rentang: sebelum pengisian dimulai dianggap pengisian, jeda
+  // antar fase ikut fase berikutnya, setelah semua lewat tetap penilaian.
   if (periode?.pengisian_mulai && now < periode.pengisian_mulai) return "pengisian";
-  return "selesai";
+  if (periode?.pemeriksaan_mulai && now < periode.pemeriksaan_mulai) return "pemeriksaan";
+  return "penilaian";
 }
 
 // Gate aksi berdasarkan fase (dipakai server action + UI)
 export const bolehDosenInput = (f: Fase) => f === "pengisian";
-export const bolehDosenPerbaiki = (f: Fase) => f === "pengisian" || f === "perbaikan";
-export const bolehAsesorNilai = (f: Fase) => f === "penilaian" || f === "perbaikan";
+export const bolehDosenPerbaiki = (f: Fase) => f === "pengisian" || f === "pemeriksaan";
+
+/**
+ * Asesor menilai pada masa pemeriksaan dan penilaian, hanya untuk periode yang
+ * masih aktif. Tanpa fase terminal, periode yang seluruh rentangnya sudah lewat
+ * tetap terbaca penilaian, jadi status periode yang menjadi kuncinya.
+ */
+export function bolehAsesorNilai(periode: any, now?: Date): boolean {
+  if (periode?.status !== "aktif") return false;
+  const f = faseAktif(periode, now);
+  return f === "pemeriksaan" || f === "penilaian";
+}
 
 /**
  * Kegiatan yang dikembalikan asesor: ada hasil penilaian berstatus revisi atau
@@ -47,7 +59,7 @@ export function perluPerbaikan(kegiatan: any): boolean {
  * menyembunyikan tombol bukan pengaman, kiriman form bisa dibuat manual.
  *
  * Terbuka pada masa pengisian selama laporan belum disimpan permanen, lalu
- * terbuka lagi pada masa perbaikan khusus kegiatan yang dikembalikan asesor.
+ * terbuka lagi pada masa pemeriksaan khusus kegiatan yang dikembalikan asesor.
  */
 export function bolehUbahBukti(kegiatan: any): boolean {
   const fase = faseAktif(kegiatan?.lkd?.periode_bkd);
@@ -55,16 +67,15 @@ export function bolehUbahBukti(kegiatan: any): boolean {
   return bolehDosenPerbaiki(fase) && perluPerbaikan(kegiatan);
 }
 
-/** Rentang tanggal milik fase tersebut; fase selesai memakai rentang periode. */
+/** Rentang tanggal milik fase tersebut. */
 export function rentangFase(
   periode: any,
   fase: Fase,
 ): { mulai: Date | null; selesai: Date | null } {
   const kunci: Record<Fase, [string, string]> = {
     pengisian: ["pengisian_mulai", "pengisian_selesai"],
+    pemeriksaan: ["pemeriksaan_mulai", "pemeriksaan_selesai"],
     penilaian: ["penilaian_mulai", "penilaian_selesai"],
-    perbaikan: ["perbaikan_mulai", "perbaikan_selesai"],
-    selesai: ["tanggal_mulai", "tanggal_selesai"],
   };
   const [a, b] = kunci[fase];
   return { mulai: periode?.[a] ?? null, selesai: periode?.[b] ?? null };
@@ -76,10 +87,10 @@ export const FIELD_TANGGAL = [
   ["tanggal_selesai", "Selesai Periode"],
   ["pengisian_mulai", "Pengisian Mulai"],
   ["pengisian_selesai", "Pengisian Selesai"],
+  ["pemeriksaan_mulai", "Pemeriksaan Mulai"],
+  ["pemeriksaan_selesai", "Pemeriksaan Selesai"],
   ["penilaian_mulai", "Penilaian Mulai"],
   ["penilaian_selesai", "Penilaian Selesai"],
-  ["perbaikan_mulai", "Perbaikan Mulai"],
-  ["perbaikan_selesai", "Perbaikan Selesai"],
 ] as const;
 
 export type KunciTanggal = (typeof FIELD_TANGGAL)[number][0];

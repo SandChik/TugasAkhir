@@ -427,8 +427,8 @@ async function main() {
         tanggal_mulai: new Date("2026-02-02"), tanggal_selesai: new Date("2026-07-31"), status: "aktif",
         // Rentang fase (R3). Override manual ke 'pengisian' agar demo langsung bisa input.
         pengisian_mulai: new Date("2026-06-01"), pengisian_selesai: new Date("2026-07-31"),
-        penilaian_mulai: new Date("2026-08-01"), penilaian_selesai: new Date("2026-08-20"),
-        perbaikan_mulai: new Date("2026-08-21"), perbaikan_selesai: new Date("2026-08-31"),
+        pemeriksaan_mulai: new Date("2026-08-01"), pemeriksaan_selesai: new Date("2026-08-15"),
+        penilaian_mulai: new Date("2026-08-16"), penilaian_selesai: new Date("2026-08-31"),
         fase_override: "pengisian",
       },
     });
@@ -439,7 +439,7 @@ async function main() {
       data: {
         nama_periode: "2025/2026 Ganjil", tahun_ajaran: "2025/2026", semester: "Ganjil",
         tanggal_mulai: new Date("2025-09-01"), tanggal_selesai: new Date("2026-01-31"), status: "nonaktif",
-        fase_override: "selesai",
+        fase_override: "penilaian",
       },
     });
   }
