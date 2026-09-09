@@ -49,8 +49,9 @@ class Box:
     def y1(s): return s.y + s.h
 
 class Edge:
-    def __init__(s, id, src, dst, pts, arrow_end=True, arrow_start=False):
+    def __init__(s, id, src, dst, pts, arrow_end=True, arrow_start=False, tail_circle=False):
         s.id, s.src, s.dst, s.pts, s.arrow_end, s.arrow_start = id, src, dst, pts, arrow_end, arrow_start
+        s.tail_circle = tail_circle
 
 class Label:
     def __init__(s, id, cx, cy, text, fs, w, h, bold=False, bg=True, owner=None):
@@ -70,8 +71,8 @@ class Dia:
     def box(s, x, y, w, h, text, shape="rect", warna="entitas", fs=10, bold=False, parent=None, align="center", dashed=False):
         b = Box(s.nid(), x, y, w, h, text, shape, warna, fs, bold, parent, align, dashed)
         s.boxes.append(b); return b
-    def edge(s, src, dst, pts, arrow_end=True, arrow_start=False):
-        e = Edge(s.nid("e"), src, dst, pts, arrow_end, arrow_start)
+    def edge(s, src, dst, pts, arrow_end=True, arrow_start=False, tail_circle=False):
+        e = Edge(s.nid("e"), src, dst, pts, arrow_end, arrow_start, tail_circle)
         s.edges.append(e); return e
     def label(s, cx, cy, text, fs=8, bold=False, bg=True, pad=3, owner=None):
         w, h = text_size(text, fs, bold)
@@ -116,7 +117,7 @@ class Dia:
         for e in s.edges:
             st = "edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;"
             st += "endArrow=classic;" if e.arrow_end else "endArrow=none;"
-            st += "startArrow=classic;" if e.arrow_start else "startArrow=none;"
+            st += "startArrow=classic;" if e.arrow_start else ("startArrow=oval;startFill=0;startSize=7;" if e.tail_circle else "startArrow=none;")
             attrs = ""
             if e.src is not None:
                 ax, ay, ax1, ay1 = s.abs_box(e.src)
@@ -179,6 +180,9 @@ class Dia:
                 dr.polygon([(x1, y1), p1, p2], fill="black")
             if e.arrow_end: panah(pts[-2], pts[-1])
             if e.arrow_start: panah(pts[1], pts[0])
+            if e.tail_circle:
+                r = 4 * scale; x, y = pts[0]
+                dr.ellipse([x - r, y - r, x + r, y + r], fill="white", outline="black", width=max(1, int(1.2 * scale)))
         for b in s.boxes:
             x0, y0, x1, y1 = [S(v) for v in s.abs_box(b)]
             fill, stroke = WARNA[b.warna]

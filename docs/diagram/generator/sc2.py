@@ -29,16 +29,19 @@ for i, (nama, par) in enumerate(MODUL):
     fill = "modul"
     if kiri:
         m = d.box(110, cy-CH/2, CW, CH, nama, "rect", fill, 9)
-        pts = [(tx_l, akar.y1), (tx_l, cy), (m.x1, cy)]
-        e = d.edge(akar, m, pts)
-        t = par; w, h = text_size(t, FS)
-        d.label(m.x1+12+w/2, cy-5-h/2, t, FS, owner=e)
+        e = d.edge(akar, m, [(tx_l, akar.y1), (tx_l, cy), (m.x1, cy)])
+        xa, xb, sg = m.x1+14, m.x1+54, 1
     else:
         m = d.box(1290, cy-CH/2, CW, CH, nama, "rect", fill, 9)
-        pts = [(tx_r, akar.y1), (tx_r, cy), (m.x, cy)]
-        e = d.edge(akar, m, pts)
-        t = par; w, h = text_size(t, FS)
-        d.label(m.x-12-w/2, cy-5-h/2, t, FS, owner=e)
+        e = d.edge(akar, m, [(tx_r, akar.y1), (tx_r, cy), (m.x, cy)])
+        xa, xb, sg = m.x-14, m.x-54, -1
+    # data couple masuk: ekor lingkaran di sisi pemanggil, panah ke arah modul
+    if par != "tanpa data couple masuk":
+        c = d.edge(None, None, [(xb, cy-9), (xa, cy-9)], tail_circle=True)
+        w, h = text_size(par, FS); d.label(xa+sg*(w/2+2), cy-9-5-h/2, par, FS, owner=c)
+    # data couple keluar: ekor lingkaran di sisi modul, panah ke arah pemanggil
+    c2 = d.edge(None, None, [(xa, cy+9), (xb, cy+9)], tail_circle=True)
+    w, h = text_size("sksX100", FS); d.label(xa+sg*(w/2+2), cy+9+5+h/2, "sksX100", FS, owner=c2)
 d.box(110, Y0+10*DY-20, 1480, 96,
       "Notasi mengikuti Pressman (2001): kotak menyatakan modul, panah menyatakan pemanggilan dari modul superordinat ke modul\n"
       "subordinat, dan nama pada panah menyatakan data couple masuk. Seluruh modul perhitungan mengembalikan satu data couple\n"
@@ -48,7 +51,7 @@ d.box(110, Y0+10*DY-20, 1480, 96,
       "note", "catatan", 9)
 d.save_drawio("IV-12-structure-chart-kalkulator.drawio"); d.check(); d.render("iv12.png")
 
-def kipas(d, akar, anak, labels, bus0=26, step=22):
+def kipas(d, akar, anak, labels, bus0=26, step=22, keluar=None):
     """panah dari akar ke deretan anak sebaris di bawahnya, tanpa persilangan (aturan sarang)."""
     n = len(anak); cx = akar.cx
     order = sorted(range(n), key=lambda i: abs(anak[i].cx-cx))
@@ -65,22 +68,28 @@ def kipas(d, akar, anak, labels, bus0=26, step=22):
             ex = cx + sgn*(14+rank*16)
             pts = [(ex, akar.y1), (ex, bus), (m.cx, bus), (m.cx, m.y)]
         e = d.edge(akar, m, pts)
+        # data couple masuk di kiri ruas vertikal terakhir, panah ke bawah (ke modul)
         t = labels[i]; w, h = text_size(t, FS)
-        d.label(m.cx+8+w/2, m.y-12-h/2, t, FS, owner=e)
+        c = d.edge(None, None, [(m.cx-9, m.y-56), (m.cx-9, m.y-16)], tail_circle=True)
+        d.label(m.cx-9-6-w/2, m.y-36, t, FS, owner=c)
+        # data couple keluar di kanan, panah ke atas (ke pemanggil)
+        if keluar and keluar[i]:
+            c2 = d.edge(None, None, [(m.cx+9, m.y-16), (m.cx+9, m.y-56)], tail_circle=True)
+            w2, h2 = text_size(keluar[i], FS)
+            d.label(m.cx+9+6+w2/2, m.y-36, keluar[i], FS, owner=c2)
 
 # ---------- IV.13 : token ----------
-d = Dia("Gambar IV.13 Structure Chart Kontrak Token SKS", 1150, 640)
+d = Dia("Gambar IV.13 Structure Chart Kontrak Token SKS", 1150, 660)
 akar = d.box(415, 40, 320, 66, "Modul Integrasi Token\npada lapisan aplikasi web", "rect", "akar", 11, bold=True)
 nama = ["constructor","mint","burn","_update\npembatas pemindahan"]
 lab = ["admin, initialMinter","to, amount, referenceId","account, amount, reason","from, to, value"]
 anak = [d.box(50+i*270, 260, 220, 60, nama[i], "rect", "modul", 10) for i in range(4)]
-kipas(d, akar, anak, lab)
-g1 = d.box(320, 400, 220, 55, "Pemeriksa peran\nMINTER_ROLE", "rect", "jaga", 9)
-g2 = d.box(590, 400, 220, 55, "Pemeriksa peran\nDEFAULT_ADMIN_ROLE", "rect", "jaga", 9)
-for m, g in ((anak[1], g1), (anak[2], g2)):
-    e = d.edge(m, g, [(m.cx, m.y1), (g.cx, g.y)])
-    w, h = text_size("peran_pemanggil", FS); d.label(g.cx+8+w/2, g.y-12-h/2, "peran_pemanggil", FS, owner=e)
-d.box(50, 500, 760, 96,
+kipas(d, akar, anak, lab, keluar=["", "transaction hash", "transaction hash", ""])
+g1 = d.box(320, 420, 220, 55, "Pemeriksa peran\nMINTER_ROLE", "rect", "jaga", 9)
+g2 = d.box(590, 420, 220, 55, "Pemeriksa peran\nDEFAULT_ADMIN_ROLE", "rect", "jaga", 9)
+kipas(d, anak[1], [g1], ["peran_pemanggil"], keluar=["izin"])
+kipas(d, anak[2], [g2], ["peran_pemanggil"], keluar=["izin"])
+d.box(50, 520, 760, 96,
       "Notasi mengikuti Pressman (2001). Modul mint dan modul burn masing-masing dijaga satu modul pemeriksa\n"
       "peran. Modul _update menahan seluruh jalur transfer bawaan ERC-20 sehingga token bersifat non-transferable.\n"
       "Modul mint dan modul burn mengembalikan data couple transaction hash kepada modul pemanggil.\n"
@@ -89,14 +98,14 @@ d.box(50, 500, 760, 96,
 d.save_drawio("IV-13-structure-chart-token.drawio"); d.check(); d.render("iv13.png")
 
 # ---------- IV.14 : registri ----------
-d = Dia("Gambar IV.14 Structure Chart Kontrak Registri Dokumen", 1000, 600)
+d = Dia("Gambar IV.14 Structure Chart Kontrak Registri Dokumen", 1000, 620)
 akar = d.box(340, 40, 320, 66, "Modul Pencatatan Jejak Dokumen\npada lapisan aplikasi web", "rect", "akar", 11, bold=True)
 c1 = d.box(390, 240, 220, 60, "catat", "rect", "modul", 10)
-kipas(d, akar, [c1], ["hashDokumen, aksi, referensi"])
-g1 = d.box(120, 400, 220, 55, "Pemeriksa peran\nPENCATAT_ROLE", "rect", "jaga", 9)
-g2 = d.box(660, 400, 220, 55, "Pembangkit event\nDokumenTercatat", "rect", "jaga", 9)
-kipas(d, c1, [g1, g2], ["peran_pemanggil", "hashDokumen, aksi, referensi"])
-d.box(60, 490, 760, 84,
+kipas(d, akar, [c1], ["hashDokumen, aksi, referensi"], keluar=["transaction hash"])
+g1 = d.box(120, 420, 220, 55, "Pemeriksa peran\nPENCATAT_ROLE", "rect", "jaga", 9)
+g2 = d.box(660, 420, 220, 55, "Pembangkit event\nDokumenTercatat", "rect", "jaga", 9)
+kipas(d, c1, [g1, g2], ["peran_pemanggil", "hashDokumen, aksi, referensi"], keluar=["izin", ""])
+d.box(60, 510, 760, 84,
       "Notasi mengikuti Pressman (2001). Modul catat dijaga modul pemeriksa peran pencatat dan menolak sidik\n"
       "digital bernilai nol. Keluarannya berupa data couple transaction hash kepada modul pemanggil serta event\n"
       "DokumenTercatat pada jaringan. Jenis aksi ditegakkan lapisan aplikasi sebagai tipe tertutup, bukan\n"
