@@ -1,0 +1,1169 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Gambar IV.7 DFD Level 1" id="d265">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3558" pageHeight="1907.0" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n1" value="P1
+Autentikasi dan
+Otorisasi" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="491" y="140" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="Dosen" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="76" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Asesor" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="168" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="260" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="511" y="374" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="P2
+Pengelolaan Pengguna
+dan Wallet" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="1512" y="60" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="1162" y="88" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1532" y="293" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" value="P3
+Pengelolaan Periode
+dan Fase" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="2705" y="60" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="2355" y="88" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" value="D2  periode_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2725" y="293" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n42" value="P4
+Penugasan Asesor" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="491" y="484" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="511" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n48" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="339" y="716" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n51" value="D3  lkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="511" y="716" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n54" value="D4  penugasan_asesor" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="683" y="716" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n59" value="P5
+Pengelolaan Referensi
+Kegiatan" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="1512" y="484" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n60" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="1162" y="511" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n65" value="D5  referensi_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1532" y="716" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n68" value="P6
+Ekstraksi dan
+Penerapan Dokumen" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="2705" y="484" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n69" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="2355" y="511" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n74" value="Layanan Model
+Bahasa Visual" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="3095" y="511" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n79" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2295" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n82" value="D2  periode_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2467" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n85" value="D3  lkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2639" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n90" value="D5  referensi_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2811" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n93" value="D6  unggahan_dokumen" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2983" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n98" value="D7  kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="3155" y="776" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n103" value="P7
+Pengelolaan Kegiatan
+dan Dokumen BKD" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="491" y="886" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n104" value="Dosen" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="914" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n109" value="D2  periode_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="167" y="1150" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n112" value="D3  lkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="339" y="1150" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n117" value="D5  referensi_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="511" y="1150" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n120" value="D7  kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="683" y="1150" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n125" value="D8  dokumen_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="855" y="1150" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n130" value="P8
+Perhitungan Kredit
+Kegiatan" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="1512" y="886" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n131" value="Smart Contract
+Kalkulator BKD" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="1902" y="914" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n136" value="D5  referensi_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1446" y="1120" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n139" value="D7  kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1618" y="1120" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n144" value="P9
+Penilaian, Simpulan,
+dan Penerbitan Token" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="2705" y="886" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n145" value="Asesor" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="2355" y="914" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n150" value="Smart Contract
+Token SKS" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="3095" y="914" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n155" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2123" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n158" value="D2  periode_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2295" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n161" value="D3  lkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2467" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n166" value="D4  penugasan_asesor" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2639" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n171" value="D7  kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2811" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n174" value="D9  hasil_penilaian" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2983" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n179" value="D10  simpulan_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="3155" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n182" value="D11  riwayat_transaksi" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="3327" y="1210" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n185" value="P10
+Koreksi Token
+dan Pelaporan" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="491" y="1354" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n186" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="1336" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n191" value="Dosen" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="141" y="1428" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n196" value="Smart Contract
+Token SKS" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="881" y="1382" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n201" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="81" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n204" value="D2  periode_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="253" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n207" value="D3  lkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="425" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n210" value="D9  hasil_penilaian" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="597" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n213" value="D10  simpulan_bkd" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="769" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n216" value="D11  riwayat_transaksi" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="941" y="1647" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n219" value="P11
+Verifikasi Keaslian
+Dokumen Bukti" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="1512" y="1320" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n220" value="Asesor" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="1162" y="1347" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n225" value="Layanan Model
+Bahasa Visual" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="1902" y="1347" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n230" value="D1  pengguna" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1274" y="1582" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n233" value="D5  referensi_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1446" y="1582" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n236" value="D7  kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1618" y="1582" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n239" value="D8  dokumen_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1582" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n244" value="P12
+Pencatatan Jejak
+Dokumen" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="2705" y="1320" width="190" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="n245" value="Administrator" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="2355" y="1347" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n250" value="Smart Contract
+Registri Dokumen" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="3095" y="1347" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n255" value="D6  unggahan_dokumen" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2553" y="1552" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n258" value="D8  dokumen_kegiatan" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2725" y="1552" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n261" value="D11  riwayat_transaksi" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="2897" y="1552" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n264" value="Notasi mengikuti Pressman (2001): persegi panjang menyatakan entitas eksternal, lingkaran menyatakan
+proses, garis ganda menyatakan penyimpanan data, dan setiap panah diberi nama sesuai data yang mengalir.
+Entitas eksternal dan penyimpanan data yang diakses lebih dari satu proses digambar berulang di dekat
+masing-masing proses agar tidak ada garis yang saling memotong; setiap salinan merujuk objek yang sama.
+Deskripsi proses disajikan pada Tabel IV.16, isi penyimpanan data pada Tabel IV.17, dan aliran ke
+entitas eksternal pada Tabel IV.15." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=9;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1747" width="900" height="118" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.073;entryY=0.239;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n2" target="n1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="429" y="97" />
+              <mxPoint x="429" y="168" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.025;exitY=0.343;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="419" y="180" />
+              <mxPoint x="419" y="115" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n7" target="n1">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n1" target="n7">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.025;entryY=0.657;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n12" target="n1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="429" y="281" />
+              <mxPoint x="429" y="216" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.073;exitY=0.761;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n1" target="n12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="419" y="228" />
+              <mxPoint x="419" y="299" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n17" target="n1">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n21" target="n20">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n20" target="n21">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.458;exitY=0.998;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n20" target="n26">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n26" target="n20">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n32" target="n31">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e34" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n31" target="n32">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e38" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.458;exitY=0.998;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n31" target="n37">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e39" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n37" target="n31">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n43" target="n42">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e45" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n42" target="n43">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e49" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n48" target="n42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="422" y="632" />
+              <mxPoint x="572" y="632" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e52" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n51" target="n42">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e55" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.637;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n42" target="n54">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="612" y="620" />
+              <mxPoint x="766" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e56" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n54" target="n42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="632" />
+              <mxPoint x="600" y="632" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e61" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n60" target="n59">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e62" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n59" target="n60">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e66" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n65" target="n59">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e70" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n69" target="n68">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e71" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n68" target="n69">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e75" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n74" target="n68">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e76" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n68" target="n74">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e80" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.237;entryY=0.925;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n79" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2378" y="632" />
+              <mxPoint x="2750" y="632" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e83" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.332;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n82" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2550" y="662" />
+              <mxPoint x="2768" y="662" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e86" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.363;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n68" target="n85">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2774" y="680" />
+              <mxPoint x="2706" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e87" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n85" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2722" y="692" />
+              <mxPoint x="2786" y="692" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e91" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n90" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2878" y="692" />
+              <mxPoint x="2814" y="692" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e94" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.732;exitY=0.943;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n68" target="n93">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2844" y="650" />
+              <mxPoint x="3066" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e95" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.668;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n93" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3050" y="662" />
+              <mxPoint x="2832" y="662" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e99" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.826;exitY=0.879;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n68" target="n98">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2862" y="620" />
+              <mxPoint x="3238" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e100" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.763;entryY=0.925;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n98" target="n68">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3222" y="632" />
+              <mxPoint x="2850" y="632" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e105" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n104" target="n103">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e106" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n103" target="n104">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e110" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.332;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n109" target="n103">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1036" />
+              <mxPoint x="554" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e113" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.363;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n103" target="n112">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="1054" />
+              <mxPoint x="406" y="1054" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e114" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n112" target="n103">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="422" y="1066" />
+              <mxPoint x="572" y="1066" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e118" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n117" target="n103">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e121" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.637;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n103" target="n120">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="612" y="1054" />
+              <mxPoint x="766" y="1054" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e122" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n120" target="n103">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="1066" />
+              <mxPoint x="600" y="1066" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e126" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.732;exitY=0.943;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n103" target="n125">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="1024" />
+              <mxPoint x="938" y="1024" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e127" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.668;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n125" target="n103">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="922" y="1036" />
+              <mxPoint x="618" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e132" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n131" target="n130">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e133" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n130" target="n131">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e137" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n136" target="n130">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1529" y="1036" />
+              <mxPoint x="1593" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e140" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.637;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n130" target="n139">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1633" y="1024" />
+              <mxPoint x="1701" y="1024" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e141" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n139" target="n130">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1685" y="1036" />
+              <mxPoint x="1621" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e146" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n145" target="n144">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e147" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n145">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e151" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n150" target="n144">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e152" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n150">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e156" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.142;entryY=0.849;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n155" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2206" y="1036" />
+              <mxPoint x="2732" y="1036" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e159" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.237;entryY=0.925;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n158" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2378" y="1066" />
+              <mxPoint x="2750" y="1066" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e162" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.268;exitY=0.943;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n161">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2756" y="1084" />
+              <mxPoint x="2534" y="1084" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e163" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.332;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n161" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2550" y="1096" />
+              <mxPoint x="2768" y="1096" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e167" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.363;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.447;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n166">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2774" y="1114" />
+              <mxPoint x="2706" y="1114" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e168" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n166" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2722" y="1126" />
+              <mxPoint x="2786" y="1126" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e172" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n171" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2878" y="1126" />
+              <mxPoint x="2814" y="1126" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e175" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.732;exitY=0.943;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n174">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2844" y="1084" />
+              <mxPoint x="3066" y="1084" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e176" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.668;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n174" target="n144">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3050" y="1096" />
+              <mxPoint x="2832" y="1096" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e180" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.826;exitY=0.879;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n179">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2862" y="1054" />
+              <mxPoint x="3238" y="1054" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e183" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.921;exitY=0.770;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n144" target="n182">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2880" y="1024" />
+              <mxPoint x="3410" y="1024" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e187" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.025;entryY=0.343;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n186" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="1356" />
+              <mxPoint x="440" y="1394" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e188" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.448;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n185" target="n186">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="1406" />
+              <mxPoint x="430" y="1374" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e192" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.552;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n191" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="1448" />
+              <mxPoint x="440" y="1418" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e193" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.025;exitY=0.657;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n185" target="n191">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="1430" />
+              <mxPoint x="430" y="1466" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e197" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n196" target="n185">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e198" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n185" target="n196">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e202" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.237;entryY=0.925;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n201" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="164" y="1503" />
+              <mxPoint x="536" y="1503" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e205" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.332;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n204" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="336" y="1533" />
+              <mxPoint x="554" y="1533" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e208" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n207" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="508" y="1563" />
+              <mxPoint x="572" y="1563" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e211" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n210" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="664" y="1563" />
+              <mxPoint x="600" y="1563" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e214" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.668;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n213" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="836" y="1533" />
+              <mxPoint x="618" y="1533" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e217" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.763;entryY=0.925;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n216" target="n185">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1008" y="1503" />
+              <mxPoint x="636" y="1503" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e221" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n220" target="n219">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e222" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n219" target="n220">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e226" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n225" target="n219">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e227" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n219" target="n225">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e231" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.332;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n230" target="n219">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1357" y="1468" />
+              <mxPoint x="1575" y="1468" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e234" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n233" target="n219">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1529" y="1498" />
+              <mxPoint x="1593" y="1498" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e237" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.574;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n236" target="n219">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1685" y="1498" />
+              <mxPoint x="1621" y="1498" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e240" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.732;exitY=0.943;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n219" target="n239">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1651" y="1456" />
+              <mxPoint x="1873" y="1456" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e241" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.447;exitY=0.000;exitDx=0;exitDy=0;entryX=0.668;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n239" target="n219">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1857" y="1468" />
+              <mxPoint x="1639" y="1468" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e246" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.003;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n245" target="n244">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e247" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.003;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n244" target="n245">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e251" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.000;exitY=0.350;exitDx=0;exitDy=0;entryX=0.997;entryY=0.448;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n250" target="n244">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e252" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.997;exitY=0.552;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.000;entryY=0.650;entryDx=0;entryDy=0;" edge="1" parent="1" source="n244" target="n250">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e256" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.426;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n255" target="n244">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2636" y="1468" />
+              <mxPoint x="2786" y="1468" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e259" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.553;exitY=0.000;exitDx=0;exitDy=0;entryX=0.542;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="n258" target="n244">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e262" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.637;exitY=0.981;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.553;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n244" target="n261">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2826" y="1456" />
+              <mxPoint x="2980" y="1456" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l5" value="kredensial" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="82" width="41" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l6" value="sesi_dan_peran" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="118" width="59" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l10" value="kredensial" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="174" width="41" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l11" value="sesi_dan_peran" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="210" width="59" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l15" value="kredensial" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="266" width="41" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l16" value="sesi_dan_peran" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="302" width="59" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l19" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="532" y="346" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l24" value="data_pengguna,
+permintaan_wallet" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="84" width="69" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l25" value="daftar_pengguna" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="130" width="62" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l29" value="data_pengguna" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1536" y="231" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l30" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1553" y="265" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l35" value="data_periode" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="94" width="50" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l36" value="status_periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="130" width="90" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l40" value="data_periode" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2736" y="231" width="50" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l41" value="periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2720" y="265" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l46" value="penugasan_asesor" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="517" width="69" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l47" value="daftar_penugasan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="553" width="65" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l50" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="360" y="688" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l53" value="dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="519" y="688" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l57" value="penugasan_dan_pengesahan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="772" y="654" width="102" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l58" value="penugasan_asesor" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="772" y="688" width="69" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l63" value="permintaan_referensi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="517" width="78" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l64" value="daftar_referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="553" width="91" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l67" value="referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1525" y="688" width="68" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l72" value="berkas_sk_st, koreksi_baris,
+permintaan_penerapan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="507" width="103" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l73" value="pratinjau_pemetaan, temuan_validasi,
+status_penerapan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="553" width="133" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l77" value="hasil_penafsiran_json" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3006" y="517" width="79" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l78" value="citra_halaman,
+instruksi_skema_keluaran" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2990" y="553" width="95" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l81" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2316" y="748" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l84" value="periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2462" y="748" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l88" value="status_dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2623" y="714" width="77" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l89" value="dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2647" y="748" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l92" value="referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2900" y="748" width="68" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l96" value="unggahan_dan_koreksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3072" y="714" width="83" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l97" value="hasil_ekstraksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3072" y="748" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l101" value="kegiatan_dan_nilai_kredit" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3244" y="714" width="92" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l102" value="data_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3244" y="748" width="52" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l107" value="data_kegiatan, parameter_kegiatan,
+berkas_bukti, permintaan_klaim,
+status_capaian" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="900" width="125" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="l108" value="daftar_kegiatan,
+pesan_hasil_aksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="956" width="64" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l111" value="periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="162" y="1122" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l115" value="status_dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="323" y="1088" width="77" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l116" value="dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="347" y="1122" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l119" value="referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="504" y="1122" width="68" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l123" value="kegiatan_dan_nilai_kredit" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="772" y="1088" width="92" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l124" value="data_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="772" y="1122" width="52" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l128" value="metadata_dan_hasil_pemeriksaan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="944" y="1088" width="121" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l129" value="metadata_bukti" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="944" y="1122" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l134" value="nilai_kredit_x100,
+galat_input_tidak_valid" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1810" y="910" width="82" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l135" value="nama_fungsi,
+argumen_perhitungan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1813" y="956" width="79" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l138" value="referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1439" y="1092" width="68" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l142" value="kegiatan_dan_nilai_kredit" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1707" y="1058" width="92" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l143" value="data_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1707" y="1092" width="52" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l148" value="nilai_disetujui, catatan_penilaian,
+permintaan_pengesahan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="910" width="116" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l149" value="rincian_kegiatan,
+nilai_kredit" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="956" width="63" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l153" value="transaction_hash,
+event_token" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3020" y="910" width="65" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l154" value="alamat_wallet, jumlah_token,
+referensi_hash_simpulan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2981" y="956" width="104" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l157" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2144" y="1182" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l160" value="periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2290" y="1182" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l164" value="status_dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2451" y="1148" width="77" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l165" value="dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2475" y="1182" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l169" value="penugasan_dan_pengesahan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2598" y="1148" width="102" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l170" value="penugasan_asesor" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2631" y="1182" width="69" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l173" value="data_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2900" y="1182" width="52" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l177" value="hasil_penilaian" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3072" y="1148" width="56" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l178" value="hasil_penilaian" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3072" y="1182" width="56" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l181" value="simpulan_dan_hash" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3244" y="1148" width="73" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l184" value="catatan_transaksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3416" y="1148" width="65" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l189" value="instruksi_koreksi_token" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="1342" width="86" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l190" value="riwayat_transaksi, log_blockchain,
+rekapitulasi_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="1378" width="122" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l194" value="permintaan_rekapitulasi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="1434" width="87" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l195" value="simpulan_bkd,
+rekapitulasi_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="301" y="1470" width="61" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l199" value="transaction_hash,
+saldo_token" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="806" y="1378" width="65" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l200" value="alamat_wallet, jumlah_token,
+alasan_koreksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="767" y="1424" width="104" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l203" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="102" y="1619" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l206" value="periode_dan_fase" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="248" y="1619" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l209" value="dokumen_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="433" y="1619" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l212" value="hasil_penilaian" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="686" y="1619" width="56" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l215" value="simpulan_bkd" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="858" y="1619" width="53" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l218" value="riwayat_transaksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="1619" width="66" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l223" value="permintaan_periksa_ulang,
+persetujuan_manual" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="1343" width="97" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l224" value="hasil_pemeriksaan_bukti,
+penanda_temuan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1322" y="1389" width="92" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l228" value="hasil_penafsiran_json" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1813" y="1353" width="79" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l229" value="citra_halaman,
+instruksi_skema_keluaran" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1797" y="1389" width="95" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l232" value="data_akun" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1295" y="1554" width="40" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l235" value="referensi_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1439" y="1554" width="68" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l238" value="data_kegiatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1707" y="1554" width="52" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l242" value="metadata_dan_hasil_pemeriksaan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1879" y="1520" width="121" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l243" value="metadata_bukti" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1879" y="1554" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l248" value="permintaan_registri" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="1353" width="72" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l249" value="registri_dokumen" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2515" y="1389" width="65" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l253" value="transaction_hash,
+event_pencatatan" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="3020" y="1343" width="65" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l254" value="hash_dokumen, jenis_aksi,
+referensi_baris" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2988" y="1389" width="97" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="l257" value="hasil_ekstraksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2557" y="1524" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l260" value="metadata_bukti" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2729" y="1524" width="57" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l263" value="catatan_transaksi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2986" y="1490" width="65" height="12" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

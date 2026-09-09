@@ -1,0 +1,60 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Gambar IV.14 Structure Chart Kontrak Registri Dokumen" id="d12">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n1" value="Modul Pencatatan Jejak Dokumen
+pada lapisan aplikasi web" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="320" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="catat" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=center;strokeColor=#666666;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="390" y="240" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="Pemeriksa peran
+PENCATAT_ROLE" style="rounded=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="120" y="400" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="Pembangkit event
+DokumenTercatat" style="rounded=0;whiteSpace=wrap;html=1;fontSize=9;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="660" y="400" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="Notasi mengikuti Pressman (2001). Modul catat dijaga modul pemeriksa peran pencatat dan menolak sidik
+digital bernilai nol. Keluarannya berupa data couple transaction hash kepada modul pemanggil serta event
+DokumenTercatat pada jaringan. Jenis aksi ditegakkan lapisan aplikasi sebagai tipe tertutup, bukan
+divalidasi kontrak. Rincian modul disajikan pada Tabel IV.24." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=9;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="60" y="490" width="760" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.500;exitY=1.000;exitDx=0;exitDy=0;entryX=0.500;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.436;exitY=1.000;exitDx=0;exitDy=0;entryX=0.500;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n2" target="n5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="486" y="326" />
+              <mxPoint x="230" y="326" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=0.564;exitY=1.000;exitDx=0;exitDy=0;entryX=0.500;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n2" target="n6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="514" y="326" />
+              <mxPoint x="770" y="326" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="hashDokumen, aksi, referensi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="505" y="217" width="107" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l8" value="peran_pemanggil" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="235" y="377" width="64" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="l10" value="hashDokumen, aksi, referensi" style="text;html=1;whiteSpace=wrap;fontSize=8;align=center;verticalAlign=middle;strokeColor=none;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="775" y="377" width="107" height="12" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
