@@ -22,12 +22,15 @@ Kolom **Verifikasi** menandai apakah isi berkas PDF sudah dicocokkan dengan klai
 | § A.1 — Sudah disitasi (Bab I) | 9 |
 | § A.2 — Sudah disitasi (Bab II) | 26 |
 | § A.3 — Sudah disitasi (Bab III) | 24 |
+| § A.4 — Sudah disitasi (Bab IV) | 1 |
 | § B — Tersedia, belum disitasi | 9 |
 | § C — Masih dicari | 0 |
-| **Total sumber terkelola** | **68** |
+| **Total sumber terkelola** | **69** |
 
 Bab II menyitasi **34** sumber: 8 di antaranya sudah dipakai Bab I (§ A.1), 26 sisanya baru (§ A.2).
 Bab III menyitasi **31** sumber: 7 di antaranya sudah dipakai Bab I atau Bab II, 24 sisanya baru (§ A.3).
+
+Bab IV menyitasi **15** sumber: 14 di antaranya sudah dipakai Bab I sampai Bab III, 1 sisanya baru (§ A.4), yaitu IEEE (2008).
 
 ---
 
@@ -222,6 +225,39 @@ III.4.16.
 
 ---
 
+## § A.4 Entri Bab IV
+
+Bab IV hampir seluruhnya menyitasi ulang sumber yang telah dipakai Bab I sampai Bab III,
+karena bab ini memaparkan eksekusi atas rencana dan landasan yang sudah ditetapkan.
+Hanya satu entri yang benar-benar baru.
+
+| Entri Harvard | Verifikasi | Dipakai di |
+| ----- | :---: | ----- |
+| IEEE (2008) *IEEE Std 829-2008: IEEE Standard for Software and System Test Documentation*. New York: Institute of Electrical and Electronics Engineers | ⚠️ | **IV.4.1** — kerangka penyusunan dokumentasi pengujian; dasar Tabel IV.67 pemetaan elemen dokumentasi pengujian ke bagian laporan |
+
+Entri berikut sudah tercatat pada § A.1 sampai § A.3 dan **dipakai ulang** pada Bab IV,
+sehingga tidak diulang di atas:
+
+| Entri | Dipakai di Bab IV |
+| ----- | ----- |
+| Base (2026) | IV.1.3.2 — justifikasi pemilihan Base Sepolia sebagai jaringan sasaran |
+| Chen, P.P.-S. (1976) | IV.2.4 — model *entity-relationship* sebagai dasar perancangan basis data |
+| IEEE (1998) | IV.1.5 — kerangka IEEE Std 830-1998 pada dokumen SRS |
+| ISO/IEC (2023) | IV.1.5 — acuan perumusan persyaratan nonfungsional · IV.4.1 dan IV.4.6 — kriteria penerimaan pengujian nonfungsional |
+| Kepdirjendikti (2021) | IV.1.1.3 — struktur Rubrik BKD · IV.1.2 — peran sebagai penentu kredit · IV.1.4 — kriteria butir bernilai maksimum · IV.3.12 — ambang kewajiban unsur pendidikan |
+| Nurjannah (2026) | IV.1.1.2 — praktik asesor tidak memeriksa ulang parameter dan perata-rataan nilai · IV.1.2 — dasar dua butir kesimpulan analisis |
+| Ohlhaver, Weyl dan Buterin (2022) | IV.1.3.2 — gagasan token yang melekat pada pemiliknya |
+| Palatinus dan Rusnak (2014) | IV.1.3.2 — struktur jalur turunan baku dompet hierarkis |
+| Pericàs-Gornals dkk. (2024) | IV.1.3.2 — *non-transferability* sebagai syarat kredensial |
+| Silaghi, Artenie dan Popescu (2025) | IV.1.1.3 dan IV.1.2 — ketiadaan jalur verifikasi mandiri pada basis data terpusat |
+| Sommerville (2016) | IV.5 — fase *operation and maintenance* sebagai fase terpanjang |
+| Sultana dkk. (2023) | IV.1.3.2 — pola pengenal ringkas *on-chain* dengan berkas di luar rantai |
+| Wuille (2012) | IV.1.3.2 — penurunan pohon kunci dari satu benih induk |
+| Zheng dkk. (2020) | IV.1.3.2 — imutabilitas kode kontrak setelah penempatan |
+
+
+---
+
 # § B. Tersedia, Belum Disitasi
 
 Berkas sudah ada dan terverifikasi. **Jangan masukkan ke Daftar Pustaka final sebelum benar-benar dirujuk di badan laporan.**
@@ -278,7 +314,7 @@ kali ada entri baru yang benar-benar disitasi.
 
 > ⚠️ **Blok ini belum memuat § A.3.** Dua puluh empat entri Bab III pada § A.3 wajib
 > disisipkan ke dalam blok di bawah, urut abjad, sebelum laporan difinalisasi.
-> Setelah disisipkan, jumlah entri menjadi **58**.
+> Setelah disisipkan bersama satu entri § A.4, jumlah entri menjadi **59**.
 
 ```
 Androulaki, E. et al. (2018) 'Hyperledger Fabric: a distributed operating system for
