@@ -54,7 +54,7 @@ API_KEY = os.getenv("API_KEY", "").strip()                 # kunci auth KLIEN
 ROUTER_API_KEY = (os.getenv("ROUTER_API_KEY")              # kunci model 9router
                   or os.getenv("API_KEY_9ROUTER", "")).strip()
 BASE_URL = os.getenv("BASE_URL", "https://9router.tmfadhli.my.id/v1").strip()
-MODEL_DEFAULT = os.getenv("MODEL", "ag/gemini-3.5-flash-low").strip()
+MODEL_DEFAULT = os.getenv("MODEL", "ag/gemini-3.7-flash-medium").strip()
 ALLOWED_ORIGINS = [o.strip() for o in os.getenv(
     "ALLOWED_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
 
