@@ -32,3 +32,5 @@ pnpm-debug.log*
 
 /dokumen_demo
 /.vscode
+# Dokumen laporan dan diagram: disimpan lokal saja
+docs/
