@@ -70,12 +70,11 @@ async function simpanBerkas(file: File, bytes: Buffer) {
  * tahap ini — admin memeriksa pratinjau lalu menekan "Terapkan".
  *
  * Menerima banyak berkas sekaligus (satu folder SK & ST); jenis tiap berkas
- * bisa dipilih manual atau dideteksi dari nama berkas.
+ * dideteksi dari nama berkasnya.
  */
 export async function unggahDokumen(formData: FormData) {
   const session = await pastikanAdmin();
 
-  const jenisPilihan = String(formData.get("jenis") ?? "auto");
   const berkas = formData
     .getAll("file")
     .filter((f): f is File => f instanceof File && f.size > 0);
@@ -104,8 +103,7 @@ export async function unggahDokumen(formData: FormData) {
   const catatan: string[] = [];
 
   for (const file of berkas) {
-    const jenis: JenisUnggahan | null =
-      jenisPilihan === "auto" ? deteksiJenis(file.name) : (jenisPilihan as JenisUnggahan);
+    const jenis: JenisUnggahan | null = deteksiJenis(file.name);
 
     if (!jenis || !spekJenis(jenis)) {
       gagal++;

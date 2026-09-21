@@ -289,14 +289,7 @@ export default async function UnggahPage({
         </summary>
 
         <form action={unggahDokumen} className="border-t border-line">
-          <FormUnggahIsian
-            daftarJenis={JENIS_UNGGAHAN.map((j) => ({
-              key: j.key,
-              label: j.label,
-              mesin: j.mesin,
-              petunjukTeks: j.petunjukTeks,
-            }))}
-          />
+          <FormUnggahIsian />
 
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
             <p className="text-[11px] text-muted">
