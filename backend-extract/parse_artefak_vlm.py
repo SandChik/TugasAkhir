@@ -49,7 +49,7 @@ from typing import Any
 # ---------------------------------------------------------------------------
 
 BASE_URL_DEFAULT = "https://9router.tmfadhli.my.id/v1"
-MODEL_DEFAULT = "ag/gemini-3.5-flash-low"
+MODEL_DEFAULT = "ag/gemini-3.7-flash-medium"
 
 # Kosongkan di sini. Nilainya diambil dari environment variable ROUTER_API_KEY
 # (atau .env). JANGAN hardcode kunci di berkas ini dan jangan commit ke repo.

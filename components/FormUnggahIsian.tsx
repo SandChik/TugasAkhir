@@ -13,7 +13,6 @@ export type JenisRingkas = {
   key: string;
   label: string;
   mesin: "offline" | "vlm";
-  petunjukTeks: string;
 };
 
 /**
@@ -22,9 +21,7 @@ export type JenisRingkas = {
  * — untuk jenis lain field-nya memang diabaikan server, jadi tak perlu tampil.
  */
 export default function FormUnggahIsian({ daftarJenis }: { daftarJenis: JenisRingkas[] }) {
-  const [jenis, setJenis] = useState("auto");
-  // Petunjuk hanya untuk jenis yang sedang dipilih; mode otomatis tidak
-  // menampilkan apa pun karena tak ada satu jenis pun yang dipastikan.
+  const [jenis, setJenis] = useState("");
   const spek = daftarJenis.find((j) => j.key === jenis);
 
   return (
@@ -38,16 +35,18 @@ export default function FormUnggahIsian({ daftarJenis }: { daftarJenis: JenisRin
           name="jenis"
           value={jenis}
           onChange={(e) => setJenis(e.target.value)}
+          required
           className={kolom}
         >
-          <option value="auto">Deteksi otomatis dari nama berkas</option>
+          <option value="" disabled>
+            Pilih jenis dokumen
+          </option>
           {daftarJenis.map((j) => (
             <option key={j.key} value={j.key}>
               {j.label} — {j.mesin === "vlm" ? "parser VLM" : "parser offline"}
             </option>
           ))}
         </select>
-        {spek && <p className={bantuan}>Kata kunci nama berkas: {spek.petunjukTeks}</p>}
       </div>
 
       <div className="md:col-span-2">

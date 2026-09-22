@@ -294,7 +294,6 @@ export default async function UnggahPage({
               key: j.key,
               label: j.label,
               mesin: j.mesin,
-              petunjukTeks: j.petunjukTeks,
             }))}
           />
 

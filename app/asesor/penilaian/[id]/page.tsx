@@ -72,7 +72,7 @@ export default async function PenilaianPage({ params }: { params: { id: string }
   const lkd = penugasan.lkd;
   const fase = faseAktif(lkd.periode_bkd);
   const sudahSah = (penugasan as any).disahkan;
-  const bisaNilai = lkd.simpan_permanen && bolehAsesorNilai(fase) && !sudahSah;
+  const bisaNilai = lkd.simpan_permanen && bolehAsesorNilai(lkd.periode_bkd) && !sudahSah;
   const asesorLain: any[] = (lkd as any).penugasan_asesor.filter(
     (x: any) => x.id_penugasan !== penugasan.id_penugasan
   );
@@ -283,9 +283,11 @@ export default async function PenilaianPage({ params }: { params: { id: string }
 
   const terkunci = !lkd.simpan_permanen
     ? "Dosen belum melakukan simpan permanen."
-    : !bolehAsesorNilai(fase)
-      ? `${FASE_LABEL[fase]}, di luar masa penilaian asesor.`
-      : null;
+    : lkd.periode_bkd.status !== "aktif"
+      ? "Periode sudah tidak aktif."
+      : !bolehAsesorNilai(lkd.periode_bkd)
+        ? `${FASE_LABEL[fase]}, di luar masa penilaian asesor.`
+        : null;
 
   return (
     <AppShell

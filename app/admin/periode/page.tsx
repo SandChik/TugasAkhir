@@ -33,7 +33,7 @@ export default async function PeriodePage() {
       deskripsi="Admin, Sistem"
       breadcrumb={["Beranda", "Administrasi", "Periode BKD"]}
       title="Manajemen Periode BKD"
-      subtitle="Kelola periode semester dan fase (pengisian, penilaian, perbaikan)"
+      subtitle="Kelola periode semester dan fase (pengisian, pemeriksaan, penilaian)"
     >
       {/* Form tambah periode + fase */}
       <form action={createPeriode} className="rounded-[10px] border border-line p-4">
@@ -62,10 +62,10 @@ export default async function PeriodePage() {
           {[
             ["pengisian_mulai", "Pengisian Mulai"],
             ["pengisian_selesai", "Pengisian Selesai"],
+            ["pemeriksaan_mulai", "Pemeriksaan Mulai"],
+            ["pemeriksaan_selesai", "Pemeriksaan Selesai"],
             ["penilaian_mulai", "Penilaian Mulai"],
             ["penilaian_selesai", "Penilaian Selesai"],
-            ["perbaikan_mulai", "Perbaikan Mulai"],
-            ["perbaikan_selesai", "Perbaikan Selesai"],
           ].map(([name, label]) => (
             <div key={name}>
               <label className="text-[10px] font-medium text-muted">{label}</label>

@@ -11,7 +11,6 @@ import { prisma } from "../../../lib/prisma";
 import { hitungViaKontrak } from "../../../lib/blockchain";
 import {
   LABEL_JENIS,
-  deteksiJenis,
   parseDokumen,
   spekJenis,
   type JenisUnggahan,
@@ -69,18 +68,21 @@ async function simpanBerkas(file: File, bytes: Buffer) {
  * simpan JSON hasilnya sebagai bukti audit. Kegiatan dosen BELUM dibuat di
  * tahap ini — admin memeriksa pratinjau lalu menekan "Terapkan".
  *
- * Menerima banyak berkas sekaligus (satu folder SK & ST); jenis tiap berkas
- * bisa dipilih manual atau dideteksi dari nama berkas.
+ * Menerima banyak berkas sekaligus (satu folder SK & ST); semua berkas dalam
+ * satu unggahan memakai jenis dokumen yang dipilih admin.
  */
 export async function unggahDokumen(formData: FormData) {
   const session = await pastikanAdmin();
 
-  const jenisPilihan = String(formData.get("jenis") ?? "auto");
+  const jenisPilihan = String(formData.get("jenis") ?? "");
   const berkas = formData
     .getAll("file")
     .filter((f): f is File => f instanceof File && f.size > 0);
 
   if (berkas.length === 0) redirect(withFlash(DASAR, { err: "Pilih minimal satu berkas PDF" }));
+  if (!spekJenis(jenisPilihan as JenisUnggahan))
+    redirect(withFlash(DASAR, { err: "Pilih jenis dokumen" }));
+  const jenis = jenisPilihan as JenisUnggahan;
 
   const [periode, dosenSistem] = await Promise.all([
     prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
@@ -104,14 +106,6 @@ export async function unggahDokumen(formData: FormData) {
   const catatan: string[] = [];
 
   for (const file of berkas) {
-    const jenis: JenisUnggahan | null =
-      jenisPilihan === "auto" ? deteksiJenis(file.name) : (jenisPilihan as JenisUnggahan);
-
-    if (!jenis || !spekJenis(jenis)) {
-      gagal++;
-      catatan.push(`${file.name}: jenis dokumen tidak terdeteksi dari nama berkas`);
-      continue;
-    }
     const namaPdf =
       file.name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf";
     if (!namaPdf) {

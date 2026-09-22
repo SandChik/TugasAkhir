@@ -45,7 +45,7 @@ ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 
 # Opsional
 BASE_URL=https://9router.tmfadhli.my.id/v1
-MODEL=ag/gemini-3.5-flash-low
+MODEL=ag/gemini-3.7-flash-medium
 ```
 
 Generate kunci klien acak:

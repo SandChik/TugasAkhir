@@ -18,12 +18,11 @@ enum status_periode {
   nonaktif
 }
 
-// R3: fase LKD dalam satu periode
+// R3: fase LKD dalam satu periode, berurutan
 enum fase_bkd {
-  pengisian // dosen isi kegiatan + upload bukti
-  penilaian // asesor menilai
-  perbaikan // dosen memperbaiki sesuai catatan asesor
-  selesai   // sudah disahkan / dikunci
+  pengisian   // dosen isi kegiatan + upload bukti
+  pemeriksaan // asesor memeriksa bukti, dosen memperbaiki kegiatan yang dikembalikan
+  penilaian   // asesor menilai dan mengesahkan
 }
 
 // Alur dokumen LKD (per dosen per periode per jenis)
@@ -146,13 +145,13 @@ model periode_bkd {
   tanggal_selesai DateTime?      @db.Date
 
   // Rentang fase (R3) - fase aktif ditentukan dari tanggal hari ini
-  pengisian_mulai    DateTime? @db.Date
-  pengisian_selesai  DateTime? @db.Date
-  penilaian_mulai    DateTime? @db.Date
-  penilaian_selesai  DateTime? @db.Date
-  perbaikan_mulai    DateTime? @db.Date
-  perbaikan_selesai  DateTime? @db.Date
-  fase_override      fase_bkd? // jika diisi, override perhitungan tanggal
+  pengisian_mulai     DateTime? @db.Date
+  pengisian_selesai   DateTime? @db.Date
+  pemeriksaan_mulai   DateTime? @db.Date
+  pemeriksaan_selesai DateTime? @db.Date
+  penilaian_mulai     DateTime? @db.Date
+  penilaian_selesai   DateTime? @db.Date
+  fase_override       fase_bkd? // jika diisi, override perhitungan tanggal
   status          status_periode @default(nonaktif)
   created_at      DateTime       @default(now()) @db.Timestamp(6)
 

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
-import { faseAktif, bolehAsesorNilai } from "../../../../lib/fase";
+import { bolehAsesorNilai } from "../../../../lib/fase";
 import { hashPenilaian, mintSks } from "../../../../lib/blockchain";
 import { bisaDiverifikasi, verifikasiNamaBukti } from "../../../../lib/verifikasiBukti";
 
@@ -156,7 +156,7 @@ export async function simpanPenilaian(formData: FormData) {
   const pn = await penugasanMilikAsesor(idPenugasan, session.user.id);
   if (!pn) redirect(flash(idPenugasan, { err: "Penugasan tidak ditemukan" }));
   if (!pn!.lkd.simpan_permanen) redirect(flash(idPenugasan, { err: "Dosen belum simpan permanen" }));
-  if (!bolehAsesorNilai(faseAktif(pn!.lkd.periode_bkd)))
+  if (!bolehAsesorNilai(pn!.lkd.periode_bkd))
     redirect(flash(idPenugasan, { err: "Di luar masa penilaian" }));
   if ((pn as any).disahkan) redirect(flash(idPenugasan, { err: "Penilaian sudah disahkan, tidak dapat diubah" }));
 

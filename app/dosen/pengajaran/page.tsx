@@ -15,7 +15,7 @@ export default async function PengajaranPage() {
     prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
     prisma.pengguna.findUnique({ where: { id_pengguna: session!.user.id } }),
   ]);
-  const fase = periode ? faseAktif(periode) : "selesai";
+  const fase = periode ? faseAktif(periode) : null;
   const kolom = KOLOM_KATEGORI["pengajaran"];
   const ctx = {
     periode: periode?.nama_periode,
@@ -50,7 +50,7 @@ export default async function PengajaranPage() {
       subtitle="Kegiatan perkuliahan sesuai penugasan Anda pada periode berjalan"
       actions={
         <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
-          {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
+          {periode && fase ? `${periode.nama_periode} · ${FASE_LABEL[fase]}` : "Belum ada periode aktif"}
         </span>
       }
     >

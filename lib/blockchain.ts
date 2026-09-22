@@ -1,4 +1,5 @@
 import {
+  BaseContract,
   JsonRpcProvider,
   Wallet,
   HDNodeWallet,
@@ -33,6 +34,24 @@ export function getProvider(): JsonRpcProvider {
     _provider = new JsonRpcProvider(RPC_URL, undefined, { batchMaxCount: 1 });
   }
   return _provider;
+}
+
+let _providerLog: JsonRpcProvider | null = null;
+
+/**
+ * Provider khusus pembacaan event. RPC transaksi tidak harus menyimpan riwayat
+ * log penuh: node publik umumnya memangkas log lama (publicnode hanya menyimpan
+ * sekitar 110.000 block terakhir), sehingga mint/burn lama terbaca kosong tanpa
+ * error. `RPC_LOGS_URL` diisi gateway arsip yang menyimpan log sejak deploy dan
+ * menerima rentang block penuh sekali panggil. Bila kosong, jatuh ke RPC utama.
+ */
+export function getProviderLog(): JsonRpcProvider {
+  const url = process.env.RPC_LOGS_URL;
+  if (!url) return getProvider();
+  if (!_providerLog) {
+    _providerLog = new JsonRpcProvider(url, undefined, { batchMaxCount: 1 });
+  }
+  return _providerLog;
 }
 
 export function getAdminSigner(): Wallet {
@@ -83,22 +102,24 @@ export async function catatDokumen(hashHex: string, aksi: AksiDokumen, referensi
 
 /**
  * Baca event DokumenTercatat langsung dari registri on-chain (halaman Log
- * Blockchain admin). Rentang block dipecah kecil, alasan sama dengan
- * queryFilterChunked token.
+ * Blockchain admin). Rentang block disapu lewat `sapuEvent`, sama dengan
+ * event token.
  */
 export async function bacaEventDokumen(maksimal = 200) {
   const address = process.env.NEXT_PUBLIC_DOKUMEN_REGISTRI_ADDRESS;
   if (!address) return { kontrak: null, baris: [], total: 0 };
-  const registri = BKDDokumenRegistri__factory.connect(address, getProvider());
+  const registri = BKDDokumenRegistri__factory.connect(address, getProviderLog());
 
   const fromBlock = Number(process.env.NEXT_PUBLIC_DOKUMEN_REGISTRI_DEPLOY_BLOCK || 0);
-  const toBlock = await getProvider().getBlockNumber();
+  const toBlock = await getProviderLog().getBlockNumber();
 
-  const events = [];
-  for (let start = fromBlock; start <= toBlock; start += MAX_BLOCK_RANGE) {
-    const end = Math.min(start + MAX_BLOCK_RANGE - 1, toBlock);
-    events.push(...(await registri.queryFilter(registri.filters.DokumenTercatat(), start, end)));
-  }
+  const events = await sapuEvent(
+    `dokumen:${address.toLowerCase()}`,
+    registri,
+    registri.filters.DokumenTercatat(),
+    fromBlock,
+    toBlock
+  );
 
   const baris = events.map((e: any) => ({
     operator: e.args?.operator as string,
@@ -248,25 +269,111 @@ export async function saldoTokenBanyak(
 }
 
 /**
- * Banyak RPC publik (mis. free tier drpc/Alchemy/Infura) menolak eth_getLogs
- * dengan rentang > 10.000 block sekali panggil. Base Sepolia sudah punya
- * jutaan block, jadi query dari block 0 langsung gagal (code 35: "ranges
- * over 10000 blocks are not supported on free plan"). Pecah jadi beberapa
- * window kecil, mulai dari block deploy kontrak (bukan 0), lalu digabung.
+ * Sebagian RPC menolak eth_getLogs dengan rentang block terlalu lebar sekali
+ * panggil, jadi rentang deploy..tip dipecah jadi beberapa window. Batasnya
+ * berbeda per provider (publicnode 50.000, sebagian free tier 10.000), dan
+ * gateway arsip menerima rentang penuh sekali tembak. `RPC_MAX_BLOCK_RANGE=0`
+ * berarti tanpa pemecahan. Window yang tetap ditolak dibelah otomatis oleh
+ * `queryFilterBelah`, jadi salah setel tidak membuat pembacaan gagal.
  */
-const MAX_BLOCK_RANGE = 10_000;
+const MAX_BLOCK_RANGE = (() => {
+  const env = process.env.RPC_MAX_BLOCK_RANGE;
+  if (env === undefined || env === "") return 50_000;
+  const n = Number(env);
+  if (!Number.isFinite(n) || n < 0) return 50_000;
+  return n === 0 ? Number.POSITIVE_INFINITY : n;
+})();
 
-async function queryFilterChunked(
-  contract: ReturnType<typeof BKDSKSToken__factory.connect>,
-  filter: ReturnType<ReturnType<typeof BKDSKSToken__factory.connect>["filters"]["SKSMinted" | "SKSBurned"]>,
+/** Jumlah window yang ditembak bersamaan. Terlalu tinggi memicu rate limit. */
+const RPC_KONKURENSI = Number(process.env.RPC_KONKURENSI || 8);
+
+/**
+ * Block paling ujung belum final dan masih bisa tergeser reorg, jadi sebanyak
+ * ini selalu disapu ulang saat menyegarkan cache, tidak dianggap sudah pasti.
+ */
+const MARGIN_REORG = 64;
+
+/**
+ * Satu window eth_getLogs. Kalau provider menolak (rentang terlalu lebar atau
+ * hasilnya terlalu banyak), window dibelah dua lalu dicoba lagi berurutan -
+ * sengaja tidak paralel supaya kegagalan rate limit tidak berlipat.
+ */
+async function queryFilterBelah(
+  contract: BaseContract,
+  filter: any,
   fromBlock: number,
   toBlock: number
-) {
-  const events = [];
-  for (let start = fromBlock; start <= toBlock; start += MAX_BLOCK_RANGE) {
-    const end = Math.min(start + MAX_BLOCK_RANGE - 1, toBlock);
-    events.push(...(await contract.queryFilter(filter, start, end)));
+): Promise<any[]> {
+  try {
+    return await (contract as any).queryFilter(filter, fromBlock, toBlock);
+  } catch (e) {
+    if (toBlock <= fromBlock) throw e;
+    const tengah = Math.floor((fromBlock + toBlock) / 2);
+    const kiri = await queryFilterBelah(contract, filter, fromBlock, tengah);
+    const kanan = await queryFilterBelah(contract, filter, tengah + 1, toBlock);
+    return [...kiri, ...kanan];
   }
+}
+
+/**
+ * Sapu rentang block penuh. Window dikerjakan beberapa sekaligus lalu hasilnya
+ * disusun ulang sesuai urutan window supaya event tetap urut block menaik.
+ */
+async function queryFilterParalel(
+  contract: BaseContract,
+  filter: any,
+  fromBlock: number,
+  toBlock: number
+): Promise<any[]> {
+  if (toBlock < fromBlock) return [];
+
+  const potongan: Array<[number, number]> = [];
+  for (let start = fromBlock; start <= toBlock; start += MAX_BLOCK_RANGE) {
+    potongan.push([start, Math.min(start + MAX_BLOCK_RANGE - 1, toBlock)]);
+  }
+
+  const hasil: any[][] = new Array(potongan.length);
+  let berikut = 0;
+  const pekerja = Array.from({ length: Math.min(RPC_KONKURENSI, potongan.length) }, async () => {
+    while (berikut < potongan.length) {
+      const i = berikut++;
+      hasil[i] = await queryFilterBelah(contract, filter, potongan[i][0], potongan[i][1]);
+    }
+  });
+  await Promise.all(pekerja);
+
+  return hasil.flat();
+}
+
+/**
+ * Hasil sapuan per kontrak, ditahan di memori proses. Rentang deploy..tip terus
+ * melebar seumur chain, sedangkan block yang sudah lewat isinya tidak berubah,
+ * jadi yang perlu disapu ulang tiap permintaan hanya selisih sejak sapuan
+ * terakhir ditambah `MARGIN_REORG`. Cache hilang saat server restart, sapuan
+ * penuh berikutnya membangunnya lagi.
+ */
+const cacheEvent = new Map<string, { blokTerakhir: number; events: any[] }>();
+
+async function sapuEvent(
+  kunci: string,
+  contract: BaseContract,
+  filter: any,
+  deployBlock: number,
+  toBlock: number
+): Promise<any[]> {
+  const cache = cacheEvent.get(kunci);
+  const mulai = cache ? Math.max(deployBlock, cache.blokTerakhir - MARGIN_REORG + 1) : deployBlock;
+
+  // Tip mundur lebih jauh dari margin (RPC di belakang load balancer bisa
+  // menjawab dari node yang tertinggal): pakai cache apa adanya, jangan sampai
+  // event yang sudah terkumpul terbuang oleh sapuan kosong.
+  if (cache && toBlock < mulai) return cache.events;
+
+  const baru = await queryFilterParalel(contract, filter, mulai, toBlock);
+  const lama = cache ? cache.events.filter((e) => e.blockNumber < mulai) : [];
+  const events = [...lama, ...baru];
+
+  cacheEvent.set(kunci, { blokTerakhir: Math.max(toBlock, cache?.blokTerakhir ?? toBlock), events });
   return events;
 }
 
@@ -311,17 +418,26 @@ export function tafsirJumlahToken(mentah: bigint, decimals: number): TafsirJumla
 export async function bacaEventToken(maksimal = 100) {
   const address = process.env.NEXT_PUBLIC_SKS_TOKEN_ADDRESS;
   if (!address) return [];
-  const token = BKDSKSToken__factory.connect(address, getProvider());
+  const token = BKDSKSToken__factory.connect(address, getProviderLog());
 
   const fromBlock = Number(process.env.NEXT_PUBLIC_SKS_TOKEN_DEPLOY_BLOCK || 0);
-  const toBlock = await getProvider().getBlockNumber();
+  const toBlock = await getProviderLog().getBlockNumber();
 
-  const [decimals, minted, burned] = await Promise.all([
+  // Mint dan burn diambil dalam satu sapuan (filter topic0 berisi dua event)
+  // supaya rentang block cukup ditembak sekali, bukan dua kali.
+  const [decimals, events] = await Promise.all([
     token.decimals(),
-    queryFilterChunked(token, token.filters.SKSMinted(), fromBlock, toBlock),
-    queryFilterChunked(token, token.filters.SKSBurned(), fromBlock, toBlock),
+    sapuEvent(
+      `token:${address.toLowerCase()}`,
+      token,
+      [["SKSMinted", "SKSBurned"]],
+      fromBlock,
+      toBlock
+    ),
   ]);
   const desimal = Number(decimals);
+  const minted = events.filter((e: any) => e.fragment?.name === "SKSMinted");
+  const burned = events.filter((e: any) => e.fragment?.name === "SKSBurned");
 
   const baris = (e: any, jenis: "mint" | "burn") => {
     const mentah = BigInt(e.args?.amount ?? 0n);

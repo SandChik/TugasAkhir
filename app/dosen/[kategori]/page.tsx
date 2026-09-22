@@ -22,8 +22,8 @@ export default async function KategoriPage({ params }: { params: { kategori: str
     prisma.periode_bkd.findFirst({ where: { status: "aktif" } }),
     prisma.pengguna.findUnique({ where: { id_pengguna: session!.user.id } }),
   ]);
-  const fase = periode ? faseAktif(periode) : "selesai";
-  const bisaInput = periode ? bolehDosenInput(fase) : false;
+  const fase = periode ? faseAktif(periode) : null;
+  const bisaInput = fase ? bolehDosenInput(fase) : false;
   const ctx = {
     periode: periode?.nama_periode,
     prodi: dosen?.program_studi ?? "-",
@@ -52,7 +52,7 @@ export default async function KategoriPage({ params }: { params: { kategori: str
       actions={
         <>
           <span className="rounded-lg border border-line px-3 py-2 text-xs text-navy">
-            {periode?.nama_periode ?? "Belum ada periode aktif"} · {FASE_LABEL[fase]}
+            {periode && fase ? `${periode.nama_periode} · ${FASE_LABEL[fase]}` : "Belum ada periode aktif"}
           </span>
           {!kategori.sumberPenugasan && bisaInput && (
             <Link
