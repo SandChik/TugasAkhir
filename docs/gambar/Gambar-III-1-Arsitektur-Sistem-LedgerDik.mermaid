@@ -15,7 +15,7 @@ flowchart TB
         MW["middleware.ts<br/>pembatasan akses per peran"]
         HAL["Halaman antarmuka per peran<br/>admin, asesor, dosen"]
         ACT["Server action<br/>actions.ts per rute"]
-        ORK["Modul orkestrasi<br/>parserDokumen, pemetaanPenugasan,<br/>verifikasiBukti, namaDosen, blockchain"]
+        ORK["Modul orkestrasi<br/>parserDokumen, pemetaanPenugasan,<br/>verifikasiBukti, namaDosen,<br/>blockchain, registriDokumen"]
         MW --> HAL --> ACT --> ORK
     end
 
@@ -32,12 +32,13 @@ flowchart TB
         direction TB
         KAL["KalkulatorBKDPendidikan<br/>fungsi pure per butir Rubrik BKD<br/>keluaran skala SKS x100"]
         TOK["BKDSKSToken<br/>ERC-20 non-transferable<br/>MINTER_ROLE via AccessControl"]
+        REG["BKDDokumenRegistri<br/>event DokumenTercatat, tanpa state<br/>PENCATAT_ROLE via AccessControl"]
     end
 
     subgraph DATA["LAPISAN PENYIMPANAN OPERASIONAL"]
         direction TB
         ORM["Prisma ORM<br/>schema.prisma dan migrasi terversi"]
-        DB[("PostgreSQL<br/>pengguna, periode_bkd, lkd,<br/>referensi_kegiatan, kegiatan,<br/>unggahan_dokumen, hasil_penilaian,<br/>simpulan_bkd, riwayat_transaksi")]
+        DB[("PostgreSQL<br/>pengguna, periode_bkd, lkd,<br/>penugasan_asesor, referensi_kegiatan,<br/>kegiatan, unggahan_dokumen,<br/>dokumen_kegiatan, hasil_penilaian,<br/>simpulan_bkd, riwayat_transaksi")]
         ORM --> DB
     end
 
@@ -55,9 +56,11 @@ flowchart TB
 
     ORK <==>|"Ethers.js JsonRpcProvider<br/>parameter kegiatan, nilai SKS x100"| KAL
     ORK <==>|"Ethers.js Wallet peladen<br/>mint jumlah token dan referenceId<br/>berupa hash keccak-256 simpulan,<br/>transaction hash dan event SKSMinted"| TOK
+    ORK ==>|"Ethers.js Wallet peladen<br/>sidik digital SHA-256 berkas,<br/>aksi unggah, terapkan, hapus"| REG
 
     KAL -.->|"verifikasi kode sumber"| EXP
     TOK -.->|"penelusuran publik tanpa<br/>akses basis data institusi"| EXP
+    REG -.->|"jejak dokumen publik"| EXP
 
     classDef aktor fill:#eaf1fc,stroke:#2d6cdf,stroke-width:1px,color:#14315e
     classDef web fill:#f4f7fc,stroke:#2d6cdf,stroke-width:1px,color:#14315e
@@ -70,7 +73,7 @@ flowchart TB
     class MW,HAL,ACT,ORK web
     class ORM,DB data
     class GATE,DET,VLMJ eks
-    class KAL,TOK chain
+    class KAL,TOK,REG chain
     class VLM,EXP luar
 
     style AKTOR fill:#ffffff,stroke:#d7deea,color:#14315e

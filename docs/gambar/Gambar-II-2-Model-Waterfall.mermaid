@@ -1,0 +1,12 @@
+%% Gambar II.2. Model Waterfall (Sommerville, 2016)
+%% Lima tahap berurutan; luaran tiap fase menjadi masukan fase berikutnya.
+flowchart TD
+    A["Requirements Analysis<br/>and Definition"] --> B["System and<br/>Software Design"]
+    B --> C["Implementation and<br/>Unit Testing"]
+    C --> D["Integration and<br/>System Testing"]
+    D --> E["Operation and<br/>Maintenance"]
+
+    B -. "umpan balik" .-> A
+    C -. "umpan balik" .-> B
+    D -. "umpan balik" .-> C
+    E -. "umpan balik" .-> D

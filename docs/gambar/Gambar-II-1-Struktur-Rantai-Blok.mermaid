@@ -1,0 +1,27 @@
+%% Gambar II.1. Struktur Rantai Blok (Nakamoto, 2008)
+%% Tiap blok memuat hash blok sebelumnya, sehingga urutan catatan bersifat
+%% mengikat dan tidak dapat disusun ulang tanpa terdeteksi.
+flowchart LR
+    subgraph B1["Blok N-1"]
+        direction TB
+        H1["Hash Blok Sebelumnya"]
+        T1["Timestamp"]
+        D1["Daftar Transaksi"]
+    end
+
+    subgraph B2["Blok N"]
+        direction TB
+        H2["Hash Blok Sebelumnya"]
+        T2["Timestamp"]
+        D2["Daftar Transaksi"]
+    end
+
+    subgraph B3["Blok N+1"]
+        direction TB
+        H3["Hash Blok Sebelumnya"]
+        T3["Timestamp"]
+        D3["Daftar Transaksi"]
+    end
+
+    B1 -- "hash(Blok N-1)" --> H2
+    B2 -- "hash(Blok N)" --> H3
