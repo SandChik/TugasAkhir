@@ -4,6 +4,8 @@ import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mo
 
 export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
+  // unit test kontrak saja; test/pengujian berisi suite Playwright yang dijalankan terpisah
+  paths: { tests: { mocha: "test/unit" } },
   solidity: {
     version: "0.8.28",
     settings: { optimizer: { enabled: true, runs: 200 } }
