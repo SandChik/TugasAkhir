@@ -48,13 +48,13 @@ ASESOR = ("Ruang kerja Asesor\n/asesor", "asesor", [
             ("Penilaian", "turunan", [
                 ("Detail Bukti", "turunan", [])])])])])
 
-BW, BH, DY, DX = 230, 32, 42, 26
+BW, BH, DY, DX = 230, 32, 60, 40     # jarak antarkotak 28, indentasi 40
 PERAN = ("admin", "dosen", "asesor")
 WARNA = {"admin": "admin", "dosen": "dosen", "asesor": "asesor", "seksi": "entitas",
          "halaman": "putih", "turunan": "putih", "bersama": "putih"}
 def tinggi(node):
     teks, jenis, _ = node
-    return 44 if jenis in PERAN else (BH + 12 if "\n" in teks else BH)
+    return 52 if jenis in PERAN else (BH + 16 if "\n" in teks else BH)
 def pohon(d, x, y, node):
     """gambar simpul pada (x,y) beserta anaknya; kembalikan y berikutnya yang bebas."""
     teks, jenis, anak = node
@@ -62,26 +62,28 @@ def pohon(d, x, y, node):
     b = d.box(x, y, BW, h, teks, "rect", WARNA[jenis], 10 if jenis in PERAN else 9,
               bold=jenis in PERAN or jenis == "seksi", dashed=jenis in ("turunan", "bersama"))
     cy = y + h + (DY - BH)
-    tx = x + 12
+    tx = x + 16                          # batang 24 px dari kotak anak
     for a in anak:
         acy = cy + tinggi(a) / 2
-        d.edge(b, None, [(tx, b.y1), (tx, acy), (x + DX, acy)], arrow_end=False)
+        n = len(d.boxes)
         cy = pohon(d, x + DX, cy, a)
+        d.edge(b, d.boxes[n], [(tx, b.y1), (tx, acy), (x + DX, acy)], arrow_end=False)
     return cy
 
-KOL, X0, Y0 = 360, 40, 220
+KOL, X0, Y0 = 420, 40, 230
 d = Dia("Gambar IV.16 Arsitektur Navigasi Sistem LedgerDik", X0 + 3 * KOL + 20, 10)
 cx = X0 + 1.5 * KOL - 20
-login = d.box(cx - 150, 30, 300, 40, "Halaman Masuk\n/login", "rect", "term", 10, bold=True)
-pengalih = d.box(cx - 150, 110, 300, 44, "Beranda /\npengalih berdasarkan peran pada sesi", "rhombus" if False else "rect", "putusan", 9, bold=True)
+login = d.box(cx - 150, 30, 300, 52, "Halaman Masuk\n/login", "rect", "term", 10, bold=True)
+pengalih = d.box(cx - 150, 110, 300, 48, "Beranda /\npengalih berdasarkan peran pada sesi", "rhombus" if False else "rect", "putusan", 9, bold=True)
 d.edge(login, pengalih, [(login.cx, login.y1), (pengalih.cx, pengalih.y)])
 ymax = 0
 for i, n in enumerate((ADMIN, DOSEN, ASESOR)):
     x = X0 + i * KOL
     # dari pengalih ke tiap ruang kerja: turun, mendatar di y=185, turun ke atas kotak peran
-    d.edge(pengalih, None, [(pengalih.cx, pengalih.y1), (pengalih.cx, 185), (x + BW / 2, 185), (x + BW / 2, Y0)])
+    k = len(d.boxes)
     ymax = max(ymax, pohon(d, x, Y0, n))
-d.box(X0, ymax + 30, 3 * KOL - 40, 132,
+    d.edge(pengalih, d.boxes[k], [(pengalih.cx, pengalih.y1), (pengalih.cx, 192), (x + BW / 2, 192), (x + BW / 2, Y0)])
+d.box(X0, ymax + 20, 3 * KOL - 40, 132,
       "Struktur hierarkis mengikuti Pressman (2001) subbab 29.5.1, dengan jalur navigasi ditetapkan per peran\n"
       "pengguna sesuai subbab 29.5.2. Halaman masuk menjadi gerbang tunggal; beranda mengalihkan pengguna ke\n"
       "ruang kerja perannya, dan permintaan ke ruang kerja peran lain dikembalikan ke sana oleh middleware. Kotak\n"
@@ -90,5 +92,6 @@ d.box(X0, ymax + 30, 3 * KOL - 40, 132,
       "dipakai bersama. Pengujian mahasiswa, Bahan ajar, Pembinaan mahasiswa, dan Tugas tambahan memiliki halaman\n"
       "turunan yang sama dengan Bimbingan mahasiswa. Nama halaman mengikuti Tabel IV.27.",
       "note", "catatan", 9)
-d.h = ymax + 200
+from dfd2 import bingkai
+bingkai(d)
 d.save_drawio("IV-16-arsitektur-navigasi.drawio"); d.check(); d.render("iv16.png")

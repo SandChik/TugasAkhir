@@ -21,19 +21,16 @@ def bahan(p):
         stores.append((STORE[k], LBL[k][0] if "r" in mode else "", LBL[k][1] if "w" in mode else ""))
     return left, right, stores
 
-def lebar(p):
-    """lebar kolom pada tata letak gabungan (dipakai agar empat baris tetap sejajar)."""
-    left, right, stores = bahan(p)
-    w_st = len(stores) * ST_SP
-    w_en = HUB_W + (ENT_W + ENT_GAP if left else 0) + (ENT_W + ENT_GAP if right else 0)
-    return max(w_st, w_en) + 60
-
 def taruh(d, p, cx, y):
-    """gambar satu klaster proses; kembalikan ordinat bawahnya."""
+    """gambar satu klaster proses dengan tepi atas di y; kembalikan batasnya."""
     left, right, stores = bahan(p)
-    band = max(115, max(len(left), len(right), 1) * 92)
-    (x0, y0, x1, y1), hub = cluster(d, PROSES[p], cx, y + band / 2, left, right, stores, ent_gap=ENT_GAP)
-    return y1
+    (x0, y0, x1, y1), hub = cluster(d, PROSES[p], cx, 0, left, right, stores, ent_gap=ENT_GAP, top=y)
+    return x0, y0, x1, y1
+
+def lebar(p):
+    """(tepi kiri, tepi kanan) klaster relatif sumbu hub; dipakai tata letak gabungan."""
+    x0, y0, x1, y1 = taruh(Dia("ukur", 10, 10), p, 0, 0)
+    return x0, x1
 
 def batas(d):
     """kotak pembatas seluruh isi diagram (kotak, label, dan titik belok garis)."""
@@ -82,8 +79,8 @@ if not PILIH or any(p in PILIH for p in ("iv7a", "iv7b", "iv7c", "iv7d")):
         d = Dia(f"Gambar IV.7 DFD Level 1 ({rentang})", 10, 10)
         y = 60
         for p in kel:
-            y = taruh(d, p, 0, y) + 80
-        d.box(-450, y - 10, 900, 132,
+            y = taruh(d, p, 0, y)[3] + 90
+        d.box(-450, y - 10, 900, 124,
               f"Bagian {i} dari empat pada Gambar IV.7, memuat proses {rentang}.\n" + CATATAN,
               "note", "catatan", 9)
         dibangun.append((i, kel, rentang, d, batas(d)))
@@ -97,16 +94,19 @@ if not PILIH or any(p in PILIH for p in ("iv7a", "iv7b", "iv7c", "iv7d")):
 # ---------- gabungan dua belas proses (arsip) ----------
 if not PILIH or "iv7" in PILIH:
     kolom = [urut[i::3] for i in range(3)]
-    lebar_kol = [max(lebar(p) for p in k) for k in kolom]
-    xs = [MARGIN]
-    for w in lebar_kol[:-1]: xs.append(xs[-1] + w)
+    ukuran = {p: lebar(p) for p in urut}
+    kiri_kol = [max(-ukuran[p][0] for p in k) for k in kolom]     # jarak sumbu ke tepi kiri kolom
+    kanan_kol = [max(ukuran[p][1] for p in k) for k in kolom]
+    sumbu, x = [], MARGIN
+    for c in range(3):
+        sumbu.append(x + kiri_kol[c]); x = sumbu[-1] + kanan_kol[c] + 90
     d = Dia("Gambar IV.7 DFD Level 1", 10, 10)
     y = 60
     for r in range(4):
         bawah = y
         for c in range(3):
-            bawah = max(bawah, taruh(d, urut[r * 3 + c], xs[c] + lebar_kol[c] / 2, y))
-        y = bawah + 70
+            bawah = max(bawah, taruh(d, urut[r * 3 + c], sumbu[c], y)[3])
+        y = bawah + 90
     d.box(MARGIN, y - 10, 900, 118, CATATAN, "note", "catatan", 9)
     bingkai(d)
     d.save_drawio("IV-07-dfd-level-1.drawio")

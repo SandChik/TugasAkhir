@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" type="device">
   <diagram name="Gambar IV.18 Rancangan Antarmuka Halaman Detail Rekap Kegiatan Dosen" id="d131">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="825" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="865" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -100,8 +100,7 @@
         <mxCell id="n32" value="A" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#1f5eff;fillColor=#1f5eff;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="n30">
           <mxGeometry x="8" y="9" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n33" value="Melaksanakan perkuliahan (tutorial,
-tatap muka, dan/atau daring) dan..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n33" value="Melaksanakan perkuliahan (tutorial,&lt;br&gt;tatap muka, dan/atau daring) dan..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="4" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n34" value="*" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n30">
@@ -125,8 +124,7 @@ tatap muka, dan/atau daring) dan..." style="text;strokeColor=none;whiteSpace=wra
         <mxCell id="n40" value="C" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="74" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n41" value="Membimbing Kuliah Kerja Nyata,
-Praktek Kerja Nyata, Praktek..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n41" value="Membimbing Kuliah Kerja Nyata,&lt;br&gt;Praktek Kerja Nyata, Praktek..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="68" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n42" value="+2" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n30">
@@ -138,8 +136,7 @@ Praktek Kerja Nyata, Praktek..." style="text;strokeColor=none;whiteSpace=wrap;ht
         <mxCell id="n44" value="D" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="106" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n45" value="Membimbing dan ikut membimbing
-dalam menghasilkan disertasi,..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n45" value="Membimbing dan ikut membimbing&lt;br&gt;dalam menghasilkan disertasi,..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="100" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n46" value="0" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;" vertex="1" parent="n30">
@@ -148,8 +145,7 @@ dalam menghasilkan disertasi,..." style="text;strokeColor=none;whiteSpace=wrap;h
         <mxCell id="n47" value="E" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="138" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n48" value="Bertugas sebagai penguji pada ujian
-akhir/profesi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n48" value="Bertugas sebagai penguji pada ujian&lt;br&gt;akhir/profesi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="133" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n49" value="*" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n30">
@@ -161,8 +157,7 @@ akhir/profesi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;al
         <mxCell id="n51" value="F" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="170" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n52" value="Membina kegiatan mahasiswa di
-bidang akademik dan kemahasis..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n52" value="Membina kegiatan mahasiswa di&lt;br&gt;bidang akademik dan kemahasis..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="165" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n53" value="0" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;" vertex="1" parent="n30">
@@ -171,8 +166,7 @@ bidang akademik dan kemahasis..." style="text;strokeColor=none;whiteSpace=wrap;h
         <mxCell id="n54" value="G" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="202" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n55" value="Melakukan kegiatan pengembangan
-program kuliah tatap muka/daring..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n55" value="Melakukan kegiatan pengembangan&lt;br&gt;program kuliah tatap muka/daring..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="197" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n56" value="+1" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n30">
@@ -193,8 +187,7 @@ program kuliah tatap muka/daring..." style="text;strokeColor=none;whiteSpace=wra
         <mxCell id="n61" value="I" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="267" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n62" value="Menduduki jabatan pimpinan
-perguruan tinggi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n62" value="Menduduki jabatan pimpinan&lt;br&gt;perguruan tinggi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="262" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n63" value="0" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;" vertex="1" parent="n30">
@@ -203,8 +196,7 @@ perguruan tinggi" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7
         <mxCell id="n64" value="J" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontStyle=1;fontColor=#6b7280;" vertex="1" parent="n30">
           <mxGeometry x="8" y="299" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="n65" value="Melakukan kegiatan pengembangan
-diri untuk meningkatkan..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
+        <mxCell id="n65" value="Melakukan kegiatan pengembangan&lt;br&gt;diri untuk meningkatkan..." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n30">
           <mxGeometry x="26" y="294" width="134" height="26" as="geometry" />
         </mxCell>
         <mxCell id="n66" value="+1" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n30">
@@ -216,8 +208,7 @@ diri untuk meningkatkan..." style="text;strokeColor=none;whiteSpace=wrap;html=1;
         <mxCell id="n68" value="" style="rounded=1;arcSize=4;verticalAlign=top;fontStyle=1;spacingTop=2;spacingLeft=6;whiteSpace=wrap;html=1;fontSize=11;align=center;strokeColor=#bbbbbb;fillColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="436" y="240" width="666" height="294" as="geometry" />
         </mxCell>
-        <mxCell id="n69" value="A. Melaksanakan perkuliahan (tutorial, tatap muka, dan/atau daring) dan membimbing,
-menguji serta menyelenggarakan pendidikan di laboratorium sesuai penugasan" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="n68">
+        <mxCell id="n69" value="A. Melaksanakan perkuliahan (tutorial, tatap muka, dan/atau daring) dan membimbing,&lt;br&gt;menguji serta menyelenggarakan pendidikan di laboratorium sesuai penugasan" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="n68">
           <mxGeometry x="12" y="8" width="450" height="30" as="geometry" />
         </mxCell>
         <mxCell id="n70" value="Wajib" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#c9cdd6;fillColor=#eef1f5;fontColor=#6b7280;" vertex="1" parent="n68">
@@ -235,12 +226,10 @@ menguji serta menyelenggarakan pendidikan di laboratorium sesuai penugasan" styl
         <mxCell id="n74" value="Kegiatan" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="482" y="295" width="136" height="42" as="geometry" />
         </mxCell>
-        <mxCell id="n75" value="Rencana
-Pertemuan" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+        <mxCell id="n75" value="Rencana&lt;br&gt;Pertemuan" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="618" y="295" width="87" height="42" as="geometry" />
         </mxCell>
-        <mxCell id="n76" value="sks MK
-terhitung" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+        <mxCell id="n76" value="sks MK&lt;br&gt;terhitung" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="705" y="295" width="87" height="42" as="geometry" />
         </mxCell>
         <mxCell id="n77" value="sks BKD" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=#d0d5de;fillColor=#f0f3f8;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
@@ -261,8 +250,7 @@ terhitung" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeC
         <mxCell id="n82" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9cdd6;fillColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="482" y="337" width="136" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n83" value="Dasar-Dasar
-Pemrograman / 1C" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;spacingLeft=6;" vertex="1" parent="n82">
+        <mxCell id="n83" value="Dasar-Dasar&lt;br&gt;Pemrograman / 1C" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;spacingLeft=6;" vertex="1" parent="n82">
           <mxGeometry x="8" y="6" width="128" height="27" as="geometry" />
         </mxCell>
         <mxCell id="n84" value="1 bukti pendukung" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#8cc9a6;fillColor=#e6f4ec;fontStyle=1;fontColor=#2e7d4f;" vertex="1" parent="n82">
@@ -301,8 +289,7 @@ Pemrograman / 1C" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8
         <mxCell id="n95" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9cdd6;fillColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="482" y="402" width="136" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n96" value="Dasar-Dasar
-Pemrograman / 1D" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;spacingLeft=6;" vertex="1" parent="n95">
+        <mxCell id="n96" value="Dasar-Dasar&lt;br&gt;Pemrograman / 1D" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;spacingLeft=6;" vertex="1" parent="n95">
           <mxGeometry x="8" y="6" width="128" height="27" as="geometry" />
         </mxCell>
         <mxCell id="n97" value="Belum ada bukti pendukung" style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=#d33;fillColor=#fde8e8;fontStyle=1;fontColor=#c62828;" vertex="1" parent="n95">
@@ -383,10 +370,8 @@ Pemrograman / 1D" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8
         <mxCell id="n128" value="7" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="359" y="629" width="22" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="n130" value="Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900 mengikuti kerangka halaman
-(bilah sisi, bilah atas, remah, judul). Nomor merujuk komponen pada Tabel IV.29. Pola halaman kerja berbasis seksi: daftar seksi
-di kiri dengan penanda seksi wajib (*) dan jumlah kegiatan siap ditarik (+n), tabel seksi terpilih di kanan, bilah aksi di dasar layar." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
-          <mxGeometry x="40" y="731" width="1080" height="56" as="geometry" />
+        <mxCell id="n130" value="Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900 mengikuti kerangka halaman&lt;br&gt;(bilah sisi, bilah atas, remah, judul). Nomor merujuk komponen pada Tabel IV.29. Pola halaman kerja berbasis seksi: daftar seksi&lt;br&gt;di kiri dengan penanda seksi wajib (*) dan jumlah kegiatan siap ditarik (+n), tabel seksi terpilih di kanan, bilah aksi di dasar layar." style="shape=note;size=14;verticalAlign=top;spacingLeft=10;spacingRight=20;spacingTop=8;whiteSpace=wrap;html=1;fontSize=11;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="747" width="661" height="65" as="geometry" />
         </mxCell>
         <mxCell id="e117" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.000;exitY=0.500;exitDx=0;exitDy=0;entryX=1.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n116" target="n25">
           <mxGeometry relative="1" as="geometry">

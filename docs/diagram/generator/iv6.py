@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dg import Dia
-from dfd2 import cluster
+from dfd2 import cluster, bingkai
 KIRI = [("Dosen","kredensial, data_kegiatan,\nparameter_kegiatan, berkas_bukti,\npermintaan_klaim, status_capaian,\npermintaan_simpan_permanen",
                  "daftar_kegiatan, nilai_kredit,\nstatus_penilaian, catatan_asesor,\nsimpulan_bkd, rekapitulasi_bkd,\npesan_hasil_aksi"),
         ("Asesor","kredensial, nilai_disetujui,\ncatatan_penilaian, status_penilaian,\npermintaan_periksa_ulang,\npersetujuan_manual, permintaan_pengesahan",
@@ -12,10 +12,10 @@ KANAN = [("Smart Contract\nKalkulator BKD Pendidikan","nilai_kredit_x100,\ngalat
          ("Smart Contract\nToken SKS","transaction_hash, saldo_token,\nevent_token","alamat_wallet, jumlah_token,\nreferensi_hash_simpulan,\nalasan_koreksi"),
          ("Smart Contract\nRegistri Dokumen","transaction_hash,\nevent_pencatatan","hash_dokumen, jenis_aksi,\nreferensi_baris"),
          ("Layanan Model\nBahasa Visual","hasil_penafsiran_json","citra_halaman,\ninstruksi_skema_keluaran")]
-d = Dia("Gambar IV.6 Diagram Konteks Sistem LedgerDik", 1560, 1000)
-(x0,y0,x1,y1), hub = cluster(d, "0\nSistem Penilaian BKD\n(LedgerDik)", 780, 420, KIRI, KANAN, [],
-                             hub_w=300, hub_h=170, ent_w=180, ent_h=70, ent_gap=380, band=210, fs_hub=12)
-d.box(60, y1+60, 760, 130,
+d = Dia("Gambar IV.6 Diagram Konteks Sistem LedgerDik", 10, 10)
+(x0,y0,x1,y1), hub = cluster(d, "0\nSistem Penilaian BKD\n(LedgerDik)", 0, 0, KIRI, KANAN, [],
+                             hub_w=300, hub_h=170, ent_w=190, ent_h=70, ent_gap=380, band=230, fs_hub=12)
+d.box(x0, y1+60, 760, 124,
       "Notasi mengikuti Pressman (2001): persegi panjang menyatakan entitas eksternal, lingkaran\n"
       "menyatakan proses, dan setiap panah diberi nama sesuai data yang mengalir. Diagram konteks\n"
       "merupakan tingkat tertinggi DFD yang merepresentasikan keseluruhan sistem sebagai satu proses\n"
@@ -23,5 +23,5 @@ d.box(60, y1+60, 760, 130,
       "Tabel IV.15. Aliran menuju kontrak kalkulator tidak menghasilkan transaksi karena seluruh\n"
       "fungsinya murni; aliran menuju kontrak token dan kontrak registri merupakan transaksi on-chain.",
       "note", "catatan", 9)
-d.h = y1+230
+bingkai(d)
 d.save_drawio("IV-06-diagram-konteks.drawio"); d.check(); d.render("iv6.png")

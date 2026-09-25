@@ -1,27 +1,32 @@
 # -*- coding: utf-8 -*-
 import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dg import Dia
-from dfd2 import cluster, alir_langsung
+from dfd2 import cluster, alir_langsung, bingkai
+JARAK = 110          # jarak antarklaster subproses
 from data_dfd import STORE, ENT
 def baris(nama_dia, fn, png, subs, langsung, catatan):
-    lebar = []
-    for kode, nama, st, at in subs:
-        w = max(len(st)*172, len(at)*250, 210, 330) + 160
-        lebar.append(w)
-    W = sum(lebar) + 80
-    d = Dia(nama_dia, W, 10)
-    ada_atas = any(at for _,_,_,at in subs)
-    hub_cy = 60 + (170 if ada_atas else 0) + 58
-    x = 40; hubs = {}; ymax = 0
-    for (kode, nama, st, at), w in zip(subs, lebar):
-        cx = x + w/2
-        stores = [(STORE[k], b, t) for k, (b, t) in st.items()]
-        atas = [(ENT[e], m, k) for e, m, k in at]
-        (x0,y0,x1,y1), hub = cluster(d, f"{kode}\n{nama}", cx, hub_cy, [], [], stores, atas, hub_w=210)
-        hubs[kode] = hub; ymax = max(ymax, y1); x += w
+    """subproses berjajar kiri ke kanan dengan sumbu hub yang sama (y = 0); jarak antarklaster
+    diukur dari batas klaster yang sebenarnya."""
+    d = Dia(nama_dia, 10, 10)
+    bahan = [(kode + chr(10) + nama, [(STORE[k], b, t) for k, (b, t) in st.items()],
+              [(ENT[e], m, k) for e, m, k in at]) for kode, nama, st, at in subs]
+    # jarak hub ke baris entitas atas dan ke baris penyimpanan disamakan (ambil yang terbesar)
+    ja = jb = 0
+    for teks, stores, atas in bahan:
+        u = Dia("ukur", 10, 10); cluster(u, teks, 0, 0, [], [], stores, atas); hub = u.boxes[0]
+        ents = [b for b in u.boxes if b.shape == "rect"]; sts = [b for b in u.boxes if b.shape == "store"]
+        if ents: ja = max(ja, hub.y - ents[0].y1)
+        if sts: jb = max(jb, sts[0].y - hub.y1)
+    hubs = {}; x = 0; y1 = 0; x0_all = None
+    for (kode, nama, st, at), (teks, stores, atas) in zip(subs, bahan):
+        uk = cluster(Dia("ukur", 10, 10), teks, 0, 0, [], [], stores, atas, jarak_atas=ja, jarak_bawah=jb)[0]
+        cx = x - uk[0]
+        (bx0, by0, bx1, by1), hub = cluster(d, teks, cx, 0, [], [], stores, atas, jarak_atas=ja, jarak_bawah=jb)
+        hubs[kode] = hub; y1 = max(y1, by1); x = bx1 + JARAK
+        if x0_all is None: x0_all = bx0
     for a, b, l in langsung: alir_langsung(d, hubs[a], hubs[b], l)
-    d.box(40, ymax+50, 730, 96, catatan, "note", "catatan", 9)
-    d.h = ymax+190
+    d.box(x0_all, y1 + 60, 730, 96, catatan, "note", "catatan", 9)
+    bingkai(d)
     d.save_drawio(fn); d.check(); d.render(png)
 
 baris("Gambar IV.8 DFD Level 2 Proses P6", "IV-08-dfd-level-2-p6.drawio", "iv8.png",

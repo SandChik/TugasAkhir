@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" type="device">
   <diagram name="Gambar IV.17 Rancangan Antarmuka Halaman Masuk" id="d33">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="825" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="865" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -10,8 +10,7 @@
         <mxCell id="n2" value="L" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="166" y="242" width="33" height="33" as="geometry" />
         </mxCell>
-        <mxCell id="n3" value="LedgerDik
-Buku Besar Pendidikan &amp; Penilaian Dosen Berbasis Smart Contract" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+        <mxCell id="n3" value="LedgerDik&lt;br&gt;Buku Besar Pendidikan &amp;amp; Penilaian Dosen Berbasis Smart Contract" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="208" y="241" width="333" height="36" as="geometry" />
         </mxCell>
         <mxCell id="n4" value="Selamat Datang di LedgerDik" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=28;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
@@ -20,11 +19,7 @@ Buku Besar Pendidikan &amp; Penilaian Dosen Berbasis Smart Contract" style="text
         <mxCell id="n5" value="Automasi Penilaian BKD, Tercatat di Blockchain" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=14;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="166" y="349" width="465" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="n6" value="Pantau dan validasi Beban Kinerja Dosen bidang pendidikan dalam satu
-platform yang transparan dan terotomatisasi. LedgerDik membantu dosen,
-asesor, dan admin mewujudkan proses penilaian dan pengesahan kredit SKS
-yang akurat, transparan, dan tercatat permanen dengan menggunakan
-smart contract di atas jaringan blockchain." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="1">
+        <mxCell id="n6" value="Pantau dan validasi Beban Kinerja Dosen bidang pendidikan dalam satu&lt;br&gt;platform yang transparan dan terotomatisasi. LedgerDik membantu dosen,&lt;br&gt;asesor, dan admin mewujudkan proses penilaian dan pengesahan kredit SKS&lt;br&gt;yang akurat, transparan, dan tercatat permanen dengan menggunakan&lt;br&gt;smart contract di atas jaringan blockchain." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="166" y="379" width="420" height="90" as="geometry" />
         </mxCell>
         <mxCell id="n7" value="Transparan" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9d6f2;fillColor=#e8effc;fontStyle=1;fontColor=#1f5eff;" vertex="1" parent="1">
@@ -87,10 +82,8 @@ smart contract di atas jaringan blockchain." style="text;strokeColor=none;whiteS
         <mxCell id="n30" value="4" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="982" y="478" width="22" height="22" as="geometry" />
         </mxCell>
-        <mxCell id="n32" value="Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900. Nomor merujuk komponen pada
-Tabel IV.28. Halaman gerbang tanpa kerangka bilah sisi: panel pengantar di kiri, kartu masuk di kanan. Kotak putus-putus
-menyatakan pesan yang hanya tampil saat kredensial ditolak; saat verifikasi berjalan tombol berlabel “Memproses...”." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
-          <mxGeometry x="40" y="731" width="1080" height="56" as="geometry" />
+        <mxCell id="n32" value="Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900. Nomor merujuk komponen pada&lt;br&gt;Tabel IV.28. Halaman gerbang tanpa kerangka bilah sisi: panel pengantar di kiri, kartu masuk di kanan. Kotak putus-putus&lt;br&gt;menyatakan pesan yang hanya tampil saat kredensial ditolak; saat verifikasi berjalan tombol berlabel “Memproses...”." style="shape=note;size=14;verticalAlign=top;spacingLeft=10;spacingRight=20;spacingTop=8;whiteSpace=wrap;html=1;fontSize=11;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="747" width="658" height="65" as="geometry" />
         </mxCell>
         <mxCell id="e23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.500;exitY=1.000;exitDx=0;exitDy=0;entryX=0.500;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n22" target="n3">
           <mxGeometry relative="1" as="geometry">

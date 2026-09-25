@@ -4,31 +4,23 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="n1" value="1. Perencanaan
-pengujian" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+        <mxCell id="n1" value="1. Perencanaan&lt;br&gt;pengujian" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
           <mxGeometry x="40" y="60" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n2" value="2. Penyusunan
-skenario uji" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+        <mxCell id="n2" value="2. Penyusunan&lt;br&gt;skenario uji" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
           <mxGeometry x="256" y="60" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n3" value="3. Pelaksanaan
-pengujian" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+        <mxCell id="n3" value="3. Pelaksanaan&lt;br&gt;pengujian" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
           <mxGeometry x="472" y="60" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n4" value="4. Pencatatan dan
-analisis hasil" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
+        <mxCell id="n4" value="4. Pencatatan dan&lt;br&gt;analisis hasil" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#6c8ebf;fillColor=#dae8fc;" vertex="1" parent="1">
           <mxGeometry x="688" y="60" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n5" value="5. Perbaikan dan
-pengujian ulang" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
+        <mxCell id="n5" value="5. Perbaikan dan&lt;br&gt;pengujian ulang" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;align=center;strokeColor=#d6b656;fillColor=#fff2cc;" vertex="1" parent="1">
           <mxGeometry x="904" y="60" width="170" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="n12" value="Unsur strategi pengujian mengikuti Pressman (2001) subbab 18.1: perencanaan pengujian, perancangan kasus uji,
-pelaksanaan, serta pengumpulan dan evaluasi hasil. Tahap perbaikan dan pengujian ulang mengembalikan siklus ke
-tahap pelaksanaan hingga seluruh skenario pada modul yang bersangkutan lulus. Kriteria kelulusan ditetapkan pada
-tahap perencanaan, sebelum eksekusi, sesuai uraian pada subbab IV.4.1." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=12;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
-          <mxGeometry x="40" y="220" width="760" height="96" as="geometry" />
+        <mxCell id="n12" value="Unsur strategi pengujian mengikuti Pressman (2001) subbab 18.1: perencanaan pengujian, perancangan kasus uji,&lt;br&gt;pelaksanaan, serta pengumpulan dan evaluasi hasil. Tahap perbaikan dan pengujian ulang mengembalikan siklus ke&lt;br&gt;tahap pelaksanaan hingga seluruh skenario pada modul yang bersangkutan lulus. Kriteria kelulusan ditetapkan pada&lt;br&gt;tahap perencanaan, sebelum eksekusi, sesuai uraian pada subbab IV.4.1." style="shape=note;size=14;verticalAlign=top;spacingLeft=10;spacingRight=20;spacingTop=8;whiteSpace=wrap;html=1;fontSize=12;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="681" height="84" as="geometry" />
         </mxCell>
         <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=classic;startArrow=none;exitX=1.000;exitY=0.500;exitDx=0;exitDy=0;entryX=0.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n1" target="n2">
           <mxGeometry relative="1" as="geometry">

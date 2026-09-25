@@ -116,7 +116,8 @@ def bilah_aksi(L, info, tombol):
 
 # ================= IV.17 Halaman Masuk =================
 if not PILIH or "iv17" in PILIH:
-    d = Dia("Gambar IV.17 Rancangan Antarmuka Halaman Masuk", S(1440) + 80 + 60, S(900) + 150)
+    d = Dia("Gambar IV.17 Rancangan Antarmuka Halaman Masuk", S(1440) + 80 + 60, S(900) + 190)
+    d.cek_ruang = False   # wireframe mengikuti tata letak UI; aturan jarak diagram tidak berlaku
     L = Layar(d)
     # hero kiri
     logo = L.kotak(168, 270, 44, 44, "L", "rect", "navy", 9, fc=PUTIH, bold=True)
@@ -145,7 +146,7 @@ if not PILIH or "iv17" in PILIH:
     callout(d, 3, mata, "kanan", 60)
     callout(d, 5, galat, "kanan", 60, geser=0)
     callout(d, 4, masuk, "kanan", 60)
-    d.box(OX, OY + S(900) + 16, S(1440), 56,
+    d.box(OX, OY + S(900) + 32, S(1440), 56,
           "Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900. Nomor merujuk komponen pada\n"
           "Tabel IV.28. Halaman gerbang tanpa kerangka bilah sisi: panel pengantar di kiri, kartu masuk di kanan. Kotak putus-putus\n"
           "menyatakan pesan yang hanya tampil saat kredensial ditolak; saat verifikasi berjalan tombol berlabel “Memproses...”.",
@@ -154,7 +155,8 @@ if not PILIH or "iv17" in PILIH:
 
 # ================= IV.18 Detail Rekap Kegiatan Dosen =================
 if not PILIH or "iv18" in PILIH:
-    d = Dia("Gambar IV.18 Rancangan Antarmuka Halaman Detail Rekap Kegiatan Dosen", S(1440) + 80 + 60, S(900) + 150)
+    d = Dia("Gambar IV.18 Rancangan Antarmuka Halaman Detail Rekap Kegiatan Dosen", S(1440) + 80 + 60, S(900) + 190)
+    d.cek_ruang = False   # wireframe mengikuti tata letak UI; aturan jarak diagram tidak berlaku
     L = Layar(d)
     kerangka(L, "Nama Dosen, S.T., M.T.", "Dosen, D3 Teknik Informatika", "Rekap kegiatan",
              "Beranda / Layanan BKD / Rekap kegiatan / Laporan Kinerja", "Laporan Kinerja Dosen - Semester 2025/2026 Genap")
@@ -198,7 +200,7 @@ if not PILIH or "iv18" in PILIH:
     callout(d, 5, sel[(1, 5)], "bawah", 40)
     callout(d, 6, sel[(1, 7)], "bawah", 40)
     callout(d, 7, ba, "atas", 30, geser=-300)
-    d.box(OX, OY + S(900) + 16, S(1440), 56,
+    d.box(OX, OY + S(900) + 32, S(1440), 56,
           "Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900 mengikuti kerangka halaman\n"
           "(bilah sisi, bilah atas, remah, judul). Nomor merujuk komponen pada Tabel IV.29. Pola halaman kerja berbasis seksi: daftar seksi\n"
           "di kiri dengan penanda seksi wajib (*) dan jumlah kegiatan siap ditarik (+n), tabel seksi terpilih di kanan, bilah aksi di dasar layar.",
@@ -207,7 +209,8 @@ if not PILIH or "iv18" in PILIH:
 
 # ================= IV.19 Penilaian Asesor =================
 if not PILIH or "iv19" in PILIH:
-    d = Dia("Gambar IV.19 Rancangan Antarmuka Halaman Penilaian Asesor", S(1440) + 80 + 60, S(900) + 150)
+    d = Dia("Gambar IV.19 Rancangan Antarmuka Halaman Penilaian Asesor", S(1440) + 80 + 60, S(900) + 190)
+    d.cek_ruang = False   # wireframe mengikuti tata letak UI; aturan jarak diagram tidak berlaku
     L = Layar(d)
     kerangka(L, "Nama Asesor, S.T., M.T.", "Asesor, Teknik Informatika", "Asesor BKD",
              "Beranda / Layanan BKD / Asesor BKD / Peserta BKD / Rincian Peserta", "Penilaian Laporan Kinerja Dosen (LKD) - Semester 2025/2026 Genap", asesor=True)
@@ -247,7 +250,7 @@ if not PILIH or "iv19" in PILIH:
     callout(d, 5, temuan, "kanan", 30)
     callout(d, 6, sel[(1, 2)], "bawah", 40)
     callout(d, 7, ba, "atas", 30, geser=40)
-    d.box(OX, OY + S(900) + 16, S(1440), 66,
+    d.box(OX, OY + S(900) + 32, S(1440), 66,
           "Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900 mengikuti kerangka halaman.\n"
           "Nomor merujuk komponen pada Tabel IV.30. Pola halaman kerja berbasis formulir per baris: isian nilai, status, dan komentar\n"
           "berada pada tiap baris kegiatan; spanduk merah dan tanda seru menandai bukti yang tidak sesuai; angka pada kolom Bukti\n"
