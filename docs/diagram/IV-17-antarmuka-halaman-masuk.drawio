@@ -1,0 +1,118 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Gambar IV.17 Rancangan Antarmuka Halaman Masuk" id="d33">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="825" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n1" value="" style="rounded=1;arcSize=4;verticalAlign=top;fontStyle=1;spacingTop=2;spacingLeft=6;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#999999;fillColor=#f5f7fb;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1080" height="675" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="L" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="166" y="242" width="33" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="LedgerDik
+Buku Besar Pendidikan &amp; Penilaian Dosen Berbasis Smart Contract" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="208" y="241" width="333" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Selamat Datang di LedgerDik" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=28;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="166" y="295" width="465" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="Automasi Penilaian BKD, Tercatat di Blockchain" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=14;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="166" y="349" width="465" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="Pantau dan validasi Beban Kinerja Dosen bidang pendidikan dalam satu
+platform yang transparan dan terotomatisasi. LedgerDik membantu dosen,
+asesor, dan admin mewujudkan proses penilaian dan pengesahan kredit SKS
+yang akurat, transparan, dan tercatat permanen dengan menggunakan
+smart contract di atas jaringan blockchain." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="166" y="379" width="420" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Transparan" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9d6f2;fillColor=#e8effc;fontStyle=1;fontColor=#1f5eff;" vertex="1" parent="1">
+          <mxGeometry x="166" y="488" width="69" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="Terverifikasi On-chain" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9d6f2;fillColor=#e8effc;fontStyle=1;fontColor=#1f5eff;" vertex="1" parent="1">
+          <mxGeometry x="244" y="488" width="112" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="Akurat" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9d6f2;fillColor=#e8effc;fontStyle=1;fontColor=#1f5eff;" vertex="1" parent="1">
+          <mxGeometry x="366" y="488" width="51" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="" style="rounded=1;arcSize=4;verticalAlign=top;fontStyle=1;spacingTop=2;spacingLeft=6;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#bbbbbb;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="626" y="212" width="336" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="Masuk ke Akun Anda" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=14;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;fontColor=#14315e;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="33" width="270" height="21" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Gunakan email dan password yang ditetapkan admin" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=left;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="56" width="270" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="Email" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="86" width="150" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="nama@polban.ac.id" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=#c9cdd6;fillColor=#ffffff;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="102" width="276" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="Password" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=none;fillColor=none;spacing=0;fontStyle=1;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="152" width="150" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="••••••••••" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=left;strokeColor=#c9cdd6;fillColor=#ffffff;fontColor=#6b7280;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="168" width="242" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="lihat" style="rounded=0;whiteSpace=wrap;html=1;fontSize=8;align=center;strokeColor=#c9cdd6;fillColor=#ffffff;fontColor=#6b7280;" vertex="1" parent="n10">
+          <mxGeometry x="272" y="168" width="34" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="Lupa Password?" style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=8;align=right;strokeColor=none;fillColor=none;spacing=0;fontColor=#1f5eff;" vertex="1" parent="n10">
+          <mxGeometry x="180" y="210" width="126" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="Email atau password salah, atau akun dinonaktifkan." style="rounded=0;whiteSpace=wrap;html=1;fontSize=7;align=left;strokeColor=#d33;fillColor=#fde8e8;dashed=1;fontColor=#c62828;spacingLeft=6;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="228" width="276" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="Masuk" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fontSize=11;align=center;strokeColor=#1f5eff;fillColor=#1f5eff;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="260" width="276" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="Akun Dosen, Asesor, dan Admin dibuat oleh Administrator sistem." style="text;strokeColor=none;whiteSpace=wrap;html=1;fontSize=7;align=center;strokeColor=none;fillColor=none;spacing=0;fontColor=#6b7280;" vertex="1" parent="n10">
+          <mxGeometry x="30" y="300" width="276" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="1" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="364" y="200" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" value="2" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="982" y="320" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="3" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="982" y="386" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" value="5" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="982" y="441" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="4" style="ellipse;fontStyle=1;whiteSpace=wrap;html=1;fontSize=12;align=center;strokeColor=#14315e;fillColor=#14315e;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="982" y="478" width="22" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="Tata letak layar mengikuti Pressman (2001) subbab 15.4.1, disusun pada viewport 1440 x 900. Nomor merujuk komponen pada
+Tabel IV.28. Halaman gerbang tanpa kerangka bilah sisi: panel pengantar di kiri, kartu masuk di kanan. Kotak putus-putus
+menyatakan pesan yang hanya tampil saat kredensial ditolak; saat verifikasi berjalan tombol berlabel “Memproses...”." style="shape=note;size=14;verticalAlign=top;spacingLeft=4;spacingTop=2;whiteSpace=wrap;html=1;fontSize=11;align=left;strokeColor=#999999;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="731" width="1080" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.500;exitY=1.000;exitDx=0;exitDy=0;entryX=0.500;entryY=0.000;entryDx=0;entryDy=0;" edge="1" parent="1" source="n22" target="n3">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.000;exitY=0.500;exitDx=0;exitDy=0;entryX=1.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n24" target="n14">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.000;exitY=0.500;exitDx=0;exitDy=0;entryX=1.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n26" target="n17">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.000;exitY=0.500;exitDx=0;exitDy=0;entryX=1.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n28" target="n19">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=none;startArrow=none;exitX=0.000;exitY=0.500;exitDx=0;exitDy=0;entryX=1.000;entryY=0.500;entryDx=0;entryDy=0;" edge="1" parent="1" source="n30" target="n20">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
