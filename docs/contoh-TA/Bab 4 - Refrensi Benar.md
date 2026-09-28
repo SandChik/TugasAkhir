@@ -2,32 +2,24 @@
 
 Bab ini berisi deskripsi (dokumentasi) teknis pengembangan produk/solusi fungsional sistem/perangkat lunak aplikasi yang dikembangkan. Tahap implementasi disusun dalam bentuk subbab sesuai dengan siklus pengembangan aplikasi yang dijelaskan pada subbab III.5, dimulai dari analisis, perancangan, implementasi (*coding*), dan pengujian.
 
-
 ## **Analisis**
 
 Subbab ini memaparkan tahap analisis sebagai langkah awal dari siklus pengembangan aplikasi Lawan PMO berbasis model *Waterfall* sebagaimana ditetapkan pada Bab III. Tujuan analisis adalah memperoleh pemahaman menyeluruh atas permasalahan PPU dari sudut pandang solusi teknologi yang telah tersedia, sehingga dapat dirumuskan kebutuhan sistem yang tepat untuk dikembangkan. Karena Lawan PMO merupakan produk perangkat lunak baru yang tidak menggantikan suatu sistem organisasi tertentu yang sedang berjalan, objek analisis sistem berjalan diinterpretasikan sebagai solusi-solusi digital yang saat ini telah beredar dan digunakan masyarakat untuk menangani PPU, yaitu mekanisme pemblokiran tingkat jaringan serta aplikasi *self-help* sejenis.
 Kegiatan analisis pada subbab ini mencakup empat hal. Pertama, analisis sistem berjalan berupa pengamatan terhadap solusi pemblokiran tingkat jaringan dan aplikasi *self-help* sejenis beserta fitur dan karakteristiknya. Kedua, penarikan kesimpulan analisis berupa identifikasi keterbatasan (*gap*) solusi yang ada beserta usulan pemecahan masalah. Ketiga, analisis sistem yang akan dikembangkan, yang menurunkan hasil identifikasi kebutuhan menggunakan kerangka *environment*, *items produced*, *functions*, dan *modes of operation*, serta justifikasi pemilihan teknologinya. Keempat, penetapan *requirement* yang dihubungkan ke dokumen SRS. Alat bantu yang digunakan dalam kegiatan ini meliputi penelusuran aplikasi *marketplace* Google Play Store, kajian literatur ilmiah terkait, serta perangkat pemodelan kebutuhan.
 
-
-
 ### **Analisis Sistem Berjalan**
 
 Sistem berjalan yang diamati pada tugas akhir ini adalah berbagai solusi digital yang telah tersedia bagi masyarakat untuk menanggulangi perilaku PMO dan PPU. Hasil pengamatan menunjukkan bahwa solusi yang ada dapat dikelompokkan ke dalam dua kategori utama, yaitu pemblokiran konten pada tingkat jaringan yang umumnya diselenggarakan oleh pemerintah atau ISP, dan aplikasi *self-help* yang dipasang langsung pada perangkat pengguna. Terhadap kedua kategori tersebut, hal-hal yang dianalisis meliputi mekanisme kerja, fitur yang ditawarkan, serta keterbatasan masing-masing solusi.
-
-
 
 #### **Analisis Solusi Pemblokiran Tingkat Jaringan**
 
 Solusi pertama adalah pemblokiran pada tingkat jaringan, sebagaimana diterapkan melalui inisiatif pemerintah (Kementerian Komunikasi dan Digital) yang menginstruksikan ISP untuk melakukan penyaringan berbasis DNS. Mekanisme ini bekerja sebagai filter preventif berskala nasional, ketika pengguna mencoba mengakses domain yang terdaftar dalam daftar blokir, permintaan diarahkan ulang sehingga konten tidak dapat dimuat.
 Berdasarkan pengamatan, pendekatan ini memiliki dua kelemahan fundamental. Pertama, sifatnya pasif dan sangat mudah dilewati (*bypass*), cukup dengan mengaktifkan VPN atau mengubah pengaturan DNS perangkat ke penyedia publik (misalnya 1.1.1.1 atau 8.8.8.8). Kedua, dan yang lebih mendasar, pemblokiran ini sama sekali tidak menyentuh akar permasalahan karena hanya membatasi akses tanpa menangani aspek psikologis, dorongan impulsif, maupun manajemen perilaku pengguna. Dengan demikian, solusi tingkat jaringan tidak memberikan dukungan rehabilitatif apa pun ketika dorongan untuk melakukan PMO muncul.
 
-
-
 #### **Analisis Aplikasi *Self-Help* Sejenis**
 
 Solusi kedua adalah aplikasi *self-help* berbasis *mobile* yang beredar di *marketplace* aplikasi. Pengamatan dilakukan terhadap sejumlah aplikasi yang representatif terhadap ragam pendekatan yang ada, yaitu NoFap – Quit Addiction, BrainBuddy, Fortify, QUITTR, Reboot Nation, dan Quitzilla. Keenam aplikasi tersebut mewakili tiga gaya pendekatan dominan, yakni pelacak sederhana (*tracker*), program pemulihan terstruktur, serta platform terpadu. Pengamatan ini sejalan dengan temuan tinjauan ilmiah Hart-Derrick dkk. (2025) yang mengidentifikasi bahwa fitur paling umum pada aplikasi PPU adalah pelacak *streak* abstinen (78,3%), penetapan tujuan (52,2%), dan psikoedukasi (52,2%), sementara fitur berbasis bukti klinis seperti CBT hanya ditemukan pada 17,4% aplikasi.
 Perbandingan ketersediaan fitur antaraplikasi yang diamati dirangkum pada Tabel IV.1, mencakup pelacakan *streak*, gamifikasi, dukungan komunitas, jurnal refleksi, pemblokiran konten pada perangkat, intervensi krisis (*panic*), serta latihan *mindfulness*/meditasi.
-
 
 Tabel IV.1. Perbandingan Fitur Aplikasi *Self-Help* Sejenis
 
@@ -91,7 +83,7 @@ Dukungan untuk meredakan dorongan secara *real-time* (*panic*) masih langka dan,
 
 4. Minimnya konteks lokal
 
-Mayoritas aplikasi yang komprehensif berbahasa Inggris, menerapkan model berlangganan berbayar, dan berorientasi pada platform serta pengguna di luar Indonesia, sehingga kurang sesuai dengan kebutuhan dan daftar blokir lokal.
+Mayoritas aplikasi yang komprehensif berbahasa Inggris, menerapkan model berlangganan berbayar, dan berorientasi pada platform serta pengguna di luar Indonesia, sehingga kurang sesuai dengan kebutuhan dan daftar blokir lokal. 
 
 5. Dominasi pelacakan pasif
 
