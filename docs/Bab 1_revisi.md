@@ -18,10 +18,10 @@
 
 ## **I.2 Rumusan Masalah**
 
-   Subbab ini menguraikan permasalahan utama dalam penilaian BKD bidang pendidikan yang berjalan melalui SISTER
+   Subbab ini menguraikan permasalahan utama dalam penilaian BKD bidang pendidikan yang berjalan melalui SISTER.
 
-1. Asesor menghitung ulang secara manual ketika angka SKS dari SISTER tidak sesuai porsi mengajar riil dosen, dan hasil hitungan antar-asesor kerap berbeda untuk kegiatan yang sama. Perbedaan ini diselesaikan lewat kompromi rata-rata nilai kredit tanpa dicek ulang kesesuaiannya dengan Rubrik BKD (Nurjannah, 2026), sehingga angka yang lolos penilaian bisa menyimpang dari porsi pengajaran riil dosen tanpa terdeteksi.
-   Diperlukan mekanisme yang menjalankan Rubrik BKD secara otomatis mengikuti porsi mengajar dosen, sehingga kegiatan yang sama selalu menghasilkan angka kredit yang sama tanpa perlu dihitung ulang atau dikompromikan.
+1. Asesor menghitung beban nilai dengan cara manual dan angka SKS yang muncul pada laman SISTER tidak sesuai porsi mengajar riil dosen, sehingga hasil hitungan antar-asesor kerap berbeda untuk kegiatan yang sama. Perbedaan ini diselesaikan lewat kompromi rata-rata nilai kredit tanpa dicek ulang kesesuaiannya dengan Rubrik BKD (Nurjannah, 2026), sehingga angka yang lolos penilaian bisa menyimpang dari porsi pengajaran riil dosen.
+   Diperlukan mekanisme yang menjalankan Rubrik BKD secara otomatis mengikuti porsi mengajar dosen, sehingga kegiatan yang sama selalu menghasilkan angka kredit yang sama tanpa perlu dihitung ulang atau dikompromikan. Jaminan tersebut hanya berlaku pada butir kegiatan yang perhitungannya dapat diotomasikan dari parameter terukur. Butir yang memerlukan penilaian kualitatif asesor atau yang perhitungannya berupa batas maksimum tetap dinilai manual, sehingga perbedaan nilai antar-asesor dan kompromi rata-rata masih mungkin terjadi pada butir tersebut.
 2. Rekam hasil penilaian BKD hanya bisa ditelusuri lewat administrator basis data institusi, sehingga dosen maupun pihak luar tidak bisa memeriksanya sendiri, dan angka kompromi bisa diubah sewaktu-waktu tanpa jejak yang bisa diaudit. Diperlukan pencatatan yang permanen dan bisa ditelusuri kapan saja, tanpa bergantung penuh pada administrator basis data terpusat.
 
 ## **I.3 Tujuan dan Manfaat Pengembangan Sistem**
